@@ -798,7 +798,7 @@
                 "schema": {
                   "type": "string",
                   "examples": [
-                    "event: meta\\ndata: {\"provider\":\"runpod\",\"model\":\"qwen2.5-72b-instruct\"}\\n\\nevent: token\\ndata: {\"text\":\"Aisha, your \"}\\n\\nevent: done\\ndata: {\"analysis\":{\"narrative\":\"...\"}}\\n\\n"
+                    "event: meta\\ndata: {\"provider\":\"openai-compatible\",\"model\":\"model-name\"}\\n\\nevent: token\\ndata: {\"text\":\"Aisha, your \"}\\n\\nevent: done\\ndata: {\"analysis\":{\"narrative\":\"...\"}}\\n\\n"
                   ]
                 }
               }
@@ -825,11 +825,11 @@
         "properties": {
           "provider": {
             "type": "string",
-            "example": "runpod"
+            "example": "openai-compatible"
           },
           "model": {
             "type": "string",
-            "example": "qwen2.5-72b-instruct"
+            "example": "model-name"
           },
           "configured": {
             "type": "boolean"

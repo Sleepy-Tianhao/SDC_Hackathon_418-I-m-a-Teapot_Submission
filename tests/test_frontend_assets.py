@@ -67,7 +67,7 @@ class FrontendAssetTests(unittest.TestCase):
             self.assertIn(method, source, "api facade is missing " + method)
 
     def test_no_secrets_in_frontend_bundle(self):
-        forbidden = ("RUNPOD_API_KEY", "OPENAI_API_KEY", "sk-", "Bearer ey", "AWS_SECRET")
+        forbidden = ("LLM_API_KEY", "OPENAI_API_KEY", "sk-", "Bearer ey", "AWS_SECRET")
         for path in FRONTEND.rglob("*.js"):
             source = path.read_text(encoding="utf-8")
             for marker in forbidden:
