@@ -167,7 +167,10 @@ the browser only sends ids and receives text or structured JSON.
 │   └── screenshots/                 # UI evidence
 ├── src/
 │   ├── frontend/                    # the application UI (serve this directory)
-│   ├── main.py                      # backend entry point (teammate)
+│   ├── main.py                      # backend entry point (FastAPI, teammate)
+│   ├── api/                         # backend routes (teammate)
+│   ├── services/                    # matching / pathway / SDG / LLM (teammate)
+│   ├── db/                          # SQLite models & repositories (teammate)
 │   └── utils.py
 ├── tools/
 │   ├── serve_frontend.py            # static server for frontend development

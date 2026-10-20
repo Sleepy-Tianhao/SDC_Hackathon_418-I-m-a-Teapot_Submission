@@ -65,7 +65,29 @@ src/
         ui.js, charts.js    # components
       views/                # one module per screen
     mock/                   # catalogue + signals + modules fixtures (JSON)
-  main.py                   # backend entry point (yours)
+
+  main.py                   # BACKEND entry point: FastAPI app, router, static mount
+  api/                      # BACKEND HTTP layer (yours)
+    __init__.py
+    routes.py               # /api/v1 endpoints, one handler per contract operation
+    deps.py                 # shared dependencies (db session, current profile)
+  services/                 # BACKEND business logic (yours)
+    __init__.py
+    matching.py             # deterministic role scoring + gap analysis
+    pathway.py              # three-phase plan assembly from the module catalogue
+    sdg.py                  # 17-goal mapping
+    signals.py              # filters, facets, ingestion/refresh
+    narrative.py            # LLM client, prompt building, token streaming
+  db/                       # BACKEND persistence (yours)
+    __init__.py
+    database.py             # SQLite engine/session factory
+    models.py               # SQLAlchemy tables (or raw SQL)
+    repositories.py         # profile/signal/run repositories
+  schemas.py                # Pydantic request/response models
+  config.py                 # environment and secrets loading
+  utils.py                  # existing helper module
+data/
+  app.db                    # SQLite file created at runtime (git-ignored)
 docs/
   API.md                    # contract
   openapi.json              # machine-readable contract
@@ -80,6 +102,41 @@ tools/
 tests/
   test_frontend_assets.py   # asset + contract integrity tests
 ~~~
+
+### 3.1 Where the backend code goes
+
+Keep everything under **`src/`**, next to (never inside) `src/frontend/`:
+
+* `src/main.py` stays the single entry point. It creates the FastAPI app, includes the
+  `/api/v1` router and **last** mounts `src/frontend` at `/`.
+* Put HTTP concerns in `src/api/`, business logic in `src/services/`, persistence in
+  `src/db/`. This keeps `main.py` small and makes the scoring/pathway logic unit-testable
+  without spinning up HTTP.
+* Do **not** put production handlers in `docs/backend-integration/`; that directory is the
+  contract reference and test kit, not the service.
+* Do **not** put backend code inside `src/frontend/`; it is the static root and anything there
+  is publicly served to the browser.
+
+Interpreter/run convention (pick one and keep it consistent):
+
+~~~bash
+# A. script style (matches the current src/main.py: "from utils import ...")
+python src/main.py
+
+# B. package style, if you add src/__init__.py and use "from src.api import ..."
+uvicorn src.main:app --host 0.0.0.0 --port 8000
+~~~
+
+With option A, imports are resolved from `src/`, so use `from api.routes import router`,
+`from services.matching import build_matches`, etc. With option B, add `src/__init__.py` and
+prefix imports with `src.`.
+
+Configuration and data:
+
+* Read `DATABASE_PATH` from the environment, default `data/app.db` (the UI reference uses
+  `data/reference.db`).
+* Keep `data/` and `*.db` in `.gitignore` (already configured).
+* Add `fastapi`, `uvicorn[standard]`, `httpx`, `pydantic` to `requirements.txt` when you start.
 
 ## 4. Quick start
 
