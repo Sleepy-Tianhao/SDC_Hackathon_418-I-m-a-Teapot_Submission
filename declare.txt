@@ -1,0 +1,5 @@
+大家记得declare every API, cloud service, AI tool, dataset,
+model, and sponsor resource your team used to build the
+project
+
+从这里开始:
