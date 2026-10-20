@@ -23,8 +23,8 @@
 
 | Resource | Link |
 | -------- | ---- |
-| GitHub Repository | <https://github.com/your-username/your-project> *(to be updated)* |
-| Replit Project | <https://replit.com/@your-username/your-project> *(to be updated)* |
+| GitHub Repository | <https://github.com/Sleepy-Tianhao/SDC_Hackathon_418-I-m-a-Teapot_Submission> *(to be updated)* |
+| Replit Project | <https://replit.com/@CufoFlux/SDCHackathon418-I-m-a-TeapotSubmission> *(to be updated)* |
 | Live Demo | <https://your-project.replit.app> *(to be updated)* |
 | Slide Deck | *(to be updated)* |
 | Demo Video | *(to be updated)* |
@@ -299,37 +299,37 @@ sees a key or a prompt.
 
 ## Future improvements
 
-- [ ] Replace self-rated skills with verified evidence (assessments, work samples).
-- [ ] Real ingestion pipeline with scheduled jobs and source monitoring.
-- [ ] Employer-side view: post a role, see supply and gap forecasts.
-- [ ] Localisation for Malay, Mandarin and Tamil.
-- [ ] Persist and compare multiple profiles for programme planners.
-- [ ] Add authentication and per-user workspaces.
+* [ ] Replace self-rated skills with verified evidence (assessments, work samples).
+* [ ] Real ingestion pipeline with scheduled jobs and source monitoring.
+* [ ] Employer-side view: post a role, see supply and gap forecasts.
+* [ ] Localisation for Malay, Mandarin and Tamil.
+* [ ] Persist and compare multiple profiles for programme planners.
+* [ ] Add authentication and per-user workspaces.
 
 ## Team
 
 | Name | Role | GitHub |
 | ---- | ---- | ------ |
-| CHEN XIANGYU | Team lead / backend | *(to be updated)* |
-| *(teammate)* | Frontend / design system | *(to be updated)* |
-| *(teammate)* | AI / LLM integration | *(to be updated)* |
-| *(teammate)* | Data & signals | *(to be updated)* |
-| *(teammate)* | Research & presentation | *(to be updated)* |
+| CHEN XIANGYU | Team lead / Frontend | @Sleepy-Tianhao |
+| ZI KUNLIN | Frontend | @kunlinzi53-hue |
+| ZHU BINSHA | Backend | @zhubinsha58-ai |
+| LI JIAYOU | Backend | @lijiayou755-spec |
+| WANG HAOYUE | Research & presentation | *(to be updated)* |
 
 ## Submission checklist
 
-- [x] Domain 1 and SDG track filled in
-- [x] All six must-haves implemented and demonstrated
-- [x] Working frontend with a live/demo transport switch
-- [x] API contract + OpenAPI + integration guide
-- [x] Reference API and contract smoke test
-- [x] Automated tests for assets, fixtures and contract
-- [ ] Slide deck link added
-- [ ] Demo video link added
-- [ ] Replit deployment URL added
-- [ ] LLM provider credentials set in Secrets
-- [ ] "How to Run" verified on a clean clone
-- [x] No API keys or secrets committed
+* [x] Domain 1 and SDG track filled in
+* [x] All six must-haves implemented and demonstrated
+* [x] Working frontend with a live/demo transport switch
+* [x] API contract + OpenAPI + integration guide
+* [x] Reference API and contract smoke test
+* [x] Automated tests for assets, fixtures and contract
+* [ ] Slide deck link added
+* [ ] Demo video link added
+* [ ] Replit deployment URL added
+* [ ] LLM provider credentials set in Secrets
+* [ ] "How to Run" verified on a clean clone
+* [x] No API keys or secrets committed
 
 ## License
 
