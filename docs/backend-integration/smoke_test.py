@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Contract smoke test for the AI Career Navigator API.
+"""
+Contract smoke test for the AI Career Navigator API.
 
 Runs against the reference API or the real backend:
 
-    python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v1
+python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v1
 
 Exits non-zero if a required shape or behaviour is missing. It creates one
 profile (and leaves it in the database) so the matching endpoints can be
