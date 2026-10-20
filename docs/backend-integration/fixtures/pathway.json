@@ -1,0 +1,255 @@
+{
+  "profileId": "prof-6fce1eb3",
+  "roleId": "workforce-transition-coach",
+  "roleTitle": "Workforce Transition Coach",
+  "scenarioId": "baseline",
+  "generatedAt": "2026-10-20T06:05:37Z",
+  "model": "pathway-builder:v1.2",
+  "horizonWeeks": 11,
+  "hoursPerWeek": 8,
+  "totalHours": 80,
+  "totalCost": 30,
+  "currency": "USD",
+  "readinessFrom": 72,
+  "readinessTo": 95,
+  "phases": [
+    {
+      "id": "phase-1",
+      "title": "Foundations & orientation",
+      "goal": "Close the baseline gaps that every later step depends on.",
+      "weeks": 3,
+      "hours": 20,
+      "cost": 30,
+      "startWeek": 1,
+      "endWeek": 3,
+      "modules": [
+        {
+          "id": "mod-comms-1",
+          "title": "Communicating with Influence",
+          "provider": "LinkedIn Learning",
+          "url": "https://www.linkedin.com/learning",
+          "format": "self-paced",
+          "kind": "module",
+          "hours": 5,
+          "cost": 30,
+          "currency": "USD",
+          "level": "foundation",
+          "teaches": [
+            "stakeholder-comms",
+            "change-facilitation"
+          ],
+          "credential": "LinkedIn Learning certificate",
+          "outcome": "Frame trade-offs for executives and frontline teams in one narrative.",
+          "targets": [
+            {
+              "skillId": "change-facilitation",
+              "name": "Change facilitation",
+              "fromLevel": 2,
+              "toLevel": 5
+            },
+            {
+              "skillId": "stakeholder-comms",
+              "name": "Stakeholder communication",
+              "fromLevel": 4,
+              "toLevel": 5
+            }
+          ]
+        },
+        {
+          "id": "mod-a11y-1",
+          "title": "Digital Accessibility Foundations",
+          "provider": "W3Cx / edX",
+          "url": "https://www.edx.org/learn/web-accessibility",
+          "format": "self-paced",
+          "kind": "module",
+          "hours": 15,
+          "cost": 0,
+          "currency": "USD",
+          "level": "foundation",
+          "teaches": [
+            "accessibility-inclusion",
+            "process-design"
+          ],
+          "credential": "W3Cx certificate",
+          "outcome": "Apply WCAG and inclusive research to procurement and design reviews.",
+          "targets": [
+            {
+              "skillId": "accessibility-inclusion",
+              "name": "Accessibility & inclusion",
+              "fromLevel": 1,
+              "toLevel": 3
+            }
+          ]
+        }
+      ],
+      "milestones": [
+        {
+          "title": "Starting-level diagnostic",
+          "detail": "Confirm your real level with a short practical task, not self-report.",
+          "week": 1
+        },
+        {
+          "title": "First artefact",
+          "detail": "Produce one small piece of evidence from the foundation module.",
+          "week": 3
+        }
+      ]
+    },
+    {
+      "id": "phase-2",
+      "title": "Role-specific capability",
+      "goal": "Build the capabilities this role is actually hired for.",
+      "weeks": 1,
+      "hours": 6,
+      "cost": 0,
+      "startWeek": 4,
+      "endWeek": 4,
+      "modules": [
+        {
+          "id": "mod-crit-2",
+          "title": "Verification & Misinformation",
+          "provider": "Reuters Institute",
+          "url": "https://reutersinstitute.politics.ox.ac.uk",
+          "format": "self-paced",
+          "kind": "module",
+          "hours": 6,
+          "cost": 0,
+          "currency": "USD",
+          "level": "intermediate",
+          "teaches": [
+            "critical-evaluation",
+            "stakeholder-comms"
+          ],
+          "credential": "Completion record",
+          "outcome": "Trace claims to primary sources and document verification steps.",
+          "targets": [
+            {
+              "skillId": "stakeholder-comms",
+              "name": "Stakeholder communication",
+              "fromLevel": 4,
+              "toLevel": 5
+            }
+          ]
+        }
+      ],
+      "milestones": [
+        {
+          "title": "Peer review",
+          "detail": "Have a practitioner review one output against the role's bar.",
+          "week": 4
+        },
+        {
+          "title": "Role simulation",
+          "detail": "Complete a task that mirrors the target role's weekly work.",
+          "week": 4
+        }
+      ]
+    },
+    {
+      "id": "phase-3",
+      "title": "Evidence & transition",
+      "goal": "Turn learning into artefacts a hiring panel can verify.",
+      "weeks": 7,
+      "hours": 54,
+      "cost": 0,
+      "startWeek": 5,
+      "endWeek": 11,
+      "modules": [
+        {
+          "id": "mod-portfolio-1",
+          "title": "Portfolio Sprint: ship one real artefact",
+          "provider": "AI Career Navigator mentor network",
+          "url": "https://example.org/ai-career-navigator",
+          "format": "project",
+          "kind": "project",
+          "hours": 24,
+          "cost": 0,
+          "currency": "USD",
+          "level": "advanced",
+          "teaches": [],
+          "credential": "Mentor-reviewed portfolio entry",
+          "outcome": "Produce role-relevant evidence: a dashboard, evaluation report or service blueprint.",
+          "targets": []
+        },
+        {
+          "id": "mod-capstone-1",
+          "title": "Role Simulation & Case Defence",
+          "provider": "AI Career Navigator",
+          "url": "https://example.org/ai-career-navigator",
+          "format": "workshop",
+          "kind": "assessment",
+          "hours": 30,
+          "cost": 0,
+          "currency": "USD",
+          "level": "advanced",
+          "teaches": [
+            "project-management",
+            "stakeholder-comms",
+            "critical-evaluation"
+          ],
+          "credential": "Scenario assessment record",
+          "outcome": "Defend a decision under questioning from a hiring panel.",
+          "targets": [
+            {
+              "skillId": "stakeholder-comms",
+              "name": "Stakeholder communication",
+              "fromLevel": 4,
+              "toLevel": 5
+            }
+          ]
+        }
+      ],
+      "milestones": [
+        {
+          "title": "Portfolio published",
+          "detail": "Two artefacts, each with a short decision memo.",
+          "week": 5
+        },
+        {
+          "title": "Interview-ready",
+          "detail": "Defend a scenario decision with evidence and trade-offs.",
+          "week": 11
+        }
+      ]
+    }
+  ],
+  "covers": [
+    {
+      "skillId": "change-facilitation",
+      "name": "Change facilitation",
+      "fromLevel": 2,
+      "requiredLevel": 5,
+      "toLevel": 4,
+      "covered": true,
+      "moduleIds": [
+        "mod-comms-1"
+      ]
+    },
+    {
+      "skillId": "accessibility-inclusion",
+      "name": "Accessibility & inclusion",
+      "fromLevel": 1,
+      "requiredLevel": 3,
+      "toLevel": 3,
+      "covered": true,
+      "moduleIds": [
+        "mod-a11y-1"
+      ]
+    },
+    {
+      "skillId": "stakeholder-comms",
+      "name": "Stakeholder communication",
+      "fromLevel": 4,
+      "requiredLevel": 5,
+      "toLevel": 5,
+      "covered": true,
+      "moduleIds": [
+        "mod-comms-1",
+        "mod-crit-2",
+        "mod-capstone-1"
+      ]
+    }
+  ],
+  "notes": [],
+  "rationale": "Built for Workforce Transition Coach by sequencing 3 identified gaps against a catalogue of open and low-cost modules. The plan assumes 8 study hours per week."
+}

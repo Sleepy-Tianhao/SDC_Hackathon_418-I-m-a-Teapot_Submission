@@ -1,0 +1,207 @@
+{
+  "items": [
+    {
+      "id": "sig-001",
+      "title": "Core skills churn accelerates: 39% of skills expected to change by 2030",
+      "summary": "Employers expect analytical thinking and AI literacy to be the fastest-growing skills, while manual dexterity and basic information processing decline. The report frames reskilling as a retention strategy, not a cost.",
+      "publisher": "World Economic Forum",
+      "sourceUrl": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/",
+      "publishedAt": "2025-01-07",
+      "type": "research",
+      "momentum": "rising",
+      "impact": 92,
+      "velocity": "steady",
+      "confidence": 0.9,
+      "region": "Global",
+      "sectors": [
+        "Cross-sector"
+      ],
+      "tags": [
+        "future of jobs",
+        "skills churn",
+        "reskilling"
+      ],
+      "affectedSkills": [
+        {
+          "skillId": "data-literacy",
+          "direction": "demand-up",
+          "magnitude": 5
+        },
+        {
+          "skillId": "critical-evaluation",
+          "direction": "demand-up",
+          "magnitude": 4
+        },
+        {
+          "skillId": "prompt-engineering",
+          "direction": "demand-up",
+          "magnitude": 4
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "direction": "demand-up",
+          "magnitude": 3
+        }
+      ],
+      "affectedRoles": [
+        {
+          "roleId": "ai-ops-analyst",
+          "direction": "demand-up",
+          "magnitude": 4
+        },
+        {
+          "roleId": "workforce-transition-coach",
+          "direction": "demand-up",
+          "magnitude": 4
+        },
+        {
+          "roleId": "data-governance-specialist",
+          "direction": "demand-up",
+          "magnitude": 2
+        }
+      ]
+    },
+    {
+      "id": "sig-002",
+      "title": "Agentic systems reach production, but evaluation tooling lags behind",
+      "summary": "The 2026 AI Index documents a shift from chat interfaces to systems that take actions. Enterprise adoption is reported at 78%, while fewer than a third of surveyed firms have systematic evaluation for deployed agents.",
+      "publisher": "Stanford HAI",
+      "sourceUrl": "https://hai.stanford.edu/ai-index/2026-ai-index-report",
+      "publishedAt": "2026-04-15",
+      "type": "technology",
+      "momentum": "rising",
+      "impact": 88,
+      "velocity": "accelerating",
+      "confidence": 0.86,
+      "region": "Global",
+      "sectors": [
+        "Cross-sector",
+        "Technology"
+      ],
+      "tags": [
+        "agents",
+        "evaluation",
+        "adoption"
+      ],
+      "affectedSkills": [
+        {
+          "skillId": "model-evaluation",
+          "direction": "demand-up",
+          "magnitude": 5
+        },
+        {
+          "skillId": "mlops",
+          "direction": "demand-up",
+          "magnitude": 4
+        },
+        {
+          "skillId": "prompt-engineering",
+          "direction": "demand-up",
+          "magnitude": 4
+        }
+      ],
+      "affectedRoles": [
+        {
+          "roleId": "ai-ops-analyst",
+          "direction": "demand-up",
+          "magnitude": 5
+        },
+        {
+          "roleId": "ai-product-owner",
+          "direction": "demand-up",
+          "magnitude": 3
+        }
+      ]
+    },
+    {
+      "id": "sig-005",
+      "title": "AI literacy is the fastest-growing skill on professional profiles",
+      "summary": "LinkedIn reports AI literacy mentions up 63% year on year, while AI governance appears in four times as many job advertisements as in 2024. Growth is strongest outside the technology sector.",
+      "publisher": "LinkedIn Economic Graph",
+      "sourceUrl": "https://economicgraph.linkedin.com/research/skills-on-the-rise-2026",
+      "publishedAt": "2026-03-11",
+      "type": "labour-market",
+      "momentum": "rising",
+      "impact": 86,
+      "velocity": "accelerating",
+      "confidence": 0.72,
+      "region": "Global",
+      "sectors": [
+        "Cross-sector"
+      ],
+      "tags": [
+        "skills demand",
+        "job postings",
+        "governance"
+      ],
+      "affectedSkills": [
+        {
+          "skillId": "ai-governance",
+          "direction": "demand-up",
+          "magnitude": 4
+        },
+        {
+          "skillId": "data-literacy",
+          "direction": "demand-up",
+          "magnitude": 4
+        },
+        {
+          "skillId": "critical-evaluation",
+          "direction": "demand-up",
+          "magnitude": 3
+        }
+      ],
+      "affectedRoles": [
+        {
+          "roleId": "ai-ethics-officer",
+          "direction": "demand-up",
+          "magnitude": 4
+        },
+        {
+          "roleId": "data-governance-specialist",
+          "direction": "demand-up",
+          "magnitude": 3
+        }
+      ]
+    }
+  ],
+  "total": 20,
+  "limit": 3,
+  "offset": 0,
+  "lastRefreshedAt": "2026-10-18T06:00:00Z",
+  "window": {
+    "from": "2024-07-26",
+    "to": "2026-10-12"
+  },
+  "pipeline": {
+    "sourcesConfigured": 24,
+    "sourcesScanned": 21,
+    "recordsIngested": 1840,
+    "signalsSurfaced": 20,
+    "model": "signal-extractor:v1.4",
+    "durationSeconds": 47
+  },
+  "facets": {
+    "momentum": {
+      "rising": 12,
+      "stable": 7,
+      "declining": 1
+    },
+    "region": {
+      "Global": 12,
+      "EU": 2,
+      "North America": 2,
+      "APAC": 1,
+      "Singapore": 1,
+      "Malaysia": 1,
+      "United Kingdom": 1
+    },
+    "type": {
+      "research": 5,
+      "technology": 3,
+      "labour-market": 6,
+      "policy": 3,
+      "skills-framework": 3
+    }
+  }
+}

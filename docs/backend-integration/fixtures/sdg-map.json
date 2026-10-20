@@ -1,0 +1,449 @@
+{
+  "profileId": "prof-6fce1eb3",
+  "scenarioId": "baseline",
+  "generatedAt": "2026-10-20T06:05:37Z",
+  "goals": [
+    {
+      "number": 1,
+      "name": "No Poverty",
+      "shortName": "No poverty",
+      "color": "#E5243B",
+      "focus": "Income security and access to productive work.",
+      "score": 0,
+      "tier": "contextual",
+      "roleIds": [],
+      "skillIds": [],
+      "rationale": "No direct role link yet. This goal stays contextual for the selected pathway.",
+      "evidence": []
+    },
+    {
+      "number": 2,
+      "name": "Zero Hunger",
+      "shortName": "Zero hunger",
+      "color": "#DDA63A",
+      "focus": "Food systems, supply resilience and rural livelihoods.",
+      "score": 0,
+      "tier": "contextual",
+      "roleIds": [],
+      "skillIds": [],
+      "rationale": "No direct role link yet. This goal stays contextual for the selected pathway.",
+      "evidence": []
+    },
+    {
+      "number": 3,
+      "name": "Good Health and Well-being",
+      "shortName": "Good health",
+      "color": "#4C9F38",
+      "focus": "Care quality, safety and healthy working life.",
+      "score": 59,
+      "tier": "secondary",
+      "roleIds": [
+        "healthcare-automation-specialist"
+      ],
+      "skillIds": [
+        "automation",
+        "process-design",
+        "data-literacy",
+        "stakeholder-comms",
+        "critical-evaluation",
+        "cybersecurity"
+      ],
+      "rationale": "Frees clinical time and reduces administrative harm.",
+      "evidence": []
+    },
+    {
+      "number": 4,
+      "name": "Quality Education",
+      "shortName": "Quality education",
+      "color": "#C5192D",
+      "focus": "Lifelong learning and recognised micro-credentials.",
+      "score": 75,
+      "tier": "primary",
+      "roleIds": [
+        "workforce-transition-coach",
+        "human-ai-interaction-designer",
+        "ai-product-owner"
+      ],
+      "skillIds": [
+        "stakeholder-comms",
+        "change-facilitation",
+        "systems-thinking",
+        "critical-evaluation",
+        "data-literacy",
+        "project-management"
+      ],
+      "rationale": "Delivers lifelong learning and recognised reskilling outcomes.",
+      "evidence": [
+        {
+          "signalId": "sig-001",
+          "title": "Core skills churn accelerates: 39% of skills expected to change by 2030",
+          "publisher": "World Economic Forum",
+          "publishedAt": "2025-01-07"
+        },
+        {
+          "signalId": "sig-002",
+          "title": "Agentic systems reach production, but evaluation tooling lags behind",
+          "publisher": "Stanford HAI",
+          "publishedAt": "2026-04-15"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "name": "Gender Equality",
+      "shortName": "Gender equality",
+      "color": "#FF3A21",
+      "focus": "Equal access to AI-era roles and progression.",
+      "score": 46,
+      "tier": "secondary",
+      "roleIds": [
+        "workforce-transition-coach",
+        "human-ai-interaction-designer"
+      ],
+      "skillIds": [
+        "stakeholder-comms",
+        "change-facilitation",
+        "systems-thinking",
+        "critical-evaluation",
+        "data-literacy",
+        "project-management"
+      ],
+      "rationale": "Addresses gendered participation in reskilling.",
+      "evidence": [
+        {
+          "signalId": "sig-001",
+          "title": "Core skills churn accelerates: 39% of skills expected to change by 2030",
+          "publisher": "World Economic Forum",
+          "publishedAt": "2025-01-07"
+        },
+        {
+          "signalId": "sig-003",
+          "title": "One in four clerical and support workers faces high AI exposure",
+          "publisher": "International Labour Organization",
+          "publishedAt": "2026-02-18"
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "name": "Clean Water and Sanitation",
+      "shortName": "Clean water",
+      "color": "#26BDE2",
+      "focus": "Water data, utilities and sanitation services.",
+      "score": 0,
+      "tier": "contextual",
+      "roleIds": [],
+      "skillIds": [],
+      "rationale": "No direct role link yet. This goal stays contextual for the selected pathway.",
+      "evidence": []
+    },
+    {
+      "number": 7,
+      "name": "Affordable and Clean Energy",
+      "shortName": "Clean energy",
+      "color": "#FCC30B",
+      "focus": "Energy transition, efficiency and access.",
+      "score": 0,
+      "tier": "contextual",
+      "roleIds": [],
+      "skillIds": [],
+      "rationale": "No direct role link yet. This goal stays contextual for the selected pathway.",
+      "evidence": []
+    },
+    {
+      "number": 8,
+      "name": "Decent Work and Economic Growth",
+      "shortName": "Decent work",
+      "color": "#A21942",
+      "focus": "Job quality, productivity and fair transitions.",
+      "score": 77,
+      "tier": "primary",
+      "roleIds": [
+        "workforce-transition-coach",
+        "human-ai-interaction-designer",
+        "ai-product-owner",
+        "healthcare-automation-specialist",
+        "data-governance-specialist"
+      ],
+      "skillIds": [
+        "stakeholder-comms",
+        "change-facilitation",
+        "systems-thinking",
+        "critical-evaluation",
+        "data-literacy",
+        "project-management"
+      ],
+      "rationale": "Keeps displaced workers in decent employment.",
+      "evidence": [
+        {
+          "signalId": "sig-001",
+          "title": "Core skills churn accelerates: 39% of skills expected to change by 2030",
+          "publisher": "World Economic Forum",
+          "publishedAt": "2025-01-07"
+        },
+        {
+          "signalId": "sig-002",
+          "title": "Agentic systems reach production, but evaluation tooling lags behind",
+          "publisher": "Stanford HAI",
+          "publishedAt": "2026-04-15"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "name": "Industry, Innovation and Infrastructure",
+      "shortName": "Industry & innovation",
+      "color": "#FD6925",
+      "focus": "Resilient digital and industrial infrastructure.",
+      "score": 59,
+      "tier": "secondary",
+      "roleIds": [
+        "ai-product-owner",
+        "civic-tech-program-manager",
+        "healthcare-automation-specialist",
+        "data-governance-specialist"
+      ],
+      "skillIds": [
+        "stakeholder-comms",
+        "model-evaluation",
+        "ai-governance",
+        "process-design",
+        "project-management",
+        "prompt-engineering"
+      ],
+      "rationale": "Turns research capability into dependable public services.",
+      "evidence": [
+        {
+          "signalId": "sig-001",
+          "title": "Core skills churn accelerates: 39% of skills expected to change by 2030",
+          "publisher": "World Economic Forum",
+          "publishedAt": "2025-01-07"
+        },
+        {
+          "signalId": "sig-002",
+          "title": "Agentic systems reach production, but evaluation tooling lags behind",
+          "publisher": "Stanford HAI",
+          "publishedAt": "2026-04-15"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "name": "Reduced Inequalities",
+      "shortName": "Reduced inequalities",
+      "color": "#DD1367",
+      "focus": "Who gets reskilled, hired and promoted.",
+      "score": 63,
+      "tier": "primary",
+      "roleIds": [
+        "workforce-transition-coach",
+        "human-ai-interaction-designer",
+        "ai-product-owner",
+        "civic-tech-program-manager",
+        "healthcare-automation-specialist"
+      ],
+      "skillIds": [
+        "stakeholder-comms",
+        "change-facilitation",
+        "systems-thinking",
+        "critical-evaluation",
+        "data-literacy",
+        "project-management"
+      ],
+      "rationale": "Prioritises groups furthest from opportunity.",
+      "evidence": [
+        {
+          "signalId": "sig-001",
+          "title": "Core skills churn accelerates: 39% of skills expected to change by 2030",
+          "publisher": "World Economic Forum",
+          "publishedAt": "2025-01-07"
+        },
+        {
+          "signalId": "sig-002",
+          "title": "Agentic systems reach production, but evaluation tooling lags behind",
+          "publisher": "Stanford HAI",
+          "publishedAt": "2026-04-15"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "name": "Sustainable Cities and Communities",
+      "shortName": "Sustainable cities",
+      "color": "#FD9D24",
+      "focus": "Local services, mobility and urban resilience.",
+      "score": 66,
+      "tier": "secondary",
+      "roleIds": [
+        "civic-tech-program-manager",
+        "human-ai-interaction-designer"
+      ],
+      "skillIds": [
+        "project-management",
+        "stakeholder-comms",
+        "process-design",
+        "policy-literacy",
+        "data-literacy",
+        "systems-thinking"
+      ],
+      "rationale": "Delivers better local services and inclusive urban systems.",
+      "evidence": [
+        {
+          "signalId": "sig-004",
+          "title": "Productivity gains are real, but wage polarisation persists",
+          "publisher": "OECD",
+          "publishedAt": "2026-07-09"
+        },
+        {
+          "signalId": "sig-020",
+          "title": "Routine content and junior research postings fall year on year",
+          "publisher": "Indeed Hiring Lab",
+          "publishedAt": "2026-03-26"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "name": "Responsible Consumption and Production",
+      "shortName": "Responsible consumption",
+      "color": "#BF8B2E",
+      "focus": "Circular supply chains and procurement.",
+      "score": 0,
+      "tier": "contextual",
+      "roleIds": [],
+      "skillIds": [],
+      "rationale": "No direct role link yet. This goal stays contextual for the selected pathway.",
+      "evidence": []
+    },
+    {
+      "number": 13,
+      "name": "Climate Action",
+      "shortName": "Climate action",
+      "color": "#3F7E44",
+      "focus": "Emissions data, adaptation and disclosure.",
+      "score": 0,
+      "tier": "contextual",
+      "roleIds": [],
+      "skillIds": [],
+      "rationale": "No direct role link yet. This goal stays contextual for the selected pathway.",
+      "evidence": []
+    },
+    {
+      "number": 14,
+      "name": "Life Below Water",
+      "shortName": "Life below water",
+      "color": "#0A97D9",
+      "focus": "Marine data, coastal livelihoods and pollution.",
+      "score": 0,
+      "tier": "contextual",
+      "roleIds": [],
+      "skillIds": [],
+      "rationale": "No direct role link yet. This goal stays contextual for the selected pathway.",
+      "evidence": []
+    },
+    {
+      "number": 15,
+      "name": "Life on Land",
+      "shortName": "Life on land",
+      "color": "#56C02B",
+      "focus": "Biodiversity, land use and ecosystem monitoring.",
+      "score": 0,
+      "tier": "contextual",
+      "roleIds": [],
+      "skillIds": [],
+      "rationale": "No direct role link yet. This goal stays contextual for the selected pathway.",
+      "evidence": []
+    },
+    {
+      "number": 16,
+      "name": "Peace, Justice and Strong Institutions",
+      "shortName": "Strong institutions",
+      "color": "#00689D",
+      "focus": "Accountable public systems and trustworthy AI.",
+      "score": 60,
+      "tier": "secondary",
+      "roleIds": [
+        "data-governance-specialist",
+        "civic-tech-program-manager"
+      ],
+      "skillIds": [
+        "data-literacy",
+        "policy-literacy",
+        "ai-governance",
+        "sql",
+        "cybersecurity",
+        "stakeholder-comms"
+      ],
+      "rationale": "Strengthens accountable institutions through traceable, auditable public data.",
+      "evidence": [
+        {
+          "signalId": "sig-001",
+          "title": "Core skills churn accelerates: 39% of skills expected to change by 2030",
+          "publisher": "World Economic Forum",
+          "publishedAt": "2025-01-07"
+        },
+        {
+          "signalId": "sig-005",
+          "title": "AI literacy is the fastest-growing skill on professional profiles",
+          "publisher": "LinkedIn Economic Graph",
+          "publishedAt": "2026-03-11"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "name": "Partnerships for the Goals",
+      "shortName": "Partnerships",
+      "color": "#19486A",
+      "focus": "Cross-sector coalitions and shared data.",
+      "score": 56,
+      "tier": "secondary",
+      "roleIds": [
+        "civic-tech-program-manager",
+        "data-governance-specialist",
+        "ai-product-owner"
+      ],
+      "skillIds": [
+        "project-management",
+        "stakeholder-comms",
+        "process-design",
+        "policy-literacy",
+        "data-literacy",
+        "systems-thinking"
+      ],
+      "rationale": "Brokers partnerships across sectors and levels of government.",
+      "evidence": [
+        {
+          "signalId": "sig-001",
+          "title": "Core skills churn accelerates: 39% of skills expected to change by 2030",
+          "publisher": "World Economic Forum",
+          "publishedAt": "2025-01-07"
+        },
+        {
+          "signalId": "sig-002",
+          "title": "Agentic systems reach production, but evaluation tooling lags behind",
+          "publisher": "Stanford HAI",
+          "publishedAt": "2026-04-15"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "topGoal": 8,
+    "primaryGoals": [
+      8,
+      4,
+      10
+    ],
+    "secondaryGoals": [
+      11,
+      16,
+      3,
+      9,
+      17,
+      5
+    ],
+    "strongestScore": 77,
+    "note": "Scores combine the fit of your top roles with each role's SDG contribution weight. They describe where your work would land, not a formal impact measurement."
+  }
+}

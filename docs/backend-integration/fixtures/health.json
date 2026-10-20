@@ -1,0 +1,14 @@
+{
+  "status": "ok",
+  "service": "ai-career-navigator-reference",
+  "version": "1.0.0",
+  "mode": "live",
+  "datasetVersion": "2026.10.1",
+  "time": "2026-10-20T06:05:37Z",
+  "uptimeSeconds": 119,
+  "llm": {
+    "provider": "reference",
+    "model": "narrative-v1",
+    "configured": false
+  }
+}

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Career Navigator · SDC 2026 Domain 1</title>
+    <meta
+      name="description"
+      content="AI Career Navigator turns dated AI-trend signals into personalised reskilling pathways and SDG-linked role matches."
+    />
+    <meta name="theme-color" content="#f1f4f7" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/views-core.css" />
+    <link rel="stylesheet" href="css/views-plan.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#view">Skip to content</a>
+    <div id="sidebar-scrim" class="sidebar-scrim hidden"></div>
+    <div class="app">
+      <aside class="sidebar" id="sidebar" aria-label="Main navigation"></aside>
+      <div class="app-main">
+        <header class="topbar" id="topbar"></header>
+        <main class="view" id="view" tabindex="-1">
+          <div class="loading-panel"><span class="spinner" aria-hidden="true"></span><span>Starting workspace…</span></div>
+        </main>
+        <footer class="page-foot">
+          <div class="page-foot__inner">
+            <span>AI Career Navigator · SDC 2026 · Domain 1 — Future-ready workforce</span>
+            <span>
+              Prototype dataset · figures are illustrative, sources are dated and linked ·
+              <a href="#/connect">API &amp; integration</a>
+            </span>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <div id="toast-root" class="toast-root" role="status" aria-live="polite"></div>
+    <div id="modal-root"></div>
+    <noscript>
+      <div style="padding: 24px; font-family: system-ui">
+        AI Career Navigator needs JavaScript. Enable it, or read the API contract in <code>docs/API.md</code>.
+      </div>
+    </noscript>
+    <script src="assets/config.js"></script>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

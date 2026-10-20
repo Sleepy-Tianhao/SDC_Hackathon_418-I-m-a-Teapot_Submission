@@ -1,0 +1,2159 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AI Career Navigator API",
+    "version": "1.0.0",
+    "description": "Contract for the AI Career Navigator frontend (src/frontend). Dated AI-trend signals, skills profiles, scenario-aware role matching, personalised reskilling pathways, SDG mapping and LLM narrative analysis.",
+    "contact": {
+      "name": "Team 418 I'm a Teapot",
+      "url": "https://github.com/"
+    },
+    "license": {
+      "name": "Apache-2.0"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Same origin (recommended)"
+    },
+    {
+      "url": "http://127.0.0.1:8000/api/v1",
+      "description": "Local reference API"
+    }
+  ],
+  "tags": [
+    {
+      "name": "System",
+      "description": "Health and metadata used to select the transport."
+    },
+    {
+      "name": "Catalog",
+      "description": "Skills, roles, scenarios and SDG definitions."
+    },
+    {
+      "name": "Signals",
+      "description": "Dated, source-linked AI trend signals."
+    },
+    {
+      "name": "Profiles",
+      "description": "Skills profile intake and persistence."
+    },
+    {
+      "name": "Analysis",
+      "description": "Matching, pathway, SDG mapping and LLM narrative."
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Liveness probe",
+        "operationId": "getHealth",
+        "responses": {
+          "200": {
+            "description": "Service is up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "version"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "service": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "mode": {
+                      "type": "string",
+                      "enum": [
+                        "live"
+                      ]
+                    },
+                    "datasetVersion": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "uptimeSeconds": {
+                      "type": "integer"
+                    },
+                    "llm": {
+                      "$ref": "#/components/schemas/LlmInfo"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meta": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Dataset and capability metadata",
+        "operationId": "getMeta",
+        "responses": {
+          "200": {
+            "description": "Metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Meta"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog": {
+      "get": {
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "Skills, roles, scenarios and SDG definitions",
+        "operationId": "getCatalog",
+        "responses": {
+          "200": {
+            "description": "Catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Catalog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/scenarios": {
+      "get": {
+        "tags": [
+          "Catalog"
+        ],
+        "summary": "Future scenarios (at least two)",
+        "operationId": "getScenarios",
+        "responses": {
+          "200": {
+            "description": "Scenario list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "items"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Scenario"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signals": {
+      "get": {
+        "tags": [
+          "Signals"
+        ],
+        "summary": "Filtered, dated signal feed",
+        "operationId": "listSignals",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "momentum",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "rising",
+                "stable",
+                "declining"
+              ]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "labour-market",
+                "technology",
+                "policy",
+                "skills-framework",
+                "research"
+              ]
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roleId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "recent",
+                "impact"
+              ],
+              "default": "recent"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Signal page with facets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignalPage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signals/refresh": {
+      "post": {
+        "tags": [
+          "Signals"
+        ],
+        "summary": "Re-run ingestion or re-verify sources",
+        "operationId": "refreshSignals",
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Refresh summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "refreshedAt"
+                  ],
+                  "properties": {
+                    "refreshedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "added": {
+                      "type": "integer"
+                    },
+                    "updated": {
+                      "type": "integer"
+                    },
+                    "scanned": {
+                      "type": "integer"
+                    },
+                    "durationSeconds": {
+                      "type": "number"
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profiles": {
+      "post": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Create a skills profile",
+        "operationId": "createProfile",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileDraft"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "$ref": "#/components/schemas/Profile"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{id}": {
+      "get": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Read a profile",
+        "operationId": "getProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Profile identifier returned by POST /profiles."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stored profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "$ref": "#/components/schemas/Profile"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Profiles"
+        ],
+        "summary": "Update a profile",
+        "operationId": "updateProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Profile identifier returned by POST /profiles."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profile"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "$ref": "#/components/schemas/Profile"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{id}/match": {
+      "post": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Score every role for this profile and scenario",
+        "operationId": "matchProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Profile identifier returned by POST /profiles."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "scenarioId"
+                ],
+                "properties": {
+                  "scenarioId": {
+                    "type": "string"
+                  },
+                  "profile": {
+                    "$ref": "#/components/schemas/Profile"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ranked matches with gaps",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatchResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{id}/pathway": {
+      "post": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Build a personalised reskilling pathway",
+        "operationId": "buildPathway",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Profile identifier returned by POST /profiles."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "scenarioId"
+                ],
+                "properties": {
+                  "scenarioId": {
+                    "type": "string"
+                  },
+                  "roleId": {
+                    "type": "string",
+                    "description": "Defaults to the top match."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Phased pathway",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pathway"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/profiles/{id}/sdg-map": {
+      "get": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Map matched roles to all 17 SDGs",
+        "operationId": "sdgMap",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Profile identifier returned by POST /profiles."
+          },
+          {
+            "name": "scenarioId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Defaults to baseline."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SDG mapping",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SdgMap"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analysis": {
+      "post": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Generate the LLM narrative briefing",
+        "operationId": "createAnalysis",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  },
+                  "scenarioId": {
+                    "type": "string"
+                  },
+                  "roleId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Narrative briefing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "analysis"
+                  ],
+                  "properties": {
+                    "analysis": {
+                      "$ref": "#/components/schemas/Analysis"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/analysis/stream": {
+      "get": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Stream the narrative via Server-Sent Events",
+        "operationId": "streamAnalysis",
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scenarioId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roleId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "SSE stream: meta, then token events, then done (event: meta|token|done|error).",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "examples": [
+                    "event: meta\\ndata: {\"provider\":\"runpod\",\"model\":\"qwen2.5-72b-instruct\"}\\n\\nevent: token\\ndata: {\"text\":\"Aisha, your \"}\\n\\nevent: done\\ndata: {\"analysis\":{\"narrative\":\"...\"}}\\n\\n"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LlmInfo": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "example": "runpod"
+          },
+          "model": {
+            "type": "string",
+            "example": "qwen2.5-72b-instruct"
+          },
+          "configured": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Meta": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "datasetVersion": {
+            "type": "string"
+          },
+          "lastRefreshedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "signalWindow": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "date"
+              },
+              "to": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          },
+          "llm": {
+            "$ref": "#/components/schemas/LlmInfo"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "counts": {
+            "type": "object",
+            "properties": {
+              "skills": {
+                "type": "integer"
+              },
+              "roles": {
+                "type": "integer"
+              },
+              "sdgs": {
+                "type": "integer"
+              },
+              "signals": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "Skill": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "category"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "data-literacy"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Data & AI",
+              "Digital & Systems",
+              "Human & Social",
+              "Domain & Policy"
+            ]
+          },
+          "blurb": {
+            "type": "string"
+          }
+        }
+      },
+      "RequiredSkill": {
+        "type": "object",
+        "required": [
+          "skillId",
+          "level",
+          "importance"
+        ],
+        "properties": {
+          "skillId": {
+            "type": "string"
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "importance": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          }
+        }
+      },
+      "SdgRelation": {
+        "type": "object",
+        "required": [
+          "number",
+          "weight",
+          "tier",
+          "rationale"
+        ],
+        "properties": {
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 17
+          },
+          "weight": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "tier": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "rationale": {
+            "type": "string"
+          }
+        }
+      },
+      "Role": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "requiredSkills",
+          "sdgs"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "sector": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "outlook": {
+            "type": "string"
+          },
+          "salary": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "integer"
+              },
+              "max": {
+                "type": "integer"
+              },
+              "currency": {
+                "type": "string",
+                "default": "USD"
+              }
+            }
+          },
+          "demandIndex": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "demandTrend": {
+            "type": "string",
+            "enum": [
+              "rising",
+              "stable",
+              "declining"
+            ]
+          },
+          "automationRisk": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "requiredSkills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequiredSkill"
+            }
+          },
+          "sdgs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SdgRelation"
+            }
+          }
+        }
+      },
+      "Scenario": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "confidence",
+          "metrics"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shortName": {
+            "type": "string"
+          },
+          "horizon": {
+            "type": "string"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "summary": {
+            "type": "string"
+          },
+          "assumptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "drivers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "up",
+                    "down"
+                  ]
+                },
+                "detail": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "metrics": {
+            "type": "object",
+            "properties": {
+              "netEmploymentChangePct": {
+                "type": "number"
+              },
+              "taskAutomationPct": {
+                "type": "number"
+              },
+              "reskillingDemandIndex": {
+                "type": "integer"
+              },
+              "wagePolarisationIndex": {
+                "type": "integer"
+              }
+            }
+          },
+          "rolesRising": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rolesDeclining": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "skillsInDemand": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "roleAdjustments": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "fitDelta": {
+                  "type": "integer"
+                },
+                "demandDelta": {
+                  "type": "integer"
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Signal": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "publisher",
+          "sourceUrl",
+          "publishedAt",
+          "momentum",
+          "impact"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "labour-market",
+              "technology",
+              "policy",
+              "skills-framework",
+              "research"
+            ]
+          },
+          "momentum": {
+            "type": "string",
+            "enum": [
+              "rising",
+              "stable",
+              "declining"
+            ]
+          },
+          "impact": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "velocity": {
+            "type": "string",
+            "enum": [
+              "accelerating",
+              "steady",
+              "cooling"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "region": {
+            "type": "string"
+          },
+          "sectors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "affectedSkills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "skillId": {
+                  "type": "string"
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "demand-up",
+                    "demand-down"
+                  ]
+                },
+                "magnitude": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          },
+          "affectedRoles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "roleId": {
+                  "type": "string"
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "demand-up",
+                    "demand-down"
+                  ]
+                },
+                "magnitude": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 5
+                }
+              }
+            }
+          }
+        }
+      },
+      "SignalPage": {
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Signal"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "lastRefreshedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "window": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "date"
+              },
+              "to": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          },
+          "pipeline": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "facets": {
+            "type": "object",
+            "properties": {
+              "momentum": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer"
+                }
+              },
+              "region": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer"
+                }
+              },
+              "type": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Catalog": {
+        "type": "object",
+        "required": [
+          "skills",
+          "sdgs",
+          "roles",
+          "scenarios"
+        ],
+        "properties": {
+          "meta": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Skill"
+            }
+          },
+          "sdgs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "number": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 17
+                },
+                "name": {
+                  "type": "string"
+                },
+                "shortName": {
+                  "type": "string"
+                },
+                "color": {
+                  "type": "string"
+                },
+                "focus": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Role"
+            }
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Scenario"
+            }
+          }
+        }
+      },
+      "ProfileSkill": {
+        "type": "object",
+        "required": [
+          "skillId",
+          "level"
+        ],
+        "properties": {
+          "skillId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          }
+        }
+      },
+      "Constraints": {
+        "type": "object",
+        "properties": {
+          "hoursPerWeek": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 40,
+            "default": 8
+          },
+          "budget": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "remoteOnly": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "ProfileDraft": {
+        "type": "object",
+        "required": [
+          "name",
+          "skills"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "headline": {
+            "type": "string"
+          },
+          "currentRole": {
+            "type": "string"
+          },
+          "sector": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "yearsExperience": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 50
+          },
+          "education": {
+            "type": "string"
+          },
+          "goal": {
+            "type": "string"
+          },
+          "interests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "constraints": {
+            "$ref": "#/components/schemas/Constraints"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProfileSkill"
+            }
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "Profile": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProfileDraft"
+          },
+          {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "SkillGap": {
+        "type": "object",
+        "required": [
+          "skillId",
+          "name",
+          "currentLevel",
+          "requiredLevel",
+          "gap"
+        ],
+        "properties": {
+          "skillId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "currentLevel": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "requiredLevel": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "importance": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "gap": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4
+          },
+          "priority": {
+            "type": "integer"
+          }
+        }
+      },
+      "Match": {
+        "type": "object",
+        "required": [
+          "roleId",
+          "title",
+          "fitScore",
+          "skillsGap"
+        ],
+        "properties": {
+          "roleId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "family": {
+            "type": "string"
+          },
+          "sector": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "outlook": {
+            "type": "string"
+          },
+          "demandIndex": {
+            "type": "integer"
+          },
+          "demandTrend": {
+            "type": "string",
+            "enum": [
+              "rising",
+              "stable",
+              "declining"
+            ]
+          },
+          "automationRisk": {
+            "type": "integer"
+          },
+          "salary": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "fitScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "baselineFit": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "fitDelta": {
+            "type": "integer"
+          },
+          "gapScore": {
+            "type": "integer"
+          },
+          "skillsGap": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillGap"
+            }
+          },
+          "matchedSkills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillGap"
+            }
+          },
+          "sdgs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SdgRelation"
+            }
+          },
+          "scenarioNote": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MatchResult": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "scenarioId",
+          "matches",
+          "summary"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string"
+          },
+          "scenarioId": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "model": {
+            "type": "string"
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            }
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "readinessScore": {
+                "type": "integer"
+              },
+              "topRoleId": {
+                "type": "string"
+              },
+              "topRoleTitle": {
+                "type": "string"
+              },
+              "topFit": {
+                "type": "integer"
+              },
+              "skillsToClose": {
+                "type": "integer"
+              },
+              "coveragePct": {
+                "type": "integer"
+              },
+              "topMatches": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "Module": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "provider",
+          "hours",
+          "cost"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "self-paced",
+              "cohort",
+              "workshop",
+              "project"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "module",
+              "project",
+              "assessment"
+            ]
+          },
+          "hours": {
+            "type": "integer"
+          },
+          "cost": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "foundation",
+              "intermediate",
+              "advanced"
+            ]
+          },
+          "teaches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "credential": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "Phase": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "weeks",
+          "modules",
+          "milestones"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "goal": {
+            "type": "string"
+          },
+          "weeks": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "hours": {
+            "type": "integer"
+          },
+          "cost": {
+            "type": "integer"
+          },
+          "startWeek": {
+            "type": "integer"
+          },
+          "endWeek": {
+            "type": "integer"
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Module"
+            }
+          },
+          "milestones": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "detail": {
+                  "type": "string"
+                },
+                "week": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Pathway": {
+        "type": "object",
+        "required": [
+          "profileId",
+          "roleId",
+          "phases",
+          "covers"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "string"
+          },
+          "roleTitle": {
+            "type": "string"
+          },
+          "scenarioId": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "model": {
+            "type": "string"
+          },
+          "horizonWeeks": {
+            "type": "integer"
+          },
+          "hoursPerWeek": {
+            "type": "integer"
+          },
+          "totalHours": {
+            "type": "integer"
+          },
+          "totalCost": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "readinessFrom": {
+            "type": "integer"
+          },
+          "readinessTo": {
+            "type": "integer"
+          },
+          "phases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Phase"
+            }
+          },
+          "covers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "skillId": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "fromLevel": {
+                  "type": "integer"
+                },
+                "requiredLevel": {
+                  "type": "integer"
+                },
+                "toLevel": {
+                  "type": "integer"
+                },
+                "covered": {
+                  "type": "boolean"
+                },
+                "moduleIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rationale": {
+            "type": "string"
+          }
+        }
+      },
+      "SdgMap": {
+        "type": "object",
+        "required": [
+          "goals",
+          "summary"
+        ],
+        "properties": {
+          "profileId": {
+            "type": "string"
+          },
+          "scenarioId": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "goals": {
+            "type": "array",
+            "minItems": 17,
+            "maxItems": 17,
+            "items": {
+              "type": "object",
+              "required": [
+                "number",
+                "name",
+                "score",
+                "tier"
+              ],
+              "properties": {
+                "number": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 17
+                },
+                "name": {
+                  "type": "string"
+                },
+                "shortName": {
+                  "type": "string"
+                },
+                "color": {
+                  "type": "string"
+                },
+                "focus": {
+                  "type": "string"
+                },
+                "score": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 100
+                },
+                "tier": {
+                  "type": "string",
+                  "enum": [
+                    "primary",
+                    "secondary",
+                    "contextual"
+                  ]
+                },
+                "roleIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skillIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "rationale": {
+                  "type": "string"
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "signalId": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "publisher": {
+                        "type": "string"
+                      },
+                      "publishedAt": {
+                        "type": "string",
+                        "format": "date"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "topGoal": {
+                "type": "integer"
+              },
+              "primaryGoals": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "secondaryGoals": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "strongestScore": {
+                "type": "integer"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "Analysis": {
+        "type": "object",
+        "required": [
+          "narrative"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scenarioId": {
+            "type": "string"
+          },
+          "narrative": {
+            "type": "string"
+          }
+        }
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": [
+                  "object",
+                  "array",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

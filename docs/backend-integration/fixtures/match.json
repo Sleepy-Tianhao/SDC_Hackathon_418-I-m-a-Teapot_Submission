@@ -1,0 +1,1633 @@
+{
+  "profileId": "prof-6fce1eb3",
+  "scenarioId": "baseline",
+  "generatedAt": "2026-10-20T06:05:37Z",
+  "model": "career-match:v1.3",
+  "matches": [
+    {
+      "roleId": "workforce-transition-coach",
+      "title": "Workforce Transition Coach",
+      "family": "People & skills",
+      "sector": "Public & education",
+      "summary": "Guides people displaced or reshaped by automation into adjacent roles: assesses capability, builds a plan and brokers access to training and employers.",
+      "outlook": "Publicly funded and employer-funded demand is rising together, especially in mid-career transitions where retraining has the highest wage return.",
+      "demandIndex": 74,
+      "demandTrend": "rising",
+      "automationRisk": 8,
+      "salary": {
+        "min": 58000,
+        "max": 84000,
+        "currency": "USD"
+      },
+      "fitScore": 74,
+      "baselineFit": 74,
+      "fitDelta": 0,
+      "gapScore": 27,
+      "skillsGap": [
+        {
+          "skillId": "change-facilitation",
+          "name": "Change facilitation",
+          "category": "Human & Social",
+          "currentLevel": 2,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 3,
+          "priority": 15
+        },
+        {
+          "skillId": "accessibility-inclusion",
+          "name": "Accessibility & inclusion",
+          "category": "Human & Social",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 2,
+          "priority": 6
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "project-management",
+          "name": "Project & programme management",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "systems-thinking",
+          "name": "Systems thinking",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 4,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Delivers lifelong learning and recognised reskilling outcomes."
+        },
+        {
+          "number": 8,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Keeps displaced workers in decent employment."
+        },
+        {
+          "number": 10,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Prioritises groups furthest from opportunity."
+        },
+        {
+          "number": 5,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Addresses gendered participation in reskilling."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Systems thinking and Critical evaluation already meet this role's requirement.",
+        "Largest gaps: Change facilitation (2 of 5), Accessibility & inclusion (1 of 3)."
+      ]
+    },
+    {
+      "roleId": "human-ai-interaction-designer",
+      "title": "Human–AI Interaction Designer",
+      "family": "Design & research",
+      "sector": "Cross-sector",
+      "summary": "Designs how people delegate to, check and override AI: interfaces, escalation patterns and explanations that hold up under stress.",
+      "outlook": "Emerging but durable. As agents take more actions, accountability and interface design become procurement requirements.",
+      "demandIndex": 71,
+      "demandTrend": "rising",
+      "automationRisk": 14,
+      "salary": {
+        "min": 78000,
+        "max": 115000,
+        "currency": "USD"
+      },
+      "fitScore": 71,
+      "baselineFit": 71,
+      "fitDelta": 0,
+      "gapScore": 33,
+      "skillsGap": [
+        {
+          "skillId": "accessibility-inclusion",
+          "name": "Accessibility & inclusion",
+          "category": "Human & Social",
+          "currentLevel": 1,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 4,
+          "priority": 20
+        },
+        {
+          "skillId": "process-design",
+          "name": "Process & service design",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 5,
+          "importance": 4,
+          "gap": 2,
+          "priority": 8
+        },
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        },
+        {
+          "skillId": "prompt-engineering",
+          "name": "Prompt & agent design",
+          "category": "Data & AI",
+          "currentLevel": 2,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "systems-thinking",
+          "name": "Systems thinking",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 10,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Keeps AI services usable by people with disabilities and low digital confidence."
+        },
+        {
+          "number": 8,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Designs human oversight into automated work."
+        },
+        {
+          "number": 4,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Embeds learning and explanation into tools."
+        },
+        {
+          "number": 5,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Tests for gendered and other bias in interaction patterns."
+        },
+        {
+          "number": 11,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Improves access to local public services."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Stakeholder communication and Data literacy already meet this role's requirement.",
+        "Largest gaps: Accessibility & inclusion (1 of 5), Process & service design (3 of 5)."
+      ]
+    },
+    {
+      "roleId": "ai-product-owner",
+      "title": "AI Product Owner",
+      "family": "Product",
+      "sector": "Cross-sector",
+      "summary": "Decides which AI-enabled services get built, defines acceptable performance and safety thresholds, and holds the line when a demo cannot survive contact with users.",
+      "outlook": "Demand is strong but concentrated in organisations that already ship software. The differentiator is evaluation discipline, not model access.",
+      "demandIndex": 82,
+      "demandTrend": "rising",
+      "automationRisk": 20,
+      "salary": {
+        "min": 85000,
+        "max": 125000,
+        "currency": "USD"
+      },
+      "fitScore": 68,
+      "baselineFit": 68,
+      "fitDelta": 0,
+      "gapScore": 31,
+      "skillsGap": [
+        {
+          "skillId": "ai-governance",
+          "name": "AI governance & risk",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 5,
+          "gap": 2,
+          "priority": 10
+        },
+        {
+          "skillId": "project-management",
+          "name": "Project & programme management",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 5,
+          "importance": 4,
+          "gap": 2,
+          "priority": 8
+        },
+        {
+          "skillId": "model-evaluation",
+          "name": "Model evaluation",
+          "category": "Data & AI",
+          "currentLevel": 2,
+          "requiredLevel": 3,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        },
+        {
+          "skillId": "process-design",
+          "name": "Process & service design",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        },
+        {
+          "skillId": "prompt-engineering",
+          "name": "Prompt & agent design",
+          "category": "Data & AI",
+          "currentLevel": 2,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        },
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 8,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Directs AI investment toward productivity that supports decent work."
+        },
+        {
+          "number": 9,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Turns research capability into dependable public services."
+        },
+        {
+          "number": 4,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Builds internal capability through delivery."
+        },
+        {
+          "number": 10,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Sets inclusion requirements at product definition."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Coordinates vendors, agencies and users."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Data literacy already meet this role's requirement.",
+        "Largest gaps: AI governance & risk (1 of 3), Project & programme management (3 of 5)."
+      ]
+    },
+    {
+      "roleId": "civic-tech-program-manager",
+      "title": "Civic Technology Program Manager",
+      "family": "Public sector",
+      "sector": "Government",
+      "summary": "Runs digital and AI programmes in the public interest: procurement, delivery, community engagement and the unglamorous work of making services usable.",
+      "outlook": "Stable demand tied to digital public infrastructure budgets. AI procurement scrutiny is increasing the value of experienced programme leaders.",
+      "demandIndex": 70,
+      "demandTrend": "stable",
+      "automationRisk": 9,
+      "salary": {
+        "min": 80000,
+        "max": 112000,
+        "currency": "USD"
+      },
+      "fitScore": 66,
+      "baselineFit": 66,
+      "fitDelta": 0,
+      "gapScore": 33,
+      "skillsGap": [
+        {
+          "skillId": "policy-literacy",
+          "name": "Policy & regulatory literacy",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 3,
+          "priority": 12
+        },
+        {
+          "skillId": "project-management",
+          "name": "Project & programme management",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 2,
+          "priority": 10
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        },
+        {
+          "skillId": "process-design",
+          "name": "Process & service design",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        },
+        {
+          "skillId": "ai-governance",
+          "name": "AI governance & risk",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 2,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        },
+        {
+          "skillId": "systems-thinking",
+          "name": "Systems thinking",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 11,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Delivers better local services and inclusive urban systems."
+        },
+        {
+          "number": 16,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Makes public technology accountable and transparent."
+        },
+        {
+          "number": 17,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Brokers partnerships across sectors and levels of government."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Builds reusable public digital infrastructure."
+        },
+        {
+          "number": 10,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Designs services for those least able to navigate them."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Data literacy already meet this role's requirement.",
+        "Largest gaps: Policy & regulatory literacy (1 of 4), Project & programme management (3 of 5)."
+      ]
+    },
+    {
+      "roleId": "healthcare-automation-specialist",
+      "title": "Healthcare Automation Specialist",
+      "family": "Health operations",
+      "sector": "Healthcare",
+      "summary": "Automates scheduling, documentation and triage support in care settings while keeping clinicians accountable and patients safe.",
+      "outlook": "Rising but regulated. Adoption is fastest in administrative workflows, slower where clinical risk is high.",
+      "demandIndex": 72,
+      "demandTrend": "rising",
+      "automationRisk": 13,
+      "salary": {
+        "min": 76000,
+        "max": 108000,
+        "currency": "USD"
+      },
+      "fitScore": 64,
+      "baselineFit": 64,
+      "fitDelta": 0,
+      "gapScore": 26,
+      "skillsGap": [
+        {
+          "skillId": "cybersecurity",
+          "name": "Security fundamentals",
+          "category": "Digital & Systems",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 2,
+          "priority": 6
+        },
+        {
+          "skillId": "process-design",
+          "name": "Process & service design",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        },
+        {
+          "skillId": "automation",
+          "name": "Workflow automation",
+          "category": "Digital & Systems",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        },
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        },
+        {
+          "skillId": "api-integration",
+          "name": "API integration",
+          "category": "Digital & Systems",
+          "currentLevel": 1,
+          "requiredLevel": 2,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        },
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 3,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Frees clinical time and reduces administrative harm."
+        },
+        {
+          "number": 8,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Reshapes care work rather than simply removing it."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Modernises health information infrastructure."
+        },
+        {
+          "number": 10,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Extends access where clinical capacity is scarce."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Stakeholder communication already meet this role's requirement.",
+        "Largest gaps: Security fundamentals (1 of 3), Process & service design (3 of 4)."
+      ]
+    },
+    {
+      "roleId": "data-governance-specialist",
+      "title": "Data Governance Specialist",
+      "family": "Data & Trust",
+      "sector": "Public sector",
+      "summary": "Owns the rules, lineage and permissions around data that feeds AI: catalogues datasets, resolves quality disputes and prepares documentation for audits.",
+      "outlook": "Steady structural demand. Regulation and procurement rules now require named accountability for datasets and model inputs.",
+      "demandIndex": 84,
+      "demandTrend": "rising",
+      "automationRisk": 12,
+      "salary": {
+        "min": 72000,
+        "max": 105000,
+        "currency": "USD"
+      },
+      "fitScore": 60,
+      "baselineFit": 60,
+      "fitDelta": 0,
+      "gapScore": 45,
+      "skillsGap": [
+        {
+          "skillId": "ai-governance",
+          "name": "AI governance & risk",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 3,
+          "priority": 15
+        },
+        {
+          "skillId": "policy-literacy",
+          "name": "Policy & regulatory literacy",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 3,
+          "priority": 15
+        },
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 2,
+          "priority": 10
+        },
+        {
+          "skillId": "cybersecurity",
+          "name": "Security fundamentals",
+          "category": "Digital & Systems",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 2,
+          "priority": 6
+        },
+        {
+          "skillId": "sql",
+          "name": "SQL & data modelling",
+          "category": "Digital & Systems",
+          "currentLevel": 2,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        },
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "process-design",
+          "name": "Process & service design",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 4,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 16,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Strengthens accountable institutions through traceable, auditable public data."
+        },
+        {
+          "number": 8,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Enables trustworthy data sharing that underpins decent digital work."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Improves data infrastructure quality across sectors."
+        },
+        {
+          "number": 17,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Supports interoperable data partnerships between agencies."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Process & service design and Stakeholder communication already meet this role's requirement.",
+        "Largest gaps: AI governance & risk (1 of 4), Policy & regulatory literacy (1 of 4)."
+      ]
+    },
+    {
+      "roleId": "green-supply-chain-analyst",
+      "title": "Green Supply Chain Analyst",
+      "family": "Sustainability",
+      "sector": "Manufacturing & logistics",
+      "summary": "Models emissions, materials and supplier risk across a supply chain, then wires the numbers into procurement decisions and disclosure reports.",
+      "outlook": "Growth follows mandatory climate disclosure and reshoring. The role blends traditional supply-chain analysis with carbon accounting and AI-assisted data collection.",
+      "demandIndex": 79,
+      "demandTrend": "rising",
+      "automationRisk": 15,
+      "salary": {
+        "min": 65000,
+        "max": 92000,
+        "currency": "USD"
+      },
+      "fitScore": 60,
+      "baselineFit": 60,
+      "fitDelta": 0,
+      "gapScore": 37,
+      "skillsGap": [
+        {
+          "skillId": "sustainability-literacy",
+          "name": "Sustainability literacy",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 4,
+          "priority": 20
+        },
+        {
+          "skillId": "data-visualisation",
+          "name": "Data visualisation",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 2,
+          "priority": 8
+        },
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        },
+        {
+          "skillId": "process-design",
+          "name": "Process & service design",
+          "category": "Domain & Policy",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        },
+        {
+          "skillId": "sql",
+          "name": "SQL & data modelling",
+          "category": "Digital & Systems",
+          "currentLevel": 2,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "systems-thinking",
+          "name": "Systems thinking",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 12,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Turns procurement and material flows toward circular, responsible production."
+        },
+        {
+          "number": 13,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Quantifies and reduces supply-chain emissions."
+        },
+        {
+          "number": 8,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Protects employment by making local supply chains more competitive."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Upgrades industrial infrastructure with traceable data."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Requires shared supplier reporting standards."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Critical evaluation and Stakeholder communication already meet this role's requirement.",
+        "Largest gaps: Sustainability literacy (1 of 5), Data visualisation (1 of 3)."
+      ]
+    },
+    {
+      "roleId": "ai-ops-analyst",
+      "title": "AI Operations Analyst",
+      "family": "AI & Automation",
+      "sector": "Cross-sector",
+      "summary": "Runs the day-to-day operation of AI systems: monitoring quality, triaging failures, tuning prompts and agents, and keeping a register of what the organisation is actually using.",
+      "outlook": "Demand is climbing fastest where pilot projects are being turned into production services. Roles are appearing inside operations teams rather than central data labs.",
+      "demandIndex": 91,
+      "demandTrend": "rising",
+      "automationRisk": 18,
+      "salary": {
+        "min": 68000,
+        "max": 98000,
+        "currency": "USD"
+      },
+      "fitScore": 59,
+      "baselineFit": 59,
+      "fitDelta": 0,
+      "gapScore": 42,
+      "skillsGap": [
+        {
+          "skillId": "prompt-engineering",
+          "name": "Prompt & agent design",
+          "category": "Data & AI",
+          "currentLevel": 2,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 2,
+          "priority": 10
+        },
+        {
+          "skillId": "mlops",
+          "name": "MLOps & deployment",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 2,
+          "priority": 8
+        },
+        {
+          "skillId": "python",
+          "name": "Python for data",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 2,
+          "priority": 8
+        },
+        {
+          "skillId": "api-integration",
+          "name": "API integration",
+          "category": "Digital & Systems",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 2,
+          "priority": 6
+        },
+        {
+          "skillId": "model-evaluation",
+          "name": "Model evaluation",
+          "category": "Data & AI",
+          "currentLevel": 2,
+          "requiredLevel": 3,
+          "importance": 5,
+          "gap": 1,
+          "priority": 5
+        },
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        },
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 8,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Raises job quality by pairing automation with monitored, human-supervised service delivery."
+        },
+        {
+          "number": 9,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Builds reliable AI infrastructure inside public and private services."
+        },
+        {
+          "number": 4,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Creates applied learning pathways for non-specialist staff."
+        },
+        {
+          "number": 10,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Widens access to AI-era roles beyond computer-science graduates."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Stakeholder communication already meet this role's requirement.",
+        "Largest gaps: Prompt & agent design (2 of 4), MLOps & deployment (1 of 3)."
+      ]
+    },
+    {
+      "roleId": "ai-ethics-officer",
+      "title": "AI Ethics & Compliance Officer",
+      "family": "Governance",
+      "sector": "Public & corporate",
+      "summary": "Turns principles into controls: impact assessments, bias testing, vendor terms and incident processes that survive the first serious complaint.",
+      "outlook": "Growing from a low base. Regulation, procurement and reputational risk are converting voluntary frameworks into named responsibilities.",
+      "demandIndex": 68,
+      "demandTrend": "rising",
+      "automationRisk": 7,
+      "salary": {
+        "min": 90000,
+        "max": 130000,
+        "currency": "USD"
+      },
+      "fitScore": 59,
+      "baselineFit": 59,
+      "fitDelta": 0,
+      "gapScore": 46,
+      "skillsGap": [
+        {
+          "skillId": "ai-governance",
+          "name": "AI governance & risk",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 4,
+          "priority": 20
+        },
+        {
+          "skillId": "policy-literacy",
+          "name": "Policy & regulatory literacy",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 4,
+          "priority": 20
+        },
+        {
+          "skillId": "accessibility-inclusion",
+          "name": "Accessibility & inclusion",
+          "category": "Human & Social",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 2,
+          "priority": 6
+        },
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "systems-thinking",
+          "name": "Systems thinking",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 16,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Builds accountable institutions for automated decision-making."
+        },
+        {
+          "number": 10,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Tests and mitigates discriminatory outcomes."
+        },
+        {
+          "number": 4,
+          "weight": 4,
+          "tier": "secondary",
+          "rationale": "Raises organisational AI literacy and transparency."
+        },
+        {
+          "number": 5,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Audits gendered impact of automated systems."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Aligns practice with international standards."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Stakeholder communication and Data literacy already meet this role's requirement.",
+        "Largest gaps: AI governance & risk (1 of 5), Policy & regulatory literacy (1 of 5)."
+      ]
+    },
+    {
+      "roleId": "cyber-resilience-analyst",
+      "title": "Cyber Resilience Analyst",
+      "family": "Security",
+      "sector": "Cross-sector",
+      "summary": "Protects services that now depend on models and APIs: threat models AI pipelines, hardens identity and detects abuse of automated systems.",
+      "outlook": "Very strong demand. AI adoption expands the attack surface, and security teams are hiring for AI-specific assurance rather than classic perimeter work.",
+      "demandIndex": 86,
+      "demandTrend": "rising",
+      "automationRisk": 11,
+      "salary": {
+        "min": 82000,
+        "max": 118000,
+        "currency": "USD"
+      },
+      "fitScore": 53,
+      "baselineFit": 53,
+      "fitDelta": 0,
+      "gapScore": 49,
+      "skillsGap": [
+        {
+          "skillId": "cybersecurity",
+          "name": "Security fundamentals",
+          "category": "Digital & Systems",
+          "currentLevel": 1,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 4,
+          "priority": 20
+        },
+        {
+          "skillId": "cloud-fundamentals",
+          "name": "Cloud fundamentals",
+          "category": "Digital & Systems",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 3,
+          "priority": 12
+        },
+        {
+          "skillId": "ai-governance",
+          "name": "AI governance & risk",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 2,
+          "priority": 6
+        },
+        {
+          "skillId": "api-integration",
+          "name": "API integration",
+          "category": "Digital & Systems",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 2,
+          "priority": 6
+        },
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "sql",
+          "name": "SQL & data modelling",
+          "category": "Digital & Systems",
+          "currentLevel": 2,
+          "requiredLevel": 2,
+          "importance": 2,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "name": "Stakeholder communication",
+          "category": "Human & Social",
+          "currentLevel": 4,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "automation",
+          "name": "Workflow automation",
+          "category": "Digital & Systems",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 16,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Protects public institutions and citizens from digital harm."
+        },
+        {
+          "number": 9,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Keeps critical digital infrastructure resilient."
+        },
+        {
+          "number": 8,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Safeguards business continuity and jobs."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Requires threat information sharing."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Stakeholder communication and Workflow automation already meet this role's requirement.",
+        "Largest gaps: Security fundamentals (1 of 5), Cloud fundamentals (1 of 4)."
+      ]
+    },
+    {
+      "roleId": "climate-data-steward",
+      "title": "Climate Data Steward",
+      "family": "Sustainability",
+      "sector": "Energy & environment",
+      "summary": "Curates climate and environmental datasets — emissions inventories, sensor feeds, adaptation models — so planners can act on evidence rather than vendor dashboards.",
+      "outlook": "Small but rising occupation. Cities and utilities need people who can judge data quality and translate model uncertainty for decision-makers.",
+      "demandIndex": 76,
+      "demandTrend": "rising",
+      "automationRisk": 10,
+      "salary": {
+        "min": 70000,
+        "max": 98000,
+        "currency": "USD"
+      },
+      "fitScore": 44,
+      "baselineFit": 44,
+      "fitDelta": 0,
+      "gapScore": 54,
+      "skillsGap": [
+        {
+          "skillId": "statistics",
+          "name": "Applied statistics",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 3,
+          "priority": 15
+        },
+        {
+          "skillId": "sustainability-literacy",
+          "name": "Sustainability literacy",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 3,
+          "priority": 15
+        },
+        {
+          "skillId": "data-visualisation",
+          "name": "Data visualisation",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 3,
+          "priority": 12
+        },
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 5,
+          "importance": 5,
+          "gap": 2,
+          "priority": 10
+        },
+        {
+          "skillId": "python",
+          "name": "Python for data",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 2,
+          "priority": 8
+        },
+        {
+          "skillId": "policy-literacy",
+          "name": "Policy & regulatory literacy",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 2,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        }
+      ],
+      "matchedSkills": [
+        {
+          "skillId": "critical-evaluation",
+          "name": "Critical evaluation",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        },
+        {
+          "skillId": "systems-thinking",
+          "name": "Systems thinking",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 0,
+          "priority": 0
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 13,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Makes climate action measurable and auditable."
+        },
+        {
+          "number": 11,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Supplies the evidence base for resilient urban planning."
+        },
+        {
+          "number": 6,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Improves water and sanitation monitoring data."
+        },
+        {
+          "number": 15,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Supports land and biodiversity measurement."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Aligns local data with international reporting."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Critical evaluation and Systems thinking already meet this role's requirement.",
+        "Largest gaps: Applied statistics (1 of 4), Sustainability literacy (1 of 4)."
+      ]
+    },
+    {
+      "roleId": "energy-systems-analyst",
+      "title": "Energy Systems Data Analyst",
+      "family": "Energy",
+      "sector": "Utilities",
+      "summary": "Models demand, generation and grid constraints, increasingly including the electricity appetite of data centres and electrified transport.",
+      "outlook": "Rising demand driven by electrification and AI infrastructure. Utilities are hiring analysts who can work with both market data and engineering constraints.",
+      "demandIndex": 77,
+      "demandTrend": "rising",
+      "automationRisk": 12,
+      "salary": {
+        "min": 74000,
+        "max": 102000,
+        "currency": "USD"
+      },
+      "fitScore": 42,
+      "baselineFit": 42,
+      "fitDelta": 0,
+      "gapScore": 55,
+      "skillsGap": [
+        {
+          "skillId": "statistics",
+          "name": "Applied statistics",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 5,
+          "gap": 3,
+          "priority": 15
+        },
+        {
+          "skillId": "data-visualisation",
+          "name": "Data visualisation",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 3,
+          "priority": 12
+        },
+        {
+          "skillId": "python",
+          "name": "Python for data",
+          "category": "Data & AI",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 2,
+          "priority": 8
+        },
+        {
+          "skillId": "sustainability-literacy",
+          "name": "Sustainability literacy",
+          "category": "Domain & Policy",
+          "currentLevel": 1,
+          "requiredLevel": 3,
+          "importance": 4,
+          "gap": 2,
+          "priority": 8
+        },
+        {
+          "skillId": "systems-thinking",
+          "name": "Systems thinking",
+          "category": "Human & Social",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 4,
+          "gap": 1,
+          "priority": 4
+        },
+        {
+          "skillId": "data-literacy",
+          "name": "Data literacy",
+          "category": "Data & AI",
+          "currentLevel": 3,
+          "requiredLevel": 4,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        },
+        {
+          "skillId": "sql",
+          "name": "SQL & data modelling",
+          "category": "Digital & Systems",
+          "currentLevel": 2,
+          "requiredLevel": 3,
+          "importance": 3,
+          "gap": 1,
+          "priority": 3
+        }
+      ],
+      "matchedSkills": [],
+      "sdgs": [
+        {
+          "number": 7,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Improves energy access, efficiency and clean generation planning."
+        },
+        {
+          "number": 13,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Supports decarbonisation of power systems."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Strengthens resilient energy infrastructure."
+        },
+        {
+          "number": 11,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Informs sustainable city energy planning."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Depends on regional grid cooperation."
+        }
+      ],
+      "scenarioNote": "",
+      "reasons": [
+        "Largest gaps: Applied statistics (1 of 4), Data visualisation (1 of 4)."
+      ]
+    }
+  ],
+  "summary": {
+    "readinessScore": 72,
+    "topRoleId": "workforce-transition-coach",
+    "topRoleTitle": "Workforce Transition Coach",
+    "topFit": 74,
+    "skillsToClose": 9,
+    "coveragePct": 0,
+    "topMatches": [
+      {
+        "roleId": "workforce-transition-coach",
+        "title": "Workforce Transition Coach",
+        "fitScore": 74
+      },
+      {
+        "roleId": "human-ai-interaction-designer",
+        "title": "Human–AI Interaction Designer",
+        "fitScore": 71
+      },
+      {
+        "roleId": "ai-product-owner",
+        "title": "AI Product Owner",
+        "fitScore": 68
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "service": "ai-career-navigator-reference",
+  "version": "1.0.0",
+  "mode": "live",
+  "datasetVersion": "2026.10.1",
+  "generatedAt": "2026-10-18T06:00:00Z",
+  "lastRefreshedAt": "2026-10-18T06:00:00Z",
+  "signalWindow": {
+    "from": "2024-07-26",
+    "to": "2026-10-12"
+  },
+  "llm": {
+    "provider": "reference",
+    "model": "narrative-v1",
+    "configured": false
+  },
+  "capabilities": [
+    "catalog",
+    "signals",
+    "profiles",
+    "matching",
+    "pathway",
+    "sdg-map",
+    "scenarios",
+    "streaming"
+  ],
+  "counts": {
+    "skills": 23,
+    "roles": 12,
+    "sdgs": 17,
+    "signals": 20
+  }
+}

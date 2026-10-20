@@ -1,0 +1,100 @@
+{
+  "profile": {
+    "id": "prof-6fce1eb3",
+    "name": "Aisha Rahman",
+    "headline": "Operations coordinator moving into AI-enabled public services",
+    "currentRole": "Operations Coordinator",
+    "sector": "Public sector",
+    "region": "Singapore",
+    "yearsExperience": 7,
+    "education": "Diploma / vocational",
+    "skills": [
+      {
+        "skillId": "data-literacy",
+        "name": "Data literacy",
+        "category": "Data & AI",
+        "level": 3
+      },
+      {
+        "skillId": "stakeholder-comms",
+        "name": "Stakeholder communication",
+        "category": "Human & Social",
+        "level": 4
+      },
+      {
+        "skillId": "critical-evaluation",
+        "name": "Critical evaluation",
+        "category": "Human & Social",
+        "level": 3
+      },
+      {
+        "skillId": "process-design",
+        "name": "Process & service design",
+        "category": "Domain & Policy",
+        "level": 3
+      },
+      {
+        "skillId": "sql",
+        "name": "SQL & data modelling",
+        "category": "Digital & Systems",
+        "level": 2
+      },
+      {
+        "skillId": "automation",
+        "name": "Workflow automation",
+        "category": "Digital & Systems",
+        "level": 3
+      },
+      {
+        "skillId": "prompt-engineering",
+        "name": "Prompt & agent design",
+        "category": "Data & AI",
+        "level": 2
+      },
+      {
+        "skillId": "model-evaluation",
+        "name": "Model evaluation",
+        "category": "Data & AI",
+        "level": 2
+      },
+      {
+        "skillId": "ai-governance",
+        "name": "AI governance & risk",
+        "category": "Domain & Policy",
+        "level": 1
+      },
+      {
+        "skillId": "project-management",
+        "name": "Project & programme management",
+        "category": "Domain & Policy",
+        "level": 3
+      },
+      {
+        "skillId": "change-facilitation",
+        "name": "Change facilitation",
+        "category": "Human & Social",
+        "level": 2
+      },
+      {
+        "skillId": "systems-thinking",
+        "name": "Systems thinking",
+        "category": "Human & Social",
+        "level": 3
+      }
+    ],
+    "interests": [
+      "ai",
+      "public",
+      "people"
+    ],
+    "constraints": {
+      "hoursPerWeek": 8,
+      "budget": 300,
+      "remoteOnly": false
+    },
+    "goal": "Move into an AI-facing role without leaving public service",
+    "createdAt": "2026-10-20T06:05:37Z",
+    "updatedAt": "2026-10-20T06:05:37Z",
+    "source": "docs-fixture"
+  }
+}

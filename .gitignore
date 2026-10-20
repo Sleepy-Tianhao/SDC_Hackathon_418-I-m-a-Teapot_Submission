@@ -7,7 +7,22 @@ venv/
 # Environment
 .env
 
+# Local database and generated data
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Test / tooling caches
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
 # OS / Editor
 .DS_Store
 .vscode/
 .idea/
+
+# Node (the frontend has no build step; these appear only if you use tooling locally)
+node_modules/

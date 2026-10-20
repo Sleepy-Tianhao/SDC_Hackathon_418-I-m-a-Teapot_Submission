@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "profile_not_found",
+    "message": "No profile exists with id does-not-exist.",
+    "details": null
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "analysis": {
+    "provider": "reference-api",
+    "model": "narrative-v1",
+    "generatedAt": "2026-10-20T06:05:37Z",
+    "scenarioId": "baseline",
+    "narrative": "Aisha Rahman, your strongest adjacent role is Workforce Transition Coach (fit 74/100) under the Baseline Adoption 2028 scenario. Human–AI Interaction Designer (71) and AI Product Owner (68) follow, which gives you more than one credible route.\n\nThe gap is narrow: Change facilitation 2 to 5, Accessibility & inclusion 1 to 3, Stakeholder communication 4 to 5. Your existing Critical evaluation is the reason the jump is plausible.\n\nA 11-week plan at 8 hours per week reaches an estimated readiness of 95/100, across 3 phases and USD 30 of catalogue cost. It ends with evidence: a portfolio artefact and a defended case.\n\nRe-run the analysis when the scenario changes. Under acceleration the same profile scores differently, because agentic deployment changes what employers hire for."
+  }
+}
