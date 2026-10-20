@@ -36,7 +36,7 @@ below. Nothing in the frontend needs to change if the response shapes match.
                                       └───────────────┬─────────────────────┘
                                                       │ HTTPS
                                               ┌───────▼────────┐
-                                              │ RunPod / LLM   │
+                                              │ LLM provider   │
                                               └────────────────┘
 ~~~
 
@@ -390,13 +390,13 @@ async def analysis_stream(profileId: str, scenarioId: str = "baseline", roleId: 
     context = build_context(profileId, scenarioId, roleId)   # your services
 
     async def generate():
-        yield sse("meta", {"provider": "runpod", "model": MODEL, "scenarioId": scenarioId})
+        yield sse("meta", {"provider": "openai-compatible", "model": MODEL, "scenarioId": scenarioId})
         parts = []
         async for token in llm_stream(context.prompt):
             parts.append(token)
             yield sse("token", {"text": token})
         yield sse("done", {"analysis": {
-            "provider": "runpod",
+            "provider": "openai-compatible",
             "model": MODEL,
             "scenarioId": scenarioId,
             "generatedAt": utcnow_iso(),
@@ -413,22 +413,38 @@ async def analysis_stream(profileId: str, scenarioId: str = "baseline", roleId: 
 If your provider cannot stream, emit a few coarse tokens as you write the complete answer,
 then `done`. The UI only needs to see text arrive.
 
-### 11.5 RunPod
+### 11.5 Calling the provider
 
-The team already documents a RunPod serverless endpoint. Call it from the backend, not from
-the browser:
+Use an OpenAI-compatible client so the provider can be swapped with configuration only.
+The backend owns the key and the prompt; the browser never sees either.
 
 ~~~python
-import os, httpx
+import os
 
-RUNPOD_URL = "https://api.runpod.ai/v2/" + os.environ["RUNPOD_ENDPOINT_ID"] + "/runsync"
-headers = {"Authorization": "Bearer " + os.environ["RUNPOD_API_KEY"]}
+import httpx
 
-response = httpx.post(RUNPOD_URL, json={"input": {"prompt": prompt}}, headers=headers, timeout=60)
-narrative = response.json()["output"]
+LLM_BASE_URL = os.environ["LLM_BASE_URL"]      # e.g. https://api.provider.example/v1
+LLM_API_KEY = os.environ["LLM_API_KEY"]
+LLM_MODEL = os.environ["LLM_MODEL"]
+
+def generate(prompt: str) -> str:
+    response = httpx.post(
+        LLM_BASE_URL + "/chat/completions",
+        headers={"Authorization": "Bearer " + LLM_API_KEY},
+        json={
+            "model": LLM_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.2,
+        },
+        timeout=60,
+    )
+    response.raise_for_status()
+    return response.json()["choices"][0]["message"]["content"]
 ~~~
 
-Keep prompts and keys server-side; log latency and token counts in `analysis_runs`.
+For streaming, pass `"stream": true` and iterate the response lines, yielding the deltas as
+SSE `token` events. Keep provider-specific code in `services/narrative.py` so swapping
+models never touches the HTTP layer.
 
 ## 12. Deployment on Replit
 
@@ -446,8 +462,8 @@ localPort = 8000
 externalPort = 80
 ~~~
 
-* Add `RUNPOD_API_KEY`, `RUNPOD_ENDPOINT_ID` and any provider keys in **Secrets**, never in
-  `.env` that is committed.
+* Add `LLM_BASE_URL`, `LLM_API_KEY` and `LLM_MODEL` in **Secrets**, never in a committed
+  `.env`.
 * Bind to `0.0.0.0` and the port Replit provides (`PORT` env when available).
 * Serve the UI from the same process so the demo is one URL.
 * The frontend's default `apiBaseUrl` is `/api/v1`, so no frontend change is needed.

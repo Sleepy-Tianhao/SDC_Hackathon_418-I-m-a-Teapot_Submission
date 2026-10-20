@@ -281,7 +281,7 @@ Liveness probe used by the UI to choose its transport.
   "datasetVersion": "2026.10.1",
   "time": "2026-10-20T05:51:39Z",
   "uptimeSeconds": 12,
-  "llm": { "provider": "runpod", "model": "qwen2.5-72b-instruct", "configured": true }
+  "llm": { "provider": "openai-compatible", "model": "model-name", "configured": true }
 }
 ~~~
 
@@ -300,7 +300,7 @@ Dataset and capability metadata shown in the UI (dataset version, refresh time, 
   "datasetVersion": "2026.10.1",
   "lastRefreshedAt": "2026-10-18T06:00:00Z",
   "signalWindow": { "from": "2024-07-26", "to": "2026-10-12" },
-  "llm": { "provider": "runpod", "model": "qwen2.5-72b-instruct", "configured": true },
+  "llm": { "provider": "openai-compatible", "model": "model-name", "configured": true },
   "capabilities": ["catalog", "signals", "profiles", "matching", "pathway", "sdg-map", "scenarios", "streaming"],
   "counts": { "skills": 23, "roles": 12, "sdgs": 17, "signals": 20 }
 }
@@ -659,8 +659,8 @@ Response:
 ~~~json
 {
   "analysis": {
-    "provider": "runpod",
-    "model": "qwen2.5-72b-instruct",
+    "provider": "openai-compatible",
+    "model": "model-name",
     "generatedAt": "2026-10-20T05:52:08Z",
     "scenarioId": "baseline",
     "narrative": "Aisha, your strongest adjacent role is…\n\nThe gap is narrow…"
@@ -680,7 +680,7 @@ Response headers: `Content-Type: text/event-stream`, `Cache-Control: no-cache`.
 
 ~~~text
 event: meta
-data: {"provider":"runpod","model":"qwen2.5-72b-instruct","scenarioId":"baseline"}
+data: {"provider":"openai-compatible","model":"model-name","scenarioId":"baseline"}
 
 event: token
 data: {"text":"Aisha, your "}
@@ -689,7 +689,7 @@ event: token
 data: {"text":"strongest adjacent role…"}
 
 event: done
-data: {"analysis":{"narrative":"…","model":"qwen2.5-72b-instruct","generatedAt":"…","scenarioId":"baseline"}}
+data: {"analysis":{"narrative":"…","model":"model-name","generatedAt":"…","scenarioId":"baseline"}}
 ~~~
 
 Optional failure event:
@@ -743,7 +743,7 @@ The frontend only sends ids and receives text. The backend owns:
   headings — plain paragraphs separated by blank lines.
 * **Streaming.** Emit tokens as they arrive from the provider; send `meta` first and `done`
   last. Cap generation at ~400 words / 30 seconds.
-* **Secrets.** `RUNPOD_API_KEY`, provider keys and prompts stay on the server. Never expose
+* **Secrets.** `LLM_API_KEY`, provider keys and prompts stay on the server. Never expose
   them through `/api/meta` or the static bundle.
 * **Failure handling.** Return `event: error` (or a 502 JSON error) with a human-readable
   message; the UI retries on demand.
