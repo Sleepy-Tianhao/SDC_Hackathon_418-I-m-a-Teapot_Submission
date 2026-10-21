@@ -314,7 +314,7 @@ sees a key or a prompt.
 | ZI KUNLIN | Frontend | @kunlinzi53-hue |
 | ZHU BINSHA | Backend | @zhubinsha58-ai |
 | LI JIAYOU | Backend | @lijiayou755-spec |
-| WANG HAOYUE | Research & presentation | *(to be updated)* |
+| WANG HAOYUE | Research & presentation | @Anne-why |
 
 ## Submission checklist
 
