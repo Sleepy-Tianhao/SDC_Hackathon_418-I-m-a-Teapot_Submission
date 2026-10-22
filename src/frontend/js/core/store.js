@@ -3,6 +3,7 @@
  */
 
 import { config } from "./config.js";
+import { applyJourneyEvent, emptyJourney, normalizeJourney } from "./journey.js";
 
 const STORAGE_KEY = "aicn:state:v1";
 
@@ -23,6 +24,7 @@ const initialState = {
   busy: {},
   lastError: null,
   route: { path: "/overview", query: {} },
+  journey: emptyJourney(),
 };
 
 const listeners = new Set();
@@ -40,6 +42,7 @@ function persist() {
         pathway: state.pathway,
         sdgMap: state.sdgMap,
         analysis: state.analysis,
+        journey: state.journey,
       }),
     );
   } catch {
@@ -59,6 +62,9 @@ export function restore() {
     if (saved.pathway) state.pathway = saved.pathway;
     if (saved.sdgMap) state.sdgMap = saved.sdgMap;
     if (saved.analysis) state.analysis = saved.analysis;
+    if (saved.journey) state.journey = normalizeJourney(saved.journey);
+    if (state.profile && !state.journey.profileSaved) state.journey.profileSaved = true;
+    if (saved.pathway && !state.journey.pathwayViewed) state.journey.pathwayViewed = true;
   } catch {
     /* ignore corrupted state */
   }
@@ -155,6 +161,7 @@ export function toggleTheme() {
 
 export function setScenario(scenarioId) {
   if (!scenarioId || scenarioId === state.scenarioId) return;
+  recordJourney("scenarioCompared", scenarioId);
   setState({
     scenarioId,
     matches: null,
@@ -165,7 +172,27 @@ export function setScenario(scenarioId) {
 }
 
 export function applySampleProfile(profile) {
+  recordJourney("profileSaved");
   setState({ profile, matches: null, pathway: null, sdgMap: null, analysis: null });
+}
+
+export function recordJourney(type, value = null) {
+  const result = applyJourneyEvent(state.journey, type, value, state);
+  if (!result.changed) return result;
+  setState({ journey: result.journey });
+  try {
+    window.dispatchEvent(new CustomEvent("aicn:journey-updated", { detail: result }));
+  } catch {
+    /* non-browser test environment */
+  }
+  return result;
+}
+
+export function clearJourneyPulse(stepId) {
+  const achievement = state.journey?.lastAchievement;
+  if (!achievement) return;
+  if (stepId && achievement.stepId !== stepId) return;
+  setState({ journey: { ...state.journey, lastAchievement: null } });
 }
 
 export function currentConfigMode() {

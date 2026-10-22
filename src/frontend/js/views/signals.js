@@ -163,6 +163,7 @@ function pageShell(data) {
 }
 
 function openSignal(signal) {
+  store.recordJourney("signalViewed", signal.id);
   const catalog = store.getState().catalog;
   const roles = (signal.affectedRoles || []).map((role) => ({
     ...role,

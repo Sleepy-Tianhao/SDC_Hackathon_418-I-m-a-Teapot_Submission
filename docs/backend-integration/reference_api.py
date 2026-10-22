@@ -740,6 +740,7 @@ def meta_payload() -> dict:
 class Handler(SimpleHTTPRequestHandler):
     server_version = "AICareerNavigatorReference/1.0"
     protocol_version = "HTTP/1.1"
+    extensions_map = {**SimpleHTTPRequestHandler.extensions_map, ".webp": "image/webp"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(FRONTEND), **kwargs)

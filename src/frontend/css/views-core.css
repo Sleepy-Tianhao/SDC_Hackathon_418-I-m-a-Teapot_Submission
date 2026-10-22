@@ -414,6 +414,12 @@
 .life-tree__module.is-done small { color: #61806a; }
 .life-tree__module.is-active { border-color: #b8d0b9; box-shadow: 0 6px 20px rgba(73, 119, 80, 0.2); }
 .life-tree__module.is-locked { opacity: 0.85; }
+.life-tree__module.is-new { animation: life-tree-step-in 900ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes life-tree-step-in {
+  0% { transform: scale(0.94); box-shadow: 0 0 0 0 rgba(85, 125, 99, 0.3); }
+  55% { transform: scale(1.04); }
+  100% { transform: scale(1); box-shadow: 0 0 0 14px rgba(85, 125, 99, 0); }
+}
 
 .life-tree__caption { margin: -3px 0 0; color: #77847a; font-size: 11px; text-align: center; }
 .life-tree__legend { display: flex; justify-content: center; gap: 18px; margin-top: 9px; color: #77847a; font-size: 10px; }
@@ -444,8 +450,8 @@
 .life-tree__note { justify-content: center; text-align: center; }
 .life-tree__sample { justify-content: center; min-height: 38px; border: 1px dashed #cbd8c8; border-radius: 12px; background: #ffffff77; cursor: pointer; font: inherit; }
 .life-tree__sample:hover { border-color: #73967a; color: #416a4d; }
-.life-tree__signals { justify-content: space-between; min-height: 34px; padding-top: 7px; border-top: 1px solid #e5e9e0; text-decoration: none; }
-.life-tree__signals > span { display: inline-flex; align-items: center; gap: 4px; color: #52765c; }
+.life-tree__signals { justify-content: flex-start; min-height: 34px; padding-top: 7px; border-top: 1px solid #e5e9e0; text-decoration: none; }
+.life-tree__signals > span { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; color: #52765c; }
 .life-tree__role { justify-content: space-between; padding: 10px 12px; border: 1px solid #e3e8df; border-radius: 12px; background: #ffffffa8; text-decoration: none; }
 .life-tree__role span { display: grid; gap: 3px; }
 .life-tree__role small { color: #829087; font-size: 9px; }
@@ -481,6 +487,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .life-tree__switch button,.life-tree__module { transition: none; }
+  .life-tree__module.is-new { animation: none; }
 }
 
 .kpi-grid {

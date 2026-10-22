@@ -334,6 +334,7 @@ function page(state, matches) {
 }
 
 function roleModal(match, state) {
+  store.recordJourney("roleExplored", match.roleId);
   const catalog = state.catalog;
   const role = (catalog.roles || []).find((item) => item.id === match.roleId);
   const gaps = [...match.skillsGap].sort((a, b) => b.priority - a.priority);
@@ -430,6 +431,7 @@ function bind(root) {
       if (match) roleModal(match, state);
     } else if (action === "build-pathway") {
       const roleId = target.getAttribute("data-role");
+      if (roleId) store.recordJourney("roleExplored", roleId);
       navigate("/pathway" + (roleId ? "?role=" + roleId : ""));
     } else if (action === "method") {
       methodModal();

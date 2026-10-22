@@ -26,6 +26,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     """Static handler with SPA fallback and explicit cache policy."""
 
     protocol_version = "HTTP/1.1"
+    extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map, ".webp": "image/webp"}
 
     def end_headers(self) -> None:
         self.send_header("Cache-Control", "no-store, must-revalidate")
