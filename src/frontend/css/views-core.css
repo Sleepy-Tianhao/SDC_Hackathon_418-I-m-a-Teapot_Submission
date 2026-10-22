@@ -1224,6 +1224,218 @@
   border-top: 1px solid var(--line-soft);
 }
 
+/* Role constellation (bubble view) ---------------------------------- */
+
+.bubble-card {
+  position: relative;
+  padding: 18px 20px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(120% 100% at 8% 0%, color-mix(in srgb, var(--brand) 10%, transparent), transparent 58%),
+    radial-gradient(100% 90% at 92% 100%, color-mix(in srgb, var(--violet) 9%, transparent), transparent 60%),
+    var(--surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.bubble-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 18px;
+}
+
+.bubble-card__title {
+  margin: 3px 0 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 640;
+  letter-spacing: -0.015em;
+}
+
+.bubble-card__hint {
+  max-width: 52ch;
+  margin-top: 5px;
+  color: var(--faint);
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+.bubble-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 12px;
+  padding-top: 3px;
+  color: var(--muted);
+  font-size: 10.5px;
+  letter-spacing: 0.01em;
+}
+
+.bubble-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.bubble-legend__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.bubble-legend__dot--success {
+  background: var(--success);
+}
+
+.bubble-legend__dot--brand {
+  background: var(--brand);
+}
+
+.bubble-legend__dot--gold {
+  background: var(--gold);
+}
+
+.bubble-legend__dot--danger {
+  background: var(--danger);
+}
+
+.bubble-field {
+  position: relative;
+  margin-top: 10px;
+  container-type: inline-size;
+  aspect-ratio: 1000 / 700;
+}
+
+.bubble {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: var(--size);
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-radius: 50%;
+  background:
+    radial-gradient(72% 72% at 32% 26%, color-mix(in srgb, currentColor 16%, transparent), transparent 70%),
+    color-mix(in srgb, currentColor 8%, var(--surface));
+  color: var(--brand);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: box-shadow 0.22s ease, border-color 0.22s ease;
+  animation: bubble-float var(--dur, 8s) ease-in-out var(--delay, 0s) infinite;
+  will-change: translate;
+}
+
+.bubble--success {
+  color: var(--success);
+}
+
+.bubble--brand {
+  color: var(--brand);
+}
+
+.bubble--gold {
+  color: var(--gold);
+}
+
+.bubble--danger {
+  color: var(--danger);
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  inset: 7%;
+  border: 1px dashed color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.bubble__fit {
+  color: currentColor;
+  font-family: var(--font-display);
+  font-size: max(12px, var(--fit, 3cqw));
+  font-weight: 660;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+
+.bubble__name {
+  display: -webkit-box;
+  overflow: hidden;
+  max-width: 76%;
+  color: var(--ink-2);
+  font-size: max(9px, var(--name, 1.4cqw));
+  font-weight: 600;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.bubble--compact .bubble__name {
+  display: none;
+}
+
+.bubble--compact .bubble__fit {
+  font-size: max(13px, calc(var(--fit, 3cqw) * 1.1));
+}
+
+/* The biggest bubbles carry a three-line role title, the rest stay at two. */
+.bubble--hero .bubble__name {
+  -webkit-line-clamp: 3;
+}
+
+.bubble:hover,
+.bubble:focus-visible {
+  z-index: 4;
+  border-color: color-mix(in srgb, currentColor 58%, transparent);
+  box-shadow: 0 20px 38px -20px color-mix(in srgb, currentColor 60%, transparent);
+  transform: translate(-50%, -50%) scale(1.07);
+  animation-play-state: paused;
+  outline: none;
+}
+
+.bubble:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 42%, transparent);
+}
+
+.bubble-card__foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+
+@keyframes bubble-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: var(--dx, 0px) var(--dy, 0px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    animation: none;
+  }
+}
+
 .side-card {
   padding: 16px;
   border: 1px solid var(--line);
