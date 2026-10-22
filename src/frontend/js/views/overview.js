@@ -4,7 +4,7 @@ import { api } from "../core/api.js";
 import { radarChart } from "../core/charts.js";
 import { fmt, html, icon } from "../core/dom.js";
 import * as store from "../core/store.js";
-import { momentumBadge, progressBar, scoreRing, statCard, toast } from "../core/ui.js";
+import { momentumBadge, progressBar, statCard, toast } from "../core/ui.js";
 
 async function loadSignals(limit) {
   try {
@@ -14,152 +14,147 @@ async function loadSignals(limit) {
   }
 }
 
-function heroAside(matches) {
-  const top = matches.matches[0];
-  return html`<div class="hero__aside">
-    ${scoreRing(matches.summary.readinessScore, { size: 128, label: "Readiness" })}
-    <div>
-      <p class="hero__aside-label">Best-fit future role</p>
-      <p class="hero__aside-role">${top.title}<span>${top.fitScore}/100 fit · ${top.family}</span></p>
-    </div>
-  </div>`;
+function animateLifeTree(root) {
+  const stage = root.querySelector("[data-tree-stage]");
+  const canvas = stage?.querySelector(".life-tree__art");
+  const context = canvas?.getContext("2d", { alpha: true });
+  if (!stage || !canvas || !context) return;
+
+  const images = {
+    colorful: new Image(),
+    harvest: new Image(),
+    botanical: new Image(),
+  };
+  images.colorful.src = new URL("../../assets/tree-colorful.png", import.meta.url).href;
+  images.harvest.src = new URL("../../assets/tree-harvest.jpg", import.meta.url).href;
+  images.botanical.src = new URL("../../assets/tree-botanical-preview.png", import.meta.url).href;
+
+  const startedAt = performance.now();
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+  function frame(now) {
+    if (!canvas.isConnected) return;
+    const { width, height } = stage.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const pixelWidth = Math.round(width * dpr);
+    const pixelHeight = Math.round(height * dpr);
+    if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
+      canvas.width = pixelWidth;
+      canvas.height = pixelHeight;
+    }
+
+    context.setTransform(dpr, 0, 0, dpr, 0, 0);
+    context.clearRect(0, 0, width, height);
+    const image = images[stage.dataset.treeStyle] || images.colorful;
+    if (image.complete && image.naturalWidth) {
+      const elapsed = now - startedAt;
+      const growth = reduceMotion || stage.dataset.treeStyle === "botanical" ? 1 : clamp((elapsed - 150) / 2800, 0, 1);
+      const phase = now * 0.00062;
+      const imageHeight = height * 1.1;
+      const imageWidth = imageHeight * (image.naturalWidth / image.naturalHeight);
+      const imageY = (height - imageHeight) / 2;
+      const bandHeight = 8;
+      const animateArtwork = stage.dataset.treeStyle === "colorful" && !reduceMotion;
+
+      context.save();
+      context.beginPath();
+      context.rect(0, height * (1 - growth), width, height * growth);
+      context.clip();
+      context.globalAlpha = growth;
+
+      for (let sourceY = 0; sourceY < image.naturalHeight; sourceY += bandHeight) {
+        const sourceHeight = Math.min(bandHeight + 1, image.naturalHeight - sourceY);
+        const y = sourceY / image.naturalHeight;
+        const crownWeight = clamp((0.72 - y) / 0.42, 0, 1);
+        const rootWeight = clamp((y - 0.72) / 0.28, 0, 1);
+        const branchWave = animateArtwork ? Math.sin(phase + y * 3.4) : 0;
+        const rootWave = animateArtwork ? Math.sin(phase * 0.82 + y * 2.1) : 0;
+        const spread = 1 + crownWeight * branchWave * 0.022 + rootWeight * (animateArtwork ? 0.022 + rootWave * 0.018 : 0);
+        const drift = crownWeight * branchWave * 9 + rootWeight * rootWave * 4;
+        const destinationY = imageY + y * imageHeight;
+        const destinationHeight = (sourceHeight / image.naturalHeight) * imageHeight + 1;
+        const destinationWidth = imageWidth * spread;
+        const destinationX = (width - destinationWidth) / 2 + drift;
+        context.drawImage(
+          image,
+          0, sourceY, image.naturalWidth, sourceHeight,
+          destinationX, destinationY, destinationWidth, destinationHeight,
+        );
+      }
+      context.restore();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
 }
 
-function heroStats(items) {
-  return html`<div class="hero__stats">
-    ${items.map((item) => html`<div class="hero__stat"><strong>${item.value}</strong><span>${item.label}</span></div>`)}
-  </div>`;
+function lifeTreeOverview({ name = "there", signalTotal = 0, hasProfile = false, topRole = null } = {}) {
+  const modules = [
+    { title: "Profile", detail: "Your starting point", href: "#/intake", state: hasProfile ? "done" : "active" },
+    { title: "Skill trends", detail: "Signals and evidence", href: "#/signals", state: hasProfile ? "active" : "locked" },
+    { title: "Career matches", detail: "Fit and skill gaps", href: "#/matches", state: "locked" },
+    { title: "Future scenarios", detail: "Compare possible outcomes", href: "#/scenarios", state: "locked" },
+    { title: "Pathway", detail: "Learning modules and SDGs", href: "#/pathway", state: "locked" },
+  ];
+  const completed = hasProfile ? 1 : 0;
+
+  return html`<section class="life-tree" aria-labelledby="life-tree-title">
+    <div class="life-tree__head">
+      <div>
+        <p class="life-tree__eyebrow">Hey ${name}, take a moment to get to know yourself.</p>
+        <h1 id="life-tree-title">Explore yourself. Grow toward what’s next.</h1>
+        <p class="life-tree__lead">Start with your interests, strengths and values to find a direction that feels like yours.</p>
+      </div>
+      <a class="life-tree__journal" href="#/pathway">${icon("calendar", 16)} Growth journal</a>
+    </div>
+
+    <div class="life-tree__progress" aria-label="Self-discovery progress">
+      <div class="life-tree__count"><strong>${completed}</strong><span>/ 5 steps complete</span></div>
+      <div class="life-tree__progress-main"><div class="life-tree__progress-label"><span>Your journey through the tree</span><span>${Math.round((completed / modules.length) * 100)}%</span></div>
+        <div class="life-tree__segments">${modules.map((_, index) => html`<i class="${index < completed ? "is-filled" : ""}"></i>`)}</div>
+      </div>
+    </div>
+
+    <div class="life-tree__switch" role="group" aria-label="Tree artwork options">
+      <button type="button" data-tree-variant="colorful" aria-pressed="false">Option 1 · Colorful canopy</button>
+      <button type="button" data-tree-variant="harvest" aria-pressed="false">Option 2 · Harvest tree</button>
+      <button type="button" class="is-selected" data-tree-variant="botanical" aria-pressed="true">Option 3 · Botanical tree</button>
+    </div>
+
+    <div class="life-tree__stage" data-tree-style="botanical" data-tree-stage>
+      <canvas class="life-tree__art" role="img" aria-label="Botanical tree of life illustration"></canvas>
+      ${modules.map((module, index) => html`<a class="life-tree__module life-tree__module--step-${index + 1} is-${module.state}" href="${module.href}" aria-label="Step ${index + 1}: ${module.title}. ${module.detail}. ${module.state === "done" ? "Complete" : module.state === "active" ? "In progress" : "Locked"}">
+        <span class="life-tree__module-step">0${index + 1}</span>
+        <span><strong>${module.title}</strong><small>${module.detail}</small></span>
+      </a>`) }
+    </div>
+    <p class="life-tree__caption">Start at the roots and follow upward: Profile → Skill trends → Career matches → Future scenarios → Pathway</p>
+    <div class="life-tree__legend"><span>Complete</span><span>In progress</span><span>Locked</span></div>
+
+    <div class="life-tree__focus">
+      <div class="life-tree__focus-copy">
+        <span class="life-tree__focus-kicker">${hasProfile ? "Growing now · Step 2 of 5" : "Start here · Step 1 of 5"}</span>
+        <h2>${hasProfile ? "Skill trends" : "Build your profile"}</h2>
+        <p>${hasProfile ? "See which skills are gaining demand, and open the evidence behind each trend." : "Set your baseline so each trend, career match and learning step can connect back to you."}</p>
+      </div>
+      <div class="life-tree__focus-meta">${completed}<small> / 5 steps</small></div>
+      <a class="btn btn--primary life-tree__continue" href="${hasProfile ? "#/signals" : "#/intake"}"><span>${hasProfile ? "Explore skill trends" : "Build your profile"}<small>${hasProfile ? "Step 2 · Signals and evidence" : "Step 1 · Your starting point"}</small></span>${icon("arrowRight", 18)}</a>
+    </div>
+
+    <div class="life-tree__below">
+      <div class="life-tree__note">${icon("activity", 14)} ${hasProfile ? "Your profile is ready. Keep exploring your values and career directions." : "Build your skills profile to start lighting up your interests and strengths."}</div>
+      ${topRole ? html`<a class="life-tree__role" href="#/matches"><span><small>Current career match</small><strong>${topRole.title}</strong></span><b>${topRole.fitScore}<small> / 100</small></b></a>` : html`<button class="life-tree__sample" type="button" data-action="use-sample">${icon("play", 14)} Preview the complete tree with a sample profile</button>`}
+      <a class="life-tree__signals" href="#/signals">${icon("activity", 14)} ${signalTotal} sourced career signals <span>Explore signals ${icon("arrowRight", 13)}</span></a>
+    </div>
+  </section>`;
 }
 
 function landing(signalData) {
-  const items = signalData.items || [];
-  const total = signalData.total || items.length;
-  const steps = [
-    { icon: "user", step: "01", title: "Capture your skills", body: "A five-minute profile of what you can actually do, not what your job title says." },
-    { icon: "activity", step: "02", title: "Read dated signals", body: "Every trend carries a publisher, a date and an evidence link — no undated claims." },
-    { icon: "target", step: "03", title: "Match future roles", body: "See fit scores, the exact skills gap and how each scenario changes the ranking." },
-    { icon: "route", step: "04", title: "Walk a pathway", body: "A sequenced plan with courses, cost, weeks and portfolio evidence, mapped to the SDGs." },
-  ];
-
-  return html`<section class="hero">
-    <div class="hero__content">
-      <p class="hero__eyebrow">${icon("sparkles", 12)} Domain 1 · Future-ready workforce</p>
-      <h1 class="hero__title">Navigate the next version of work, <em>with evidence</em>.</h1>
-      <p class="hero__lead">
-        AI Career Navigator tracks dated signals about AI and labour markets, matches your real skills to future roles,
-        and builds a reskilling pathway that shows how your next job connects to the SDGs — across more than one future.
-      </p>
-      <div class="hero__actions">
-        <a class="btn btn--primary btn--lg" href="#/intake">${icon("user", 17)} Build my skills profile</a>
-        <button class="btn btn--secondary btn--lg" type="button" data-action="use-sample">
-          ${icon("play", 16)} Explore with a sample profile
-        </button>
-      </div>
-      ${heroStats([
-        { value: total + " signals", label: "Dated & sourced" },
-        { value: "12 roles", label: "Future-role catalogue" },
-        { value: "3 futures", label: "2028 scenarios" },
-        { value: "17 SDGs", label: "Role-level mapping" },
-      ])}
-    </div>
-    <div class="hero__aside">
-      <span class="hero__aside-label">How it works</span>
-      <div class="stack" style="--gap:10px;width:100%">
-        ${steps.slice(0, 3).map(
-          (step) => html`<div class="row" style="--gap:10px;align-items:flex-start;text-align:left">
-            <span class="badge badge--brand">${step.step}</span>
-            <div>
-              <p class="hero__aside-role">${step.title}</p>
-              <p class="tiny" style="color:#8fa7b8;line-height:1.5">${step.body}</p>
-            </div>
-          </div>`,
-        )}
-      </div>
-      <a class="btn btn--secondary btn--sm btn--block" href="#/signals">See the signal layer ${icon("arrowRight", 14)}</a>
-    </div>
-  </section>
-
-  <div class="kpi-grid">
-    ${statCard({ label: "Signal records", value: total, icon: "activity", hint: "Each record links to its publisher and date." })}
-    ${statCard({ label: "Future roles", value: (store.getState().catalog?.roles || []).length, icon: "target", hint: "Modelled demand, salary band and required skills." })}
-    ${statCard({ label: "Scenarios", value: (store.getState().catalog?.scenarios || []).length, icon: "compare", hint: "Change the assumptions, not just the numbers." })}
-    ${statCard({ label: "SDGs mapped", value: (store.getState().catalog?.sdgs || []).length, icon: "globe", hint: "Every role carries a weighted SDG contribution." })}
-  </div>
-
-  <div class="section-head" style="margin-bottom:12px">
-    <div>
-      <h2 class="section-title">From signal to plan in four steps</h2>
-      <p class="section-desc">Every must-have in the brief is a working screen.</p>
-    </div>
-  </div>
-  <div class="grid grid--4">
-    ${steps.map(
-      (step, index) => html`<article class="panel reveal" style="--i:${index + 1}">
-        <div class="row row--between" style="margin-bottom:10px">
-          <span class="stat-card__icon">${icon(step.icon, 17)}</span>
-          <span class="mono faint">${step.step}</span>
-        </div>
-        <h3 class="panel__title">${step.title}</h3>
-        <p class="small muted" style="margin-top:6px">${step.body}</p>
-      </article>`,
-    )}
-  </div>
-
-  <div class="split" style="margin-top:18px">
-    <section class="panel">
-      <div class="panel__head">
-        <div>
-          <h2 class="panel__title">Latest signals</h2>
-          <p class="panel__hint">Sourced, dated and ready to be challenged.</p>
-        </div>
-        <a class="btn btn--ghost btn--sm" href="#/signals">All signals ${icon("arrowRight", 14)}</a>
-      </div>
-      ${items.length
-        ? items.map(
-            (signal) => html`<a class="signal-mini" href="#/signals?highlight=${signal.id}">
-              <span class="signal-mini__title">${signal.title}</span>
-              <span class="signal-mini__meta">
-                ${momentumBadge(signal.momentum)}
-                <span>${signal.publisher}</span>
-                <span>·</span>
-                <span>${fmt.date(signal.publishedAt)}</span>
-              </span>
-            </a>`,
-          )
-        : html`<p class="small muted">Connect the API to load signals.</p>`}
-    </section>
-    <div>
-      <section class="panel">
-        <h2 class="panel__title">Why this is different</h2>
-        <ul class="stack" style="--gap:12px;margin-top:12px">
-          <li class="row" style="align-items:flex-start;--gap:9px">
-            <span style="color:var(--brand);margin-top:2px">${icon("calendar", 16)}</span>
-            <span class="small muted"><strong class="strong">Dated sources.</strong> No undated trend claims: every insight carries a publisher, a date and a link.</span>
-          </li>
-          <li class="row" style="align-items:flex-start;--gap:9px">
-            <span style="color:var(--brand);margin-top:2px">${icon("compare", 16)}</span>
-            <span class="small muted"><strong class="strong">Scenario-aware.</strong> The same profile scores differently under acceleration and regulation — so plans survive more than one future.</span>
-          </li>
-          <li class="row" style="align-items:flex-start;--gap:9px">
-            <span style="color:var(--brand);margin-top:2px">${icon("globe", 16)}</span>
-            <span class="small muted"><strong class="strong">SDG-linked.</strong> Roles connect to the 17 goals with rationale, not a decorative logo strip.</span>
-          </li>
-        </ul>
-      </section>
-      <section class="panel" style="margin-top:12px">
-        <h2 class="panel__title">Running without the backend</h2>
-        <p class="small muted" style="margin-top:6px">
-          The interface ships with a complete demo transport. If <code class="mono">/api/v1/health</code> does not answer, it
-          falls back to dated fixtures and shows a clear demo badge.
-        </p>
-        <a class="btn btn--secondary btn--sm" style="margin-top:12px" href="#/connect">
-          ${icon("plug", 15)} Integration status
-        </a>
-      </section>
-    </div>
-  </div>`;
+  const total = signalData.total || (signalData.items || []).length;
+  return lifeTreeOverview({ signalTotal: total });
 }
-
 const RADAR_LABELS = {
   "Data & AI": "Data & AI",
   "Digital & Systems": "Digital",
@@ -242,40 +237,14 @@ function dashboard(state, matches, signals, sdgMap) {
   const profile = state.profile;
   const catalog = state.catalog;
   const top = matches.matches[0];
-  const scenario = (catalog.scenarios || []).find((item) => item.id === matches.scenarioId) || catalog.scenarios[0];
   const sensitivity = scenarioSensitivity(top, catalog);
   const radar = categoryRadar(profile, catalog);
   const related = (signals.items || []).filter((signal) =>
     (signal.affectedRoles || []).some((role) => role.roleId === top.roleId),
   );
   const signalList = (related.length ? related : signals.items || []).slice(0, 3);
-  const confidence = scenario.confidence ? Math.round(scenario.confidence * 100) + "% confidence" : "scenario";
 
-  return html`<section class="hero">
-    <div class="hero__content">
-      <p class="hero__eyebrow">${icon("sparkles", 12)} ${scenario.name} · ${confidence}</p>
-      <h1 class="hero__title">${profile.name.split(" ")[0]}, your strongest move is <em>${top.title}</em>.</h1>
-      <p class="hero__lead">
-        ${top.fitScore}/100 fit against ${top.matchedSkills.length} skills you already have, with ${matches.summary.skillsToClose}
-        skills to close. ${top.scenarioNote || "The plan below adapts when the scenario changes."}
-      </p>
-      <div class="hero__actions">
-        <a class="btn btn--primary btn--lg" href="#/matches">${icon("target", 17)} See all matches</a>
-        <a class="btn btn--secondary btn--lg" href="#/pathway">${icon("route", 16)} Open my pathway</a>
-      </div>
-      ${heroStats([
-        { value: matches.matches.length, label: "Roles scored" },
-        { value: top.demandIndex, label: "Demand index" },
-        {
-          value: fmt.money(top.salary.min, top.salary.currency) + "–" + fmt.money(top.salary.max, top.salary.currency),
-          label: "Salary band",
-        },
-        { value: fmt.relative(signals.lastRefreshedAt), label: "Signals refreshed" },
-      ])}
-    </div>
-    ${heroAside(matches)}
-  </section>
-
+  return html`${lifeTreeOverview({ name: profile.name.split(" ")[0], signalTotal: signals.total || (signals.items || []).length, hasProfile: true, topRole: top })}
   <div class="kpi-grid">
     ${statCard({
       label: "Readiness score",
@@ -488,12 +457,26 @@ export const overviewView = {
   },
 
   mount(root) {
+    animateLifeTree(root);
     root.addEventListener("click", (event) => {
-      const target =
-        event.target instanceof Element ? event.target.closest('[data-action="generate-briefing"]') : null;
-      if (!target) return;
-      event.preventDefault();
-      generateBriefing(root);
+      const element = event.target instanceof Element ? event.target : null;
+      const variant = element?.closest("[data-tree-variant]");
+      if (variant) {
+        const stage = root.querySelector("[data-tree-stage]");
+        if (stage) stage.dataset.treeStyle = variant.dataset.treeVariant;
+        root.querySelectorAll("[data-tree-variant]").forEach((button) => {
+          const selected = button === variant;
+          button.classList.toggle("is-selected", selected);
+          button.setAttribute("aria-pressed", String(selected));
+        });
+        return;
+      }
+
+      const target = element?.closest('[data-action="generate-briefing"]');
+      if (target) {
+        event.preventDefault();
+        generateBriefing(root);
+      }
     });
   },
 };
