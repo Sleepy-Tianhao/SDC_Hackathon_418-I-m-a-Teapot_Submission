@@ -25,7 +25,7 @@
   overflow-y: auto;
   color: var(--sidebar-ink);
   background:
-    radial-gradient(420px 240px at 10% 0%, rgba(53, 199, 165, 0.16), transparent 70%),
+    /* radial-gradient(420px 240px at 10% 0%, rgba(254, 164, 67, 0.5), transparent 70%), */
     linear-gradient(180deg, var(--sidebar) 0%, var(--sidebar-2) 62%, var(--sidebar) 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -335,9 +335,7 @@
   height: 28px;
   padding: 0 26px 0 4px;
   border: 0;
-  background: transparent
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238795a7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
-    no-repeat right 2px center;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238795a7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 2px center;
   color: var(--ink);
   font-size: 12px;
   font-weight: 600;
@@ -505,6 +503,7 @@
   .grid--4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
   .grid--3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -514,6 +513,7 @@
   .split {
     grid-template-columns: 1fr;
   }
+
   .sticky {
     position: static;
   }
@@ -555,6 +555,7 @@
 }
 
 @media (max-width: 720px) {
+
   .grid--2,
   .grid--3,
   .grid--4 {
@@ -589,6 +590,7 @@
 }
 
 @media print {
+
   .sidebar,
   .topbar,
   .page-foot,
