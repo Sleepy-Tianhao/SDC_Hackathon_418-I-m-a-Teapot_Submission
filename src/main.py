@@ -1,185 +1,127 @@
+"""FastAPI entry point for AI Career Navigator.
+
+This module adapts the contract-complete reference implementation in
+docs/backend-integration/reference_api.py to FastAPI. It serves both the
+frontend and /api/v1 on the same origin, which avoids CORS and keeps the
+frontend's default apiBaseUrl (/api/v1) working without configuration.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import importlib.util
 import json
+import mimetypes
 import os
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any
 
-import pandas as pd
-import requests
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-
-
-def load_dotenv(path: Path) -> None:
-    """Load KEY=VALUE pairs from .env without pulling in an extra dependency."""
-    if not path.is_file():
-        return
-    for raw_line in path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, _, value = line.partition("=")
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        if key and key not in os.environ:
-            os.environ[key] = value
-
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
 ROOT = Path(__file__).resolve().parent.parent
-load_dotenv(ROOT / ".env")
+REFERENCE_PATH = ROOT / "docs" / "backend-integration" / "reference_api.py"
+FRONTEND = ROOT / "src" / "frontend"
+API_PREFIX = "/api/v1"
 
-app = FastAPI(title="SDC Hackathon Backend")
 
-@app.get("/")
-def read_root():
-    return {"message": "Backend is running!", "status": "ok"}
+def _load_reference():
+    spec = importlib.util.spec_from_file_location("aicn_reference_api", REFERENCE_PATH)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Could not load the API reference implementation: " + str(REFERENCE_PATH))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
-@app.get("/api/health")
-def health_check():
-    return {"status": "healthy"}
 
-class UserProfile(BaseModel):
-    skills: Optional[List[str]] = []
-    experience: Optional[Any] = None
-    constraints: Optional[List[str]] = []
+reference = _load_reference()
 
-@app.post("/api/profile", status_code=201)
-def create_profile(profile: UserProfile):
-    return {
-        "id": "user_001",
-        "skills": profile.skills or ["Python", "SQL"],
-        "constraints": profile.constraints or ["Malaysia", "Remote"],
-    }
+mimetypes.add_type("image/webp", ".webp")
+app = FastAPI(title="AI Career Navigator API", version="1.0.0")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/api/profile/{profile_id}")
-def get_profile(profile_id: str):
-    if profile_id == "missing":
-        raise HTTPException(status_code=404, detail="Profile not found")
-    return {"id": profile_id, "skills": ["Python", "Data Analysis"], "constraints": ["Malaysia"]}
 
-@app.patch("/api/profile/{profile_id}")
-def update_profile(profile_id: str, profile: UserProfile):
-    return {"id": profile_id, "skills": profile.skills, "status": "updated"}
-
-@app.post("/api/match")
-def match_roles(payload: dict = None):
-    scenario = "fast_ai" if payload and payload.get("scenario") == "fast_ai" else "moderate"
-    return {
-        "scenarioId": scenario,
-        "summary": {"topRoleId": "role_001"},
-        "matches": [
-            {
-                "roleId": "role_001", "roleName": "AI Data Analyst", "fitScore": 85,
-                "gapRows": [{"skill": "Machine Learning", "importance": "High"}],
-                "explanation": "Based on your Python skills."
+def _error_response(error: Exception) -> JSONResponse:
+    return JSONResponse(
+        status_code=getattr(error, "status", 500),
+        content={
+            "error": {
+                "code": getattr(error, "code", "internal_error"),
+                "message": getattr(error, "message", "Unexpected server error."),
+                "details": getattr(error, "details", None),
             }
-        ]
-    }
+        },
+    )
 
 
-@app.post("/api/stream")
-async def stream_analysis():
-    return {"meta": {"status": "success"}, "tokens": ["mock", "stream"], "done": True, "analysis": "Full analysis"}
-# ---------- 以下为测试接口 ----------
-
-# 模拟数据结构（原名 UserProfile，与上面的模型重名会让前者失效）
-class PathwayRequest(BaseModel):
-    roleId: str
-    skills: List[str]
-
-# 1. 测试连通性接口 (GET)
-@app.get("/api/hello")
-def hello():
-    return {"message": "后端连接成功！", "status": "ok"}
-
-
-# ================= 全量数据智能检索接口 =================
-@app.post("/api/pathway")
-def generate_pathway(profile: PathwayRequest):
-    api_key = os.getenv("DEEPSEEK_API_KEY") or os.getenv("LLM_API_KEY")
-    if not api_key:
-        return {"error": "请配置 DEEPSEEK_API_KEY（或 LLM_API_KEY）"}
-
-    user_skill = profile.skills[0] if profile.skills else ""
-    user_role = profile.roleId
-
-    context_parts = []
-
-    # 数据文件放在 src/backend/data/ 目录下
-    data_files = {
-        "全国年度数据": ROOT / "src" / "backend" / "data" / "01_national_annual_series.csv",
-        "技能薪资": ROOT / "src" / "backend" / "data" / "02_salary_by_qualification_skill_gender_location.csv",
-        "行业分布": ROOT / "src" / "backend" / "data" / "03_industry_distribution.csv",
-        "各州薪资": ROOT / "src" / "backend" / "data" / "04_salary_by_state.csv",
-        "就业率": ROOT / "src" / "backend" / "data" / "05_mohe_employment_rate.csv",
-        "全球年度数据": ROOT / "src" / "backend" / "data" / "06_global_annual_series.csv",
-        "全球薪资": ROOT / "src" / "backend" / "data" / "07_global_salary_employment_detail.csv",
-        "数据来源": ROOT / "src" / "backend" / "data" / "08_source_urls.csv",
-        "综合Excel": ROOT / "src" / "backend" / "data" / "malaysia_graduate_labour_market.xlsx",
-    }
-
-    for name, path in data_files.items():
-        try:
-            if not path.is_file():
-                print(f"数据集缺失，跳过 {name}: {path}")
-                continue
-            if path.suffix == ".xlsx":
-                df = pd.read_excel(path)
-            else:
-                df = pd.read_csv(path)
-            
-            # 智能匹配用户技能或岗位
-            matched_rows = df[df.apply(lambda row: row.astype(str).str.contains(user_skill, case=False).any() or 
-                                                  row.astype(str).str.contains(user_role, case=False).any(), axis=1)]
-            
-            if not matched_rows.empty:
-                context_parts.append(f"【{name}匹配】: {matched_rows.head(2).to_dict('records')}")
-            elif name in ["全国年度数据", "行业分布"]:
-                context_parts.append(f"【{name}宏观背景】: {df.head(1).to_dict('records')}")
-                
-        except Exception as e:
-            print(f"读取 {name} 失败: {e}")
-            continue
-
-    real_data_context = "\n".join(context_parts)
-    if not real_data_context:
-        real_data_context = "暂无直接数据，请基于当前AI发展趋势分析。"
-
-    # 构造 Prompt 发给大模型
-    prompt = f"""
-    你是一个顶级的AI职业规划师。
-    用户目标岗位：{user_role}，现有技能：{profile.skills}。
-    
-    以下是官方真实数据（包括薪资、行业、就业率等），请务必作为重要参考：
-    {real_data_context}
-    
-    请生成个性化技能重塑路径。如果真实数据里显示该岗位风险高或薪资低，请在路径中加入警告和建议。
-    必须严格返回纯 JSON 格式，不要包含 Markdown 标记：
-    {{
-        "status": "success",
-        "roleId": "{user_role}",
-        "pathway": ["步骤1（结合真实数据）", "步骤2", "步骤3"],
-        "sdg": "最合适的SDG",
-        "risk_score": 0-100
-    }}
-    """
-
-    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-    base_url = os.getenv("DEEPSEEK_BASE_URL") or os.getenv("LLM_BASE_URL") or "https://api.deepseek.com"
-    data = {
-        "model": os.getenv("LLM_MODEL") or "deepseek-chat",
-        "messages": [{"role": "user", "content": prompt}],
-        "response_format": {"type": "json_object"}
-    }
-
+async def _read_body(request: Request) -> dict:
+    if request.method not in ("POST", "PATCH"):
+        return {}
+    raw = await request.body()
+    if not raw:
+        return {}
     try:
-        response = requests.post(
-            f"{base_url.rstrip('/')}/chat/completions", headers=headers, json=data, timeout=60
-        )
-        response.raise_for_status()
-        ai_content = response.json()["choices"][0]["message"]["content"]
-        return json.loads(ai_content)
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
+        body = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        raise reference.ApiError(400, "invalid_json", "Request body must be valid JSON.")
+    if not isinstance(body, dict):
+        raise reference.ApiError(400, "invalid_body", "Request body must be a JSON object.")
+    return body
+
+
+def _sse_frame(event: str, payload: dict) -> str:
+    return "event: " + event + "\ndata: " + json.dumps(payload, ensure_ascii=False) + "\n\n"
+
+
+def _stream_analysis(profile: dict, scenario_id: str, role_id: str | None) -> StreamingResponse:
+    async def generate():
+        scenario = reference.SCENARIOS.get(scenario_id) or reference.CATALOG["scenarios"][0]
+        matches = reference.build_matches(profile, scenario["id"])
+        pathway = reference.build_pathway(profile, matches, scenario["id"], role_id)
+        analysis = reference.build_analysis(profile, matches, scenario, pathway)
+
+        yield _sse_frame("meta", {"provider": analysis["provider"], "model": analysis["model"], "scenarioId": scenario["id"]})
+        words = analysis["narrative"].split(" ")
+        for index, word in enumerate(words):
+            text = word + (" " if index < len(words) - 1 else "")
+            yield _sse_frame("token", {"text": text})
+            await asyncio.sleep(0.015)
+        yield _sse_frame("done", {"analysis": analysis})
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+@app.api_route("/api/v1/{path:path}", methods=["GET", "POST", "PATCH"])
+async def api(path: str, request: Request):
+    route_path = "/" + path if path else "/"
+    query = {key: value for key, value in request.query_params.items()}
+    try:
+        body = await _read_body(request)
+        result = reference.route(request.method, route_path, query, body)
+        if isinstance(result, tuple) and result and result[0] == "stream":
+            return _stream_analysis(result[1], result[2], result[3])
+        status, payload = result
+        return JSONResponse(status_code=status, content=payload)
+    except reference.ApiError as error:
+        return _error_response(error)
+    except Exception as error:  # pragma: no cover - defensive
+        return _error_response(error)
+
+
+# The static mount must come after the API route. The frontend uses hash routing,
+# so a normal static file server is enough for all of its screens.
+app.mount("/", StaticFiles(directory=str(FRONTEND), html=True), name="frontend")
 
 
 if __name__ == "__main__":

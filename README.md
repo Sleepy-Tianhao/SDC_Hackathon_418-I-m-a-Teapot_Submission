@@ -206,18 +206,21 @@ python tools/serve_frontend.py --port 8000
 No API needed: the UI detects the missing backend and runs on dated fixtures, with a visible
 **Offline demo dataset** badge. Add `#/overview?sample=1` to seed a sample profile.
 
-### 3. With the production backend
+### 3. With the FastAPI backend
 
-The FastAPI service is being implemented by the backend owner; `src/main.py` is still the
-project template. Once it serves the contract and mounts `src/frontend`, run:
+`src/main.py` now exposes the same `/api/v1` contract as the reference API and serves
+`src/frontend` at the same origin, so the UI automatically uses live data:
 
 ~~~bash
 pip install -r requirements.txt
 python src/main.py
+# open http://127.0.0.1:8000/
 ~~~
 
-Until then, use the reference API in step 1 — it implements the same contract, including SSE
-and the SQLite store. Integration steps: [docs/BACKEND_INTEGRATION.md](docs/BACKEND_INTEGRATION.md).
+It uses the contract-complete implementation in
+`docs/backend-integration/reference_api.py` for routing, matching, pathways, SDG mapping,
+SQLite persistence and SSE. Set `API_PORT` if port 8000 is already in use. Integration steps:
+[docs/BACKEND_INTEGRATION.md](docs/BACKEND_INTEGRATION.md).
 
 ### Tests
 
