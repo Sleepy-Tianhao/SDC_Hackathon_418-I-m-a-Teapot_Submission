@@ -1,142 +1,114 @@
-"""FastAPI entry point for AI Career Navigator.
-
-The API engine lives under src/backend. It reads the real labour datasets in
-src/backend/data; it does not import the reference implementation under docs/.
-"""
-
-from __future__ import annotations
-
-import asyncio
-import json
-import mimetypes
 import os
-import sys
+import requests
+import pandas as pd
+import json
 from pathlib import Path
-
 from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from typing import List
+from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
+load_dotenv()
 
-from src.backend import engine  # noqa: E402
+# 定义请求的数据结构
+class UserProfile(BaseModel):
+    roleId: str
+    skills: List[str]
 
-FRONTEND = ROOT / "src" / "frontend"
-LEGACY_FRONTEND = ROOT / "src" / "frontend_bak"
-mimetypes.add_type("image/webp", ".webp")
+app = FastAPI(title="SDC Hackathon Backend")
 
-app = FastAPI(title="AI Career Navigator API", version="1.0.0")
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# ================= 接入真实大模型 =================
+ROOT = Path(__file__).resolve().parent.parent # 获取根目录
 
+@app.post("/api/pathway")
+def generate_pathway(profile: UserProfile):
+    api_key = os.getenv("DEEPSEEK_API_KEY")
+    if not api_key:
+        return {"error": "请配置 DEEPSEEK_API_KEY"}
 
-def _error_response(error: Exception) -> JSONResponse:
-    return JSONResponse(
-        status_code=getattr(error, "status", 500),
-        content={
-            "error": {
-                "code": getattr(error, "code", "internal_error"),
-                "message": getattr(error, "message", "Unexpected server error."),
-                "details": getattr(error, "details", None),
-            }
-        },
-    )
+    user_skill = profile.skills[0] if profile.skills else ""
+    user_role = profile.roleId
 
+    context_parts = []
+    
+    # 数据路径（跟你左侧的文件夹对应）
+    data_files = {
+        "全国年度数据": ROOT / "src" / "backend" / "data" / "01_national_annual_series.csv",
+        "技能薪资": ROOT / "src" / "backend" / "data" / "02_salary_by_qualification_skill_gender_location.csv",
+        "行业分布": ROOT / "src" / "backend" / "data" / "03_industry_distribution.csv",
+        "各州薪资": ROOT / "src" / "backend" / "data" / "04_salary_by_state.csv",
+        "就业率": ROOT / "src" / "backend" / "data" / "05_mohe_employment_rate.csv",
+        "全球年度数据": ROOT / "src" / "backend" / "data" / "06_global_annual_series.csv",
+        "全球薪资": ROOT / "src" / "backend" / "data" / "07_global_salary_employment_detail.csv",
+        "数据来源": ROOT / "src" / "backend" / "data" / "08_source_urls.csv",
+        "综合Excel": ROOT / "src" / "backend" / "data" / "malaysia_graduate_labour_market.xlsx",
+    }
 
-async def _read_body(request: Request) -> dict:
-    if request.method not in ("POST", "PATCH"):
-        return {}
-    raw = await request.body()
-    if not raw:
-        return {}
+    for name, path in data_files.items():
+        try:
+            if not path.is_file():
+                continue
+            if path.suffix == ".xlsx":
+                df = pd.read_excel(path)
+            else:
+                df = pd.read_csv(path)
+            
+            matched_rows = df[df.apply(lambda row: row.astype(str).str.contains(user_skill, case=False).any() or 
+                                                  row.astype(str).str.contains(user_role, case=False).any(), axis=1)]
+            
+            if not matched_rows.empty:
+                context_parts.append(f"【{name}匹配】: {matched_rows.head(2).to_dict('records')}")
+            elif name in ["全国年度数据", "行业分布"]:
+                context_parts.append(f"【{name}宏观背景】: {df.head(1).to_dict('records')}")
+                
+        except Exception as e:
+            print(f"读取 {name} 失败: {e}")
+            continue
+
+    real_data_context = "\n".join(context_parts)
+    if not real_data_context:
+        real_data_context = "暂无直接数据，请基于当前AI发展趋势分析。"
+
+    prompt = f"""
+    你是一个顶级的AI职业规划师。
+    用户目标岗位：{user_role}，现有技能：{user_skill}。
+    
+    以下是官方真实数据（包括薪资、行业、就业率等），请务必作为重要参考：
+    {real_data_context}
+    
+    请生成个性化技能重塑路径。如果真实数据里显示该岗位风险高或薪资低，请在路径中加入警告和建议。
+    必须严格返回纯 JSON 格式，不要包含 Markdown 标记：
+    {{
+        "status": "success",
+        "roleId": "{user_role}",
+        "pathway": ["步骤1（结合真实数据）", "步骤2", "步骤3"],
+        "sdg": "最合适的SDG",
+        "risk_score": 0-100
+    }}
+    """
+
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    data = {
+        "model": "deepseek-chat",
+        "messages": [{"role": "user", "content": prompt}],
+        "response_format": {"type": "json_object"}
+    }
+
     try:
-        body = json.loads(raw.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError):
-        raise engine.ApiError(400, "invalid_json", "Request body must be valid JSON.")
-    if not isinstance(body, dict):
-        raise engine.ApiError(400, "invalid_body", "Request body must be a JSON object.")
-    return body
+        response = requests.post("https://api.deepseek.com/chat/completions", headers=headers, json=data)
+        response.raise_for_status()
+        ai_content = response.json()["choices"][0]["message"]["content"]
+        return json.loads(ai_content)
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
-
-def _sse_frame(event: str, payload: dict) -> str:
-    return "event: " + event + "\ndata: " + json.dumps(payload, ensure_ascii=False) + "\n\n"
-
-
-def _stream_analysis(profile: dict, scenario_id: str, role_id: str | None) -> StreamingResponse:
-    async def generate():
-        scenario = engine.SCENARIOS.get(scenario_id) or engine.CATALOG["scenarios"][0]
-        matches = engine.build_matches(profile, scenario["id"])
-        pathway = engine.build_pathway(profile, matches, scenario["id"], role_id)
-        analysis = engine.build_analysis(profile, matches, scenario, pathway)
-        yield _sse_frame("meta", {"provider": analysis["provider"], "model": analysis["model"], "scenarioId": scenario["id"]})
-        words = analysis["narrative"].split(" ")
-        for index, word in enumerate(words):
-            yield _sse_frame("token", {"text": word + (" " if index < len(words) - 1 else "")})
-            await asyncio.sleep(0.015)
-        yield _sse_frame("done", {"analysis": analysis})
-
-    return StreamingResponse(
-        generate(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
-
-
-@app.api_route("/api/v1/{path:path}", methods=["GET", "POST", "PATCH"])
-async def api(path: str, request: Request):
-    route_path = "/" + path if path else "/"
-    query = {key: value for key, value in request.query_params.items()}
-    try:
-        body = await _read_body(request)
-        result = engine.route(request.method, route_path, query, body)
-        if isinstance(result, tuple) and result and result[0] == "stream":
-            return _stream_analysis(result[1], result[2], result[3])
-        status, payload = result
-        return JSONResponse(status_code=status, content=payload)
-    except engine.ApiError as error:
-        return _error_response(error)
-    except Exception as error:  # pragma: no cover - defensive
-        return _error_response(error)
-
-
-# The current Argon design is the default. The previous visual design is kept
-# as a separate, self-contained site under /legacy/ so it can be compared and
-# restored without touching this one.
-if LEGACY_FRONTEND.is_dir():
-
-    @app.get("/legacy", include_in_schema=False)
-    def legacy_redirect():
-        return RedirectResponse("/legacy/")
-
-    @app.get("/legacy/", include_in_schema=False)
-    def legacy_index():
-        index = LEGACY_FRONTEND / "index.html"
-        if not index.is_file():
-            return RedirectResponse("/")
-        page = index.read_text(encoding="utf-8")
-        switch = """
-<a href="/" style="position:fixed;right:18px;bottom:18px;z-index:2147483647;display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border-radius:999px;background:linear-gradient(135deg,#5e72e4,#825ee4);color:#fff;font:600 12px/1 'Segoe UI',sans-serif;text-decoration:none;box-shadow:0 12px 28px -10px rgba(94,114,228,.75)">Argon design</a>
-"""
-        if "</body>" in page:
-            page = page.replace("</body>", switch + "</body>", 1)
-        return HTMLResponse(page)
-
-    app.mount("/legacy", StaticFiles(directory=str(LEGACY_FRONTEND), html=True), name="legacy")
-
-app.mount("/", StaticFiles(directory=str(FRONTEND), html=True), name="frontend")
-
+# ================= 静态文件挂载 (如果有前端) =================
+FRONTEND_DIR = ROOT / "src" / "frontend"
+if FRONTEND_DIR.exists():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
 
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(
-        app,
-        host=os.getenv("API_HOST", "127.0.0.1"),
-        port=int(os.getenv("API_PORT", "8000")),
-    )
+    uvicorn.run(app, host="127.0.0.1", port=8000)
