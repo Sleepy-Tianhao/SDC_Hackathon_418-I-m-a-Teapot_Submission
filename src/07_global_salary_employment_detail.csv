@@ -1,0 +1,54 @@
+﻿country,data_year,dimension,category,salary_value_local,salary_currency,salary_period,salary_type,unemployment_rate_pct,underemployment_rate_pct,employment_rate_pct,employment_rate_denominator,metric_basis,release_status,notes
+United States,2026,学科起薪,计算机科学 Computer Science,81535.0,USD,annual,起薪预测（新毕业生）,,,,,NACE 2026届本科新毕业生,已发布（2026-02）,"2025实际起薪$76,251；同比+6.9%。"
+United States,2025,学科起薪,全学科整体,61747.0,USD,annual,起薪（新毕业生）,,,,,NACE 2025届本科新毕业生,已发布,"有薪实习且有offer者$69,521。"
+United States,2025,学科起薪,有薪实习且有offer者,69521.0,USD,annual,起薪（新毕业生子样本）,,,,,NACE 2025届本科新毕业生,已发布,"显著高于整体$61,747。"
+United States,2026,专业,航空航天工程 Aerospace Engineering,85000.0,USD,annual,职业生涯早期中位年薪,2.2,14.7,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,"中期中位年薪$130,000。"
+United States,2026,专业,会计 Accounting,68000.0,USD,annual,职业生涯早期中位年薪,2.6,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,"中期中位年薪$97,000。"
+United States,2026,专业,农业 Agriculture,56000.0,USD,annual,职业生涯早期中位年薪,1.4,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,"中期中位年薪$80,000。"
+United States,2026,专业,生物化学 Biochemistry,52000.0,USD,annual,职业生涯早期中位年薪,2.7,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,"中期中位年薪$100,000。"
+United States,2026,专业,商业分析 Business Analytics,72000.0,USD,annual,职业生涯早期中位年薪,5.0,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,"中期中位年薪$109,000。"
+United States,2026,专业,计算机科学 Computer Science,,USD,annual,职业生涯早期中位年薪,7.0,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,失业率7.0%；全国平均不充分就业率4.3%。
+United States,2026,专业,计算机工程 Computer Engineering,90000.0,USD,annual,职业生涯早期中位年薪,7.8,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,失业率7.8%。
+United States,2026,专业,信息系统管理 Information Systems Mgmt,,USD,annual,职业生涯早期中位年薪,6.0,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,失业率6.0%。
+United States,2026,专业,生物学 Biology,,USD,annual,职业生涯早期中位年薪,4.3,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,"薪资低于$40,000；需研究生学习提升。"
+United States,2026,专业,人类学 Anthropology,45000.0,USD,annual,职业生涯早期中位年薪,7.9,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,"中期中位年薪$65,000；调查中失业率最高之一。"
+United States,2026,专业,艺术史 Art History,45000.0,USD,annual,职业生涯早期中位年薪,6.7,,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,"中期中位年薪$91,000。"
+United States,2026,专业,刑事司法 Criminal Justice,,USD,annual,职业生涯早期中位年薪,,66.0,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,不充分就业率近66%。
+United States,2026,专业,表演艺术 Performing Arts,,USD,annual,职业生涯早期中位年薪,,64.0,,,纽约联储22–27岁近期毕业生,已发布（2026-02）,不充分就业率近64%。
+United Kingdom,2024,学科薪资,医学与牙科 Medicine & Dentistry,43749.0,GBP,annual,毕业后15个月全职中位年薪,,,,,HESA 2023/24届,已发布（2026-06-04）,"全学科最高；另一口径超过£53,000。"
+United Kingdom,2024,学科薪资,工程与技术 Engineering & Technology,,GBP,annual,毕业后15个月,,,92.7,含深造的就业率,HESA 2023/24届,已发布（2026-06-04）,就业率含深造92.7%；8.2%继续深造。
+United Kingdom,2024,学历薪资,PGT授课型研究生,34000.0,GBP,annual,毕业后15个月全职中位年薪,,,,,HESA 2024/25,已发布,"约£34,000。"
+United Kingdom,2024,全学科,全学科中位,30000.0,GBP,annual,毕业后15个月全职中位年薪,,,81.0,paid/unpaid work比例,HESA 2023/24届,已发布（2026-06-04）,"较2023/24届£28,500上升；81%在paid/unpaid work。"
+United Kingdom,2024,学科薪资,媒体、新闻与传播 Media/Journalism,25938.0,GBP,annual,毕业后15个月全职中位年薪,,,,,HESA 2023/24届,已发布（2026-06-04）,全学科最低。
+United Kingdom,2024,课程组,创意艺术与设计（University of West London）,24900.0,GBP,annual,毕业后15个月中位年薪,23.7,,,,HESA课程组层面,已发布,课程组层面最差之一。
+United Kingdom,2024,课程组,商业与管理（University of East London）,29600.0,GBP,annual,毕业后15个月中位年薪,22.6,,,,HESA课程组层面,已发布,课程组层面。
+United Kingdom,2024,院校,Imperial College London（全校）,39000.0,GBP,annual,平均年薪,,,96.5,高技能就业比例（15个月内）,HESA院校层面,已发布,院校层面最高之一。
+Japan,2026,学历起薪,大学院（硕士/博士）,3444000.0,JPY,annual,初任给（起薪）,,,,,2026届初任给,已发布,平均月薪约28.7万日元；比本科高46.8万日元/年。
+Japan,2026,学历起薪,大学本科,2976000.0,JPY,annual,初任给（起薪）,,,,,2026届初任给,已发布,平均月薪约24.8万日元；日经调查平均起薪25.4228万日元/月，+4.9%。
+Japan,2026,学历起薪,高专/短大,2676000.0,JPY,annual,初任给（起薪）,,,,,2026届初任给,已发布,比本科低30.0万日元/年。
+Japan,2026,学历起薪,高中,2364000.0,JPY,annual,初任给（起薪）,,,,,2026届初任给,已发布,比本科低61.2万日元/年。
+South Korea,2024,学历薪资,博士,6532000.0,KRW,monthly,月均收入（就业者）,,,,,2024年毕业生就业统计,已发布（2025-12）,"年均约7,838万韩元。"
+South Korea,2024,学历薪资,硕士,4962000.0,KRW,monthly,月均收入（就业者）,,,,,2024年毕业生就业统计,已发布（2025-12）,"年均约5,954万韩元。"
+South Korea,2024,学历薪资,一般大学（本科）,3146000.0,KRW,monthly,月均收入（就业者）,,,,,2024年毕业生就业统计,已发布（2025-12）,"年均约3,775万韩元。"
+South Korea,2024,学历薪资,专门大学（专科）,2693000.0,KRW,monthly,月均收入（就业者）,,,,,2024年毕业生就业统计,已发布（2025-12）,"年均约3,232万韩元。"
+South Korea,2024,学历薪资,全体平均,3426000.0,KRW,monthly,月均收入（就业者）,,,69.5,就业对象者,2024年毕业生就业统计,已发布（2025-12）,"年均约4,111万韩元；就业率69.5%。"
+South Korea,2024,学科就业率,教育,,KRW,,,,,71.1,就业对象者,2024年毕业生就业统计,已发布（2025-12）,比整体均值69.5%高1.6pp。
+South Korea,2024,学科就业率,工学,,KRW,,,,,70.4,就业对象者,2024年毕业生就业统计,已发布（2025-12）,比整体均值高0.9pp。
+South Korea,2024,学科就业率,社会,,KRW,,,,,69.0,就业对象者,2024年毕业生就业统计,已发布（2025-12）,比整体均值低0.5pp。
+South Korea,2024,学科就业率,艺术体育,,KRW,,,,,66.7,就业对象者,2024年毕业生就业统计,已发布（2025-12）,比整体均值低2.8pp。
+South Korea,2024,学科就业率,自然科学,,KRW,,,,,65.4,就业对象者,2024年毕业生就业统计,已发布（2025-12）,比整体均值低4.1pp。
+South Korea,2024,学科就业率,人文,,KRW,,,,,61.1,就业对象者,2024年毕业生就业统计,已发布（2025-12）,比整体均值低8.4pp；与教育类差距10pp。
+Australia,2025,学习领域薪资,本科整体,77000.0,AUD,annual,毕业后4–6个月全职中位年薪,,,75.4,本科劳动力（含兼职求职者）,QILT 2025 GOS,已发布（2026-06-26）,2024年74.0%，回升1.4pp；研究生coursework 88.3%，研究型84.0%。
+Australia,2025,学习领域薪资,农业与环境研究 Agriculture & Environmental,75000.0,AUD,annual,全职中位年薪,,,,,QILT 2025,已发布,男性/女性均约此水平。
+Australia,2025,学习领域薪资,建筑与建成环境 Architecture & Built Environment,79000.0,AUD,annual,全职中位年薪（女性）,,,,,QILT 2025,已发布,"男性$72,500，女性$79,000，女性反超。"
+Australia,2025,学习领域薪资,创意艺术 Creative Arts,77000.0,AUD,annual,全职中位年薪（女性）,,,53.0,本科劳动力,QILT 2025,已发布,"男性$64,000，女性$77,000；全职就业率53.0%，全领域最低。"
+Australia,2025,学习领域就业率,药学 Pharmacy,,AUD,annual,,,,96.4,本科劳动力,QILT 2025,已发布,全职就业率96.4%，全领域最高。
+Australia,2026,国际毕业生,国际毕业生整体,72800.0,AUD,annual,中位年薪,,,,,QILT 2026,已发布,"2025为A$68,500；与本地毕业生薪资差距持续存在。"
+Canada,2025,学历就业/薪资,硕士（整体）,70000.0,CAD,annual,中位employment income,,,91.3,毕业生劳动力,StatCan 2025,已发布,2025年2–6月。
+Canada,2025,专业薪资,STEM（毕业两年后）,58100.0,CAD,annual,中位employment income（2年后）,,,,,StatCan 2025,已发布,"显著高于文商类$45,100。"
+Canada,2025,专业薪资,文商类（毕业两年后）,45100.0,CAD,annual,中位employment income（2年后）,,,,,StatCan 2025,已发布,"与STEM差距约$13,000。"
+Canada,2025,专业薪资,数学与计算机科学,66000.0,CAD,annual,中位employment income（2年后）,,,,,StatCan 2025,已发布,"中位达$66,000+；STEM内部最高之一。"
+Canada,2025,总体就业,全体毕业生（2025年2–6月）,,CAD,annual,,,,,毕业生劳动力,StatCan 2025,已发布,就业率60.9%–61.1%，失业率6.6%–6.9%；范围不填单一值。
+Canada,2026,青年失业,25岁以下大学毕业生,,CAD,annual,,10.6,,,,StatCan 2026,已发布,30年非疫情最高；约40%毕业生不充分就业。
+Malaysia,2024,总体,全部就业毕业生,4521.0,RM,monthly,全职等值主要职业中位月薪,3.2,,96.8,毕业生存量劳动力,DOSM Graduates Statistics 2024,已发布,"平均月薪RM5,330；中位RM4,521；不是起薪。"
+Malaysia,2025,总体,高等教育毕业生专项,4571.0,RM,monthly,高等教育毕业生中位月薪,,,,,DOSM Salaries & Wages Survey 2025,已发布,"较2024 RM4,131上升10.7%；年度毕业生统计整体框架未发布。"
