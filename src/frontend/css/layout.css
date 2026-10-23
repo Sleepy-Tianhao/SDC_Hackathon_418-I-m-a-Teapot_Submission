@@ -41,18 +41,6 @@
   text-decoration: none;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  flex: 0 0 38px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, #4be0bd 0%, #16a085 48%, #0a5f8c 100%);
-  color: #04160f;
-  box-shadow: 0 10px 24px -12px rgba(75, 224, 189, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
 .brand-text {
   min-width: 0;
 }
@@ -373,7 +361,7 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: linear-gradient(140deg, #0b7a63, #0a4f6e);
+  background: linear-gradient(140deg, var(--brand-600), var(--brand));
   color: #ffffff;
   font-size: 11.5px;
   font-weight: 700;
@@ -531,7 +519,7 @@
 
   .sidebar.is-open {
     transform: translateX(0);
-    box-shadow: 0 0 0 100vmax rgba(4, 10, 18, 0.5);
+    box-shadow: 0 0 0 100vmax rgba(36, 23, 21, 0.52);
   }
 
   .menu-btn {

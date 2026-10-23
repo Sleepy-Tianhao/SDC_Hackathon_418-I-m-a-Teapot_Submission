@@ -15,8 +15,8 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(1200px 600px at 82% -8%, rgba(11, 122, 99, 0.09), transparent 60%),
-    radial-gradient(900px 500px at 12% 110%, rgba(85, 70, 189, 0.07), transparent 55%),
+    radial-gradient(1200px 600px at 82% -8%, rgba(160, 96, 86, 0.10), transparent 60%),
+    radial-gradient(900px 500px at 12% 110%, rgba(125, 90, 103, 0.08), transparent 55%),
     var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
@@ -29,8 +29,8 @@ body {
 
 [data-theme="dark"] body {
   background:
-    radial-gradient(1000px 520px at 85% -10%, rgba(53, 199, 165, 0.1), transparent 60%),
-    radial-gradient(800px 460px at 8% 112%, rgba(169, 155, 245, 0.08), transparent 55%),
+    radial-gradient(1000px 520px at 85% -10%, rgba(201, 135, 124, 0.10), transparent 60%),
+    radial-gradient(800px 460px at 8% 112%, rgba(195, 156, 168, 0.08), transparent 55%),
     var(--bg);
 }
 

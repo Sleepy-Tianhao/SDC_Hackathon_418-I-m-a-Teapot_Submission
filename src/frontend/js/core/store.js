@@ -151,7 +151,7 @@ export function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", next);
   document.documentElement.style.colorScheme = next;
   const metaTheme = document.querySelector('meta[name="theme-color"]');
-  if (metaTheme) metaTheme.setAttribute("content", next === "dark" ? "#080f18" : "#f4f6f8");
+  if (metaTheme) metaTheme.setAttribute("content", next === "dark" ? "#17100f" : "#f6f1ee");
   setState({ theme: next });
 }
 

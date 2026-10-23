@@ -718,8 +718,8 @@
   padding: 14px 16px;
   overflow-x: auto;
   border-radius: 12px;
-  background: #081521;
-  color: #cfe3f2;
+  background: #1b1110;
+  color: #ead9d3;
   font-family: var(--font-mono);
   font-size: 10.8px;
   line-height: 1.7;
@@ -727,15 +727,15 @@
 }
 
 .code-block .c {
-  color: #6b8ba3;
+  color: #b9a39b;
 }
 
 .code-block .k {
-  color: #7de3c2;
+  color: #d99a8e;
 }
 
 .code-block .s {
-  color: #e8c98d;
+  color: #d2aa76;
 }
 
 .connection-card {
