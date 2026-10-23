@@ -18,6 +18,19 @@ class UserProfile(BaseModel):
     skills: List[str]
 
 app = FastAPI(title="SDC Hackathon Backend")
+# app = FastAPI(title="SDC Hackathon Backend")
+
+# ================= 跨域配置（必须加在路由前面） =================
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ==============================================================
 
 # ================= 接入真实大模型 =================
 ROOT = Path(__file__).resolve().parent.parent # 获取根目录
