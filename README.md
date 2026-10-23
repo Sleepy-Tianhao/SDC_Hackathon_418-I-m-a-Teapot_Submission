@@ -162,7 +162,8 @@ step behind the same SSE contract.
 │   │   └── fixtures/                # captured example responses (legacy shape reference)
 │   └── screenshots/                 # UI evidence
 ├── src/
-│   ├── frontend/                    # the application UI (build-free SPA)
+│   ├── frontend/                    # default Argon-inspired UI (build-free SPA)
+│   ├── frontend_bak/                # complete, independent classic design at /legacy/
 │   ├── main.py                      # FastAPI entry: /api/v1 + static UI + SSE
 │   ├── backend/
 │   │   ├── data.py                  # loads real labour CSVs; builds catalogue/signals/modules
@@ -194,7 +195,11 @@ python src/main.py
 The FastAPI entry serves the frontend and the `/api/v1` API from the same origin, so the
 sidebar reads **Live API connected** without any extra configuration. It reads the real
 labour snapshots in `src/backend/data/`, persists profiles in `data/app.db`, and serves the
-UI from `src/frontend`.
+default Argon-inspired UI from `src/frontend`.
+
+The previous teapot design is preserved independently in `src/frontend_bak`. Open
+`http://127.0.0.1:8000/legacy/` or use the **Classic** pill in the top bar to switch back
+immediately; the legacy page has an **Argon design** link back.
 
 If port 8000 is already in use:
 

@@ -1,10 +1,22 @@
-# AI Career Navigator — frontend
+# AI Career Navigator — Argon edition (frontend)
 
 A build-free single-page application (native ES modules + CSS) for the SDC 2026 Domain 1
 brief. It takes a skills profile, dated AI-trend signals and three 2028 scenarios, then
 produces role matches, a reskilling pathway and an SDG map.
 
 No npm, no bundler, no build step: the files here are the deployable artefact.
+
+## Two independent designs
+
+This directory is the **default Argon-inspired design**. The previous teapot design is kept
+complete and independent in `src/frontend_bak`; when the FastAPI entry is running it is also
+served at `/legacy/`. Use the **Classic** pill in the top bar (or `/legacy/`) to switch back
+immediately, and the floating **Argon design** link on the legacy page to return here.
+
+The Argon treatment is implemented in `css/argon.css`, loaded last after the shared component
+CSS. It follows the Argon Design System's blue-violet palette, floating glass navigation,
+ambient gradients, soft cards and rounded controls; it does not load the WordPress theme.
+Design attribution: [Argon Theme](https://github.com/solstice23/argon-theme).
 
 ## Run it
 
@@ -43,6 +55,7 @@ backend.
 index.html                 shell, CSS and module entry
 assets/config.js           runtime configuration (API base URL, mode, streaming)
 assets/favicon.svg
+assets/argon-mark.svg     Argon Edition favicon
 css/
   tokens.css               colours, type, spacing, dark theme tokens
   base.css                 reset, typography, utilities, motion
@@ -50,6 +63,7 @@ css/
   components.css           buttons, inputs, cards, badges, modals, toasts
   views-core.css           hero, overview, intake, signals, matches
   views-plan.css           pathway, SDG, scenarios, connect, charts
+  argon.css                Argon design skin (loaded last; owns the default look)
 js/
   app.js                   boot, shell, router wiring, global actions
   core/

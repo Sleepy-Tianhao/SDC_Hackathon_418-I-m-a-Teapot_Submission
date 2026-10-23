@@ -1,0 +1,121 @@
+/* Design tokens ---------------------------------------------------- */
+
+:root {
+  --bg: #f6f1ee;
+  --bg-tint: #efe7e2;
+  --surface: #fffdfc;
+  --surface-2: #faf7f5;
+  --surface-3: #f2eae6;
+  --ink: #241715;
+  --ink-2: #3c2a26;
+  --muted: #6d5954;
+  --faint: #99847d;
+  --line: #e8ddd7;
+  --line-soft: #f2e9e4;
+  --line-strong: #d7c6bf;
+
+  --brand: #a06056;
+  --brand-600: #7a3f37;
+  --brand-400: #c9877c;
+  --brand-soft: #f4e5e1;
+  --brand-ink: #46221d;
+
+  --accent: #8a5a32;
+  --accent-soft: #f6eadb;
+  --violet: #7d5a67;
+  --violet-soft: #f1e5e8;
+  --success: #4f7a5a;
+  --success-soft: #e8f0e7;
+  --danger: #b0443f;
+  --danger-soft: #f8e5e2;
+  --warning: #9a6428;
+  --warning-soft: #f8ecd9;
+  --info: #4c6b83;
+  --info-soft: #e7eef3;
+  --gold: #8a5e29;
+  --gold-soft: #f7ecd9;
+
+  --sidebar: #ffffff;
+  --sidebar-2: #ffffff;
+  --sidebar-surface: #ffffff;
+  --sidebar-surface-2: #faf7f5;
+  --sidebar-surface-3: #f2eae6;
+  --sidebar-line: #e8ddd7;
+  --sidebar-hover: #f2eae6;
+  --sidebar-active: #f4e5e1;
+  --sidebar-active-ink: #7a3f37;
+  --sidebar-ink: #3c2a26;
+  --sidebar-muted: #6d5954;
+
+  --radius-xl: 22px;
+  --radius-lg: 18px;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 8px;
+
+  --shadow-xs: 0 1px 2px rgba(57, 35, 29, 0.06);
+  --shadow-sm: 0 2px 6px -2px rgba(57, 35, 29, 0.09), 0 8px 24px -18px rgba(57, 35, 29, 0.32);
+  --shadow-md: 0 18px 40px -28px rgba(57, 35, 29, 0.46);
+  --shadow-lg: 0 32px 70px -36px rgba(57, 35, 29, 0.52);
+
+  --font-sans: "Segoe UI Variable Text", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Segoe UI Variable Display", "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
+
+  --sidebar-width: 264px;
+  --maxw: 1240px;
+}
+
+[data-theme="dark"] {
+  --bg: #17100f;
+  --bg-tint: #1c1312;
+  --surface: #211716;
+  --surface-2: #2a1d1b;
+  --surface-3: #332421;
+  --ink: #f2e9e5;
+  --ink-2: #dfcfc9;
+  --muted: #b8a39c;
+  --faint: #947f78;
+  --line: #3b2b27;
+  --line-soft: #2d201e;
+  --line-strong: #4e3933;
+
+  --brand: #c9877c;
+  --brand-600: #a06056;
+  --brand-400: #e0a89e;
+  --brand-soft: rgba(201, 135, 124, 0.16);
+  --brand-ink: #f8e8e4;
+
+  --accent: #d2a06a;
+  --accent-soft: rgba(210, 160, 106, 0.15);
+  --violet: #c39ca8;
+  --violet-soft: rgba(195, 156, 168, 0.15);
+  --success: #8cba93;
+  --success-soft: rgba(140, 186, 147, 0.14);
+  --danger: #e58d84;
+  --danger-soft: rgba(229, 141, 132, 0.14);
+  --warning: #d9a45f;
+  --warning-soft: rgba(217, 164, 95, 0.14);
+  --info: #8fb4c9;
+  --info-soft: rgba(143, 180, 201, 0.14);
+  --gold: #d6ab6e;
+  --gold-soft: rgba(214, 171, 110, 0.14);
+
+  --sidebar: #ffffff;
+  --sidebar-2: #ffffff;
+  --sidebar-surface: #ffffff;
+  --sidebar-surface-2: #faf7f5;
+  --sidebar-surface-3: #f2eae6;
+  --sidebar-line: #e8ddd7;
+  --sidebar-hover: #f2eae6;
+  --sidebar-active: #f4e5e1;
+  --sidebar-active-ink: #7a3f37;
+  --sidebar-ink: #3c2a26;
+  --sidebar-muted: #6d5954;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.42);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.36);
+  --shadow-md: 0 20px 44px -28px rgba(0, 0, 0, 0.82);
+  --shadow-lg: 0 34px 70px -30px rgba(0, 0, 0, 0.88);
+}

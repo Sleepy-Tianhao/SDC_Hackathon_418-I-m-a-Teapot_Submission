@@ -1,0 +1,682 @@
+{
+  "meta": {
+    "datasetVersion": "2026.10.1",
+    "note": "Curated demo catalogue of open and low-cost learning modules used to assemble personalised pathways."
+  },
+  "items": [
+    {
+      "id": "mod-data-1",
+      "title": "Data Literacy Essentials",
+      "provider": "IBM SkillsBuild",
+      "url": "https://skillsbuild.org",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 8,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "data-literacy"
+      ],
+      "credential": "IBM SkillsBuild digital badge",
+      "outcome": "Read charts and datasets critically and ask the right questions before analysis."
+    },
+    {
+      "id": "mod-data-2",
+      "title": "Google Data Analytics Foundations",
+      "provider": "Google / Coursera",
+      "url": "https://www.coursera.org/professional-certificates/google-data-analytics",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 40,
+      "cost": 49,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "data-literacy",
+        "sql",
+        "data-visualisation"
+      ],
+      "credential": "Google Professional Certificate",
+      "outcome": "Work end-to-end from spreadsheet analysis to a stakeholder-ready dashboard."
+    },
+    {
+      "id": "mod-sql-1",
+      "title": "SQL for Data Analysis",
+      "provider": "DataCamp",
+      "url": "https://www.datacamp.com",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 12,
+      "cost": 25,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "sql",
+        "data-literacy"
+      ],
+      "credential": "DataCamp statement of accomplishment",
+      "outcome": "Write joins, aggregates and window queries against operational tables."
+    },
+    {
+      "id": "mod-stat-1",
+      "title": "Statistics Foundations",
+      "provider": "Microsoft / edX",
+      "url": "https://learn.microsoft.com",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 15,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "statistics",
+        "data-literacy"
+      ],
+      "credential": "Course completion record",
+      "outcome": "Interpret uncertainty, sampling error and A/B results without overclaiming."
+    },
+    {
+      "id": "mod-python-1",
+      "title": "Python for Everybody",
+      "provider": "University of Michigan / Coursera",
+      "url": "https://www.coursera.org/specializations/python",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 30,
+      "cost": 49,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "python",
+        "data-literacy"
+      ],
+      "credential": "Coursera Specialisation Certificate",
+      "outcome": "Automate repetitive data preparation and produce reproducible analysis."
+    },
+    {
+      "id": "mod-python-2",
+      "title": "Python for Data Science",
+      "provider": "IBM SkillsBuild",
+      "url": "https://skillsbuild.org",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 12,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "python",
+        "statistics"
+      ],
+      "credential": "IBM digital badge",
+      "outcome": "Use pandas and notebooks to clean, join and summarise real datasets."
+    },
+    {
+      "id": "mod-ml-1",
+      "title": "Machine Learning Specialisation",
+      "provider": "DeepLearning.AI / Coursera",
+      "url": "https://www.coursera.org/specializations/machine-learning-introduction",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 60,
+      "cost": 49,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "ml-fundamentals",
+        "python",
+        "statistics"
+      ],
+      "credential": "DeepLearning.AI Certificate",
+      "outcome": "Explain model behaviour and failure modes to non-specialists."
+    },
+    {
+      "id": "mod-mlops-1",
+      "title": "MLOps Fundamentals",
+      "provider": "Databricks Academy",
+      "url": "https://www.databricks.com/learn/training",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 12,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "mlops",
+        "model-evaluation",
+        "cloud-fundamentals"
+      ],
+      "credential": "Databricks Academy completion",
+      "outcome": "Version, deploy and monitor a model with rollback and drift checks."
+    },
+    {
+      "id": "mod-eval-1",
+      "title": "Evaluating Generative AI Systems",
+      "provider": "DeepLearning.AI",
+      "url": "https://www.deeplearning.ai/short-courses/",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 5,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "model-evaluation",
+        "critical-evaluation"
+      ],
+      "credential": "Short course certificate",
+      "outcome": "Design a test set, score outputs and document known limitations."
+    },
+    {
+      "id": "mod-eval-2",
+      "title": "AI Red Teaming & Evaluation Lab",
+      "provider": "MLCommons / Kaggle",
+      "url": "https://www.kaggle.com/learn",
+      "format": "project",
+      "kind": "assessment",
+      "hours": 10,
+      "cost": 0,
+      "currency": "USD",
+      "level": "advanced",
+      "teaches": [
+        "model-evaluation",
+        "statistics",
+        "critical-evaluation"
+      ],
+      "credential": "Lab completion + reviewer sign-off",
+      "outcome": "Run an adversarial evaluation and present prioritised findings."
+    },
+    {
+      "id": "mod-prompt-1",
+      "title": "Prompt Engineering for Everyone",
+      "provider": "IBM SkillsBuild",
+      "url": "https://skillsbuild.org",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 6,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "prompt-engineering",
+        "critical-evaluation"
+      ],
+      "credential": "IBM SkillsBuild digital badge",
+      "outcome": "Write reliable instructions with constraints, examples and checks."
+    },
+    {
+      "id": "mod-prompt-2",
+      "title": "Building Agent Workflows",
+      "provider": "Microsoft Learn",
+      "url": "https://learn.microsoft.com",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 8,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "prompt-engineering",
+        "api-integration",
+        "automation"
+      ],
+      "credential": "Microsoft Learn module path",
+      "outcome": "Design a tool-using workflow with explicit failure and human-review paths."
+    },
+    {
+      "id": "mod-gov-1",
+      "title": "AI Governance Essentials",
+      "provider": "Coursera / AI Governance Institute",
+      "url": "https://www.coursera.org",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 10,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "ai-governance",
+        "policy-literacy",
+        "critical-evaluation"
+      ],
+      "credential": "Course certificate",
+      "outcome": "Map a use case to controls, evidence and accountable owners."
+    },
+    {
+      "id": "mod-gov-2",
+      "title": "ISO/IEC 42001 AI Management System",
+      "provider": "PECB",
+      "url": "https://pecb.com",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 16,
+      "cost": 390,
+      "currency": "USD",
+      "level": "advanced",
+      "teaches": [
+        "ai-governance",
+        "policy-literacy",
+        "model-evaluation"
+      ],
+      "credential": "ISO/IEC 42001 Foundation exam",
+      "outcome": "Stand up an auditable AI management system with documented controls."
+    },
+    {
+      "id": "mod-policy-1",
+      "title": "EU AI Act for Deployers",
+      "provider": "FutureLearn",
+      "url": "https://www.futurelearn.com",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 8,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "policy-literacy",
+        "ai-governance"
+      ],
+      "credential": "FutureLearn certificate",
+      "outcome": "Classify systems by risk and produce the required deployer evidence."
+    },
+    {
+      "id": "mod-policy-2",
+      "title": "Digital Policy for Public Servants",
+      "provider": "World Bank Open Learning Campus",
+      "url": "https://olc.worldbank.org",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 12,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "policy-literacy",
+        "systems-thinking"
+      ],
+      "credential": "OLC completion certificate",
+      "outcome": "Translate policy mandates into procurement and delivery requirements."
+    },
+    {
+      "id": "mod-sdg-1",
+      "title": "Climate & Sustainability Literacy",
+      "provider": "UN CC:Learn",
+      "url": "https://www.uncclearn.org",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 10,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "sustainability-literacy"
+      ],
+      "credential": "UN CC:Learn certificate",
+      "outcome": "Connect organisational decisions to emissions, circularity and equity."
+    },
+    {
+      "id": "mod-sdg-2",
+      "title": "Green Skills for a Just Transition",
+      "provider": "ILO eCampus",
+      "url": "https://www.ilo.org",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 8,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "sustainability-literacy",
+        "policy-literacy",
+        "systems-thinking"
+      ],
+      "credential": "ILO eCampus certificate",
+      "outcome": "Assess transition impacts on workers and design mitigation measures."
+    },
+    {
+      "id": "mod-sys-1",
+      "title": "Systems Thinking for Public Services",
+      "provider": "OpenLearn (Open University)",
+      "url": "https://www.open.edu/openlearn/",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 8,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "systems-thinking",
+        "process-design"
+      ],
+      "credential": "OpenLearn statement of participation",
+      "outcome": "Map feedback loops and unintended consequences before redesign."
+    },
+    {
+      "id": "mod-design-1",
+      "title": "Service Design Fundamentals",
+      "provider": "TU Delft / edX",
+      "url": "https://www.edx.org",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 24,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "process-design",
+        "stakeholder-comms",
+        "accessibility-inclusion"
+      ],
+      "credential": "edX verified certificate (optional)",
+      "outcome": "Run discovery, map a journey and prototype a service change."
+    },
+    {
+      "id": "mod-a11y-1",
+      "title": "Digital Accessibility Foundations",
+      "provider": "W3Cx / edX",
+      "url": "https://www.edx.org/learn/web-accessibility",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 15,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "accessibility-inclusion",
+        "process-design"
+      ],
+      "credential": "W3Cx certificate",
+      "outcome": "Apply WCAG and inclusive research to procurement and design reviews."
+    },
+    {
+      "id": "mod-comms-1",
+      "title": "Communicating with Influence",
+      "provider": "LinkedIn Learning",
+      "url": "https://www.linkedin.com/learning",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 5,
+      "cost": 30,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "stakeholder-comms",
+        "change-facilitation"
+      ],
+      "credential": "LinkedIn Learning certificate",
+      "outcome": "Frame trade-offs for executives and frontline teams in one narrative."
+    },
+    {
+      "id": "mod-change-1",
+      "title": "Leading Change in Organisations",
+      "provider": "Macquarie University / Coursera",
+      "url": "https://www.coursera.org",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 18,
+      "cost": 49,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "change-facilitation",
+        "stakeholder-comms",
+        "systems-thinking"
+      ],
+      "credential": "Coursera certificate",
+      "outcome": "Plan adoption with resistance mapping and credible coalitions."
+    },
+    {
+      "id": "mod-pm-1",
+      "title": "Google Project Management Certificate",
+      "provider": "Google / Coursera",
+      "url": "https://www.coursera.org/professional-certificates/google-project-management",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 120,
+      "cost": 49,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "project-management",
+        "stakeholder-comms",
+        "process-design"
+      ],
+      "credential": "Google Professional Certificate",
+      "outcome": "Deliver a cross-functional programme with realistic scope and risk logs."
+    },
+    {
+      "id": "mod-pm-2",
+      "title": "Agile Delivery in the Public Sector",
+      "provider": "OpenLearn (Open University)",
+      "url": "https://www.open.edu/openlearn/",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 10,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "project-management",
+        "change-facilitation"
+      ],
+      "credential": "OpenLearn statement of participation",
+      "outcome": "Adapt agile practice to procurement, scrutiny and public accountability."
+    },
+    {
+      "id": "mod-crit-1",
+      "title": "Critical Thinking in the Age of AI",
+      "provider": "Coursera",
+      "url": "https://www.coursera.org",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 6,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "critical-evaluation",
+        "data-literacy"
+      ],
+      "credential": "Course certificate",
+      "outcome": "Separate plausible output from verified evidence under time pressure."
+    },
+    {
+      "id": "mod-crit-2",
+      "title": "Verification & Misinformation",
+      "provider": "Reuters Institute",
+      "url": "https://reutersinstitute.politics.ox.ac.uk",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 6,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "critical-evaluation",
+        "stakeholder-comms"
+      ],
+      "credential": "Completion record",
+      "outcome": "Trace claims to primary sources and document verification steps."
+    },
+    {
+      "id": "mod-cyber-1",
+      "title": "Cybersecurity Essentials",
+      "provider": "Cisco Networking Academy",
+      "url": "https://www.netacad.com",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 20,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "cybersecurity",
+        "cloud-fundamentals"
+      ],
+      "credential": "Cisco certificate",
+      "outcome": "Apply threat modelling and least-privilege basics to service design."
+    },
+    {
+      "id": "mod-cloud-1",
+      "title": "AWS Cloud Practitioner Essentials",
+      "provider": "AWS Skill Builder",
+      "url": "https://aws.amazon.com/training/",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 12,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "cloud-fundamentals",
+        "cybersecurity"
+      ],
+      "credential": "AWS completion badge",
+      "outcome": "Explain identity, cost and resilience decisions on cloud platforms."
+    },
+    {
+      "id": "mod-api-1",
+      "title": "APIs for Beginners",
+      "provider": "freeCodeCamp",
+      "url": "https://www.freecodecamp.org",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 8,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "api-integration",
+        "python"
+      ],
+      "credential": "Project submission",
+      "outcome": "Consume and document an API with error handling and rate limits."
+    },
+    {
+      "id": "mod-auto-1",
+      "title": "Power Automate in Practice",
+      "provider": "Microsoft Learn",
+      "url": "https://learn.microsoft.com",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 10,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "automation",
+        "process-design"
+      ],
+      "credential": "Microsoft Learn path",
+      "outcome": "Automate an approval workflow with audit trails."
+    },
+    {
+      "id": "mod-auto-2",
+      "title": "RPA Foundations",
+      "provider": "UiPath Academy",
+      "url": "https://academy.uipath.com",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 14,
+      "cost": 0,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "automation",
+        "process-design",
+        "data-literacy"
+      ],
+      "credential": "UiPath Academy certificate",
+      "outcome": "Assess a process for automation and build a supervised bot."
+    },
+    {
+      "id": "mod-viz-1",
+      "title": "Data Visualisation & Storytelling",
+      "provider": "Tableau / Coursera",
+      "url": "https://www.coursera.org",
+      "format": "cohort",
+      "kind": "module",
+      "hours": 20,
+      "cost": 49,
+      "currency": "USD",
+      "level": "intermediate",
+      "teaches": [
+        "data-visualisation",
+        "stakeholder-comms"
+      ],
+      "credential": "Coursera certificate",
+      "outcome": "Build a dashboard that survives an executive review."
+    },
+    {
+      "id": "mod-viz-2",
+      "title": "Storytelling with Data",
+      "provider": "OpenLearn (Open University)",
+      "url": "https://www.open.edu/openlearn/",
+      "format": "self-paced",
+      "kind": "module",
+      "hours": 8,
+      "cost": 0,
+      "currency": "USD",
+      "level": "foundation",
+      "teaches": [
+        "data-visualisation",
+        "stakeholder-comms"
+      ],
+      "credential": "OpenLearn statement of participation",
+      "outcome": "Choose the right chart and annotate the decision it supports."
+    },
+    {
+      "id": "mod-portfolio-1",
+      "title": "Portfolio Sprint: ship one real artefact",
+      "provider": "AI Career Navigator mentor network",
+      "url": "https://example.org/ai-career-navigator",
+      "format": "project",
+      "kind": "project",
+      "hours": 24,
+      "cost": 0,
+      "currency": "USD",
+      "level": "advanced",
+      "teaches": [],
+      "credential": "Mentor-reviewed portfolio entry",
+      "outcome": "Produce role-relevant evidence: a dashboard, evaluation report or service blueprint."
+    },
+    {
+      "id": "mod-capstone-1",
+      "title": "Role Simulation & Case Defence",
+      "provider": "AI Career Navigator",
+      "url": "https://example.org/ai-career-navigator",
+      "format": "workshop",
+      "kind": "assessment",
+      "hours": 30,
+      "cost": 0,
+      "currency": "USD",
+      "level": "advanced",
+      "teaches": [
+        "project-management",
+        "stakeholder-comms",
+        "critical-evaluation"
+      ],
+      "credential": "Scenario assessment record",
+      "outcome": "Defend a decision under questioning from a hiring panel."
+    },
+    {
+      "id": "mod-cert-1",
+      "title": "Credential Sprint: AI Governance",
+      "provider": "IAPP / ISACA prep track",
+      "url": "https://iapp.org",
+      "format": "cohort",
+      "kind": "assessment",
+      "hours": 20,
+      "cost": 450,
+      "currency": "USD",
+      "level": "advanced",
+      "teaches": [
+        "ai-governance",
+        "policy-literacy"
+      ],
+      "credential": "Certification exam voucher",
+      "outcome": "Sit a recognised governance credential with a prepared evidence file."
+    }
+  ]
+}

@@ -1,0 +1,1579 @@
+{
+  "meta": {
+    "datasetVersion": "2026.10.1",
+    "generatedAt": "2026-10-18T06:00:00Z",
+    "lastRefreshedAt": "2026-10-18T06:00:00Z",
+    "signalWindow": {
+      "from": "2024-07-26",
+      "to": "2026-10-12"
+    },
+    "provenance": "illustrative-demo",
+    "note": "Illustrative seed dataset for the AI Career Navigator demo. Figures are modelled for the pitch, not official statistics."
+  },
+  "skills": [
+    {
+      "id": "data-literacy",
+      "name": "Data literacy",
+      "category": "Data & AI",
+      "blurb": "Read, question and act on data without a data-science title."
+    },
+    {
+      "id": "statistics",
+      "name": "Applied statistics",
+      "category": "Data & AI",
+      "blurb": "Sampling, uncertainty and causal caution for real decisions."
+    },
+    {
+      "id": "python",
+      "name": "Python for data",
+      "category": "Data & AI",
+      "blurb": "Script, clean and automate analysis with pandas and notebooks."
+    },
+    {
+      "id": "ml-fundamentals",
+      "name": "Machine learning fundamentals",
+      "category": "Data & AI",
+      "blurb": "How models learn, fail and generalise."
+    },
+    {
+      "id": "mlops",
+      "name": "MLOps & deployment",
+      "category": "Data & AI",
+      "blurb": "Ship, monitor and retire models safely."
+    },
+    {
+      "id": "data-visualisation",
+      "name": "Data visualisation",
+      "category": "Data & AI",
+      "blurb": "Turn analysis into decisions people trust."
+    },
+    {
+      "id": "prompt-engineering",
+      "name": "Prompt & agent design",
+      "category": "Data & AI",
+      "blurb": "Design reliable instructions and tool-using agent flows."
+    },
+    {
+      "id": "model-evaluation",
+      "name": "Model evaluation",
+      "category": "Data & AI",
+      "blurb": "Test quality, safety and drift before and after launch."
+    },
+    {
+      "id": "sql",
+      "name": "SQL & data modelling",
+      "category": "Digital & Systems",
+      "blurb": "Query, join and shape operational data."
+    },
+    {
+      "id": "api-integration",
+      "name": "API integration",
+      "category": "Digital & Systems",
+      "blurb": "Connect systems, models and services with contracts."
+    },
+    {
+      "id": "cloud-fundamentals",
+      "name": "Cloud fundamentals",
+      "category": "Digital & Systems",
+      "blurb": "Identity, storage, cost and reliability on cloud platforms."
+    },
+    {
+      "id": "cybersecurity",
+      "name": "Security fundamentals",
+      "category": "Digital & Systems",
+      "blurb": "Threat models, least privilege and incident basics."
+    },
+    {
+      "id": "automation",
+      "name": "Workflow automation",
+      "category": "Digital & Systems",
+      "blurb": "Remove repetitive work with rules, RPA and agents."
+    },
+    {
+      "id": "stakeholder-comms",
+      "name": "Stakeholder communication",
+      "category": "Human & Social",
+      "blurb": "Explain trade-offs to executives, teams and the public."
+    },
+    {
+      "id": "systems-thinking",
+      "name": "Systems thinking",
+      "category": "Human & Social",
+      "blurb": "See feedback loops, incentives and second-order effects."
+    },
+    {
+      "id": "change-facilitation",
+      "name": "Change facilitation",
+      "category": "Human & Social",
+      "blurb": "Bring people through disruption with agency and trust."
+    },
+    {
+      "id": "critical-evaluation",
+      "name": "Critical evaluation",
+      "category": "Human & Social",
+      "blurb": "Interrogate AI output, evidence and confident nonsense."
+    },
+    {
+      "id": "accessibility-inclusion",
+      "name": "Accessibility & inclusion",
+      "category": "Human & Social",
+      "blurb": "Design for disabled, low-literacy and low-bandwidth users."
+    },
+    {
+      "id": "process-design",
+      "name": "Process & service design",
+      "category": "Domain & Policy",
+      "blurb": "Map, redesign and instrument end-to-end services."
+    },
+    {
+      "id": "sustainability-literacy",
+      "name": "Sustainability literacy",
+      "category": "Domain & Policy",
+      "blurb": "Connect operations to climate, circularity and just transition."
+    },
+    {
+      "id": "policy-literacy",
+      "name": "Policy & regulatory literacy",
+      "category": "Domain & Policy",
+      "blurb": "Read regulation, procurement rules and public mandates."
+    },
+    {
+      "id": "ai-governance",
+      "name": "AI governance & risk",
+      "category": "Domain & Policy",
+      "blurb": "Assurance, documentation and accountable AI operation."
+    },
+    {
+      "id": "project-management",
+      "name": "Project & programme management",
+      "category": "Domain & Policy",
+      "blurb": "Scope, sequence and land cross-functional work."
+    }
+  ],
+  "sdgs": [
+    {
+      "number": 1,
+      "name": "No Poverty",
+      "shortName": "No poverty",
+      "color": "#E5243B",
+      "focus": "Income security and access to productive work."
+    },
+    {
+      "number": 2,
+      "name": "Zero Hunger",
+      "shortName": "Zero hunger",
+      "color": "#DDA63A",
+      "focus": "Food systems, supply resilience and rural livelihoods."
+    },
+    {
+      "number": 3,
+      "name": "Good Health and Well-being",
+      "shortName": "Good health",
+      "color": "#4C9F38",
+      "focus": "Care quality, safety and healthy working life."
+    },
+    {
+      "number": 4,
+      "name": "Quality Education",
+      "shortName": "Quality education",
+      "color": "#C5192D",
+      "focus": "Lifelong learning and recognised micro-credentials."
+    },
+    {
+      "number": 5,
+      "name": "Gender Equality",
+      "shortName": "Gender equality",
+      "color": "#FF3A21",
+      "focus": "Equal access to AI-era roles and progression."
+    },
+    {
+      "number": 6,
+      "name": "Clean Water and Sanitation",
+      "shortName": "Clean water",
+      "color": "#26BDE2",
+      "focus": "Water data, utilities and sanitation services."
+    },
+    {
+      "number": 7,
+      "name": "Affordable and Clean Energy",
+      "shortName": "Clean energy",
+      "color": "#FCC30B",
+      "focus": "Energy transition, efficiency and access."
+    },
+    {
+      "number": 8,
+      "name": "Decent Work and Economic Growth",
+      "shortName": "Decent work",
+      "color": "#A21942",
+      "focus": "Job quality, productivity and fair transitions."
+    },
+    {
+      "number": 9,
+      "name": "Industry, Innovation and Infrastructure",
+      "shortName": "Industry & innovation",
+      "color": "#FD6925",
+      "focus": "Resilient digital and industrial infrastructure."
+    },
+    {
+      "number": 10,
+      "name": "Reduced Inequalities",
+      "shortName": "Reduced inequalities",
+      "color": "#DD1367",
+      "focus": "Who gets reskilled, hired and promoted."
+    },
+    {
+      "number": 11,
+      "name": "Sustainable Cities and Communities",
+      "shortName": "Sustainable cities",
+      "color": "#FD9D24",
+      "focus": "Local services, mobility and urban resilience."
+    },
+    {
+      "number": 12,
+      "name": "Responsible Consumption and Production",
+      "shortName": "Responsible consumption",
+      "color": "#BF8B2E",
+      "focus": "Circular supply chains and procurement."
+    },
+    {
+      "number": 13,
+      "name": "Climate Action",
+      "shortName": "Climate action",
+      "color": "#3F7E44",
+      "focus": "Emissions data, adaptation and disclosure."
+    },
+    {
+      "number": 14,
+      "name": "Life Below Water",
+      "shortName": "Life below water",
+      "color": "#0A97D9",
+      "focus": "Marine data, coastal livelihoods and pollution."
+    },
+    {
+      "number": 15,
+      "name": "Life on Land",
+      "shortName": "Life on land",
+      "color": "#56C02B",
+      "focus": "Biodiversity, land use and ecosystem monitoring."
+    },
+    {
+      "number": 16,
+      "name": "Peace, Justice and Strong Institutions",
+      "shortName": "Strong institutions",
+      "color": "#00689D",
+      "focus": "Accountable public systems and trustworthy AI."
+    },
+    {
+      "number": 17,
+      "name": "Partnerships for the Goals",
+      "shortName": "Partnerships",
+      "color": "#19486A",
+      "focus": "Cross-sector coalitions and shared data."
+    }
+  ],
+  "roles": [
+    {
+      "id": "ai-ops-analyst",
+      "title": "AI Operations Analyst",
+      "family": "AI & Automation",
+      "sector": "Cross-sector",
+      "summary": "Runs the day-to-day operation of AI systems: monitoring quality, triaging failures, tuning prompts and agents, and keeping a register of what the organisation is actually using.",
+      "outlook": "Demand is climbing fastest where pilot projects are being turned into production services. Roles are appearing inside operations teams rather than central data labs.",
+      "salary": {
+        "min": 68000,
+        "max": 98000,
+        "currency": "USD"
+      },
+      "demandIndex": 91,
+      "demandTrend": "rising",
+      "automationRisk": 18,
+      "requiredSkills": [
+        {
+          "skillId": "prompt-engineering",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "model-evaluation",
+          "level": 3,
+          "importance": 5
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "mlops",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "python",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "api-integration",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 4,
+          "importance": 3
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 8,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Raises job quality by pairing automation with monitored, human-supervised service delivery."
+        },
+        {
+          "number": 9,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Builds reliable AI infrastructure inside public and private services."
+        },
+        {
+          "number": 4,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Creates applied learning pathways for non-specialist staff."
+        },
+        {
+          "number": 10,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Widens access to AI-era roles beyond computer-science graduates."
+        }
+      ]
+    },
+    {
+      "id": "data-governance-specialist",
+      "title": "Data Governance Specialist",
+      "family": "Data & Trust",
+      "sector": "Public sector",
+      "summary": "Owns the rules, lineage and permissions around data that feeds AI: catalogues datasets, resolves quality disputes and prepares documentation for audits.",
+      "outlook": "Steady structural demand. Regulation and procurement rules now require named accountability for datasets and model inputs.",
+      "salary": {
+        "min": 72000,
+        "max": 105000,
+        "currency": "USD"
+      },
+      "demandIndex": 84,
+      "demandTrend": "rising",
+      "automationRisk": 12,
+      "requiredSkills": [
+        {
+          "skillId": "data-literacy",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "policy-literacy",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "ai-governance",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "sql",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "cybersecurity",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "level": 4,
+          "importance": 3
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 4,
+          "importance": 3
+        },
+        {
+          "skillId": "process-design",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 16,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Strengthens accountable institutions through traceable, auditable public data."
+        },
+        {
+          "number": 8,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Enables trustworthy data sharing that underpins decent digital work."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Improves data infrastructure quality across sectors."
+        },
+        {
+          "number": 17,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Supports interoperable data partnerships between agencies."
+        }
+      ]
+    },
+    {
+      "id": "green-supply-chain-analyst",
+      "title": "Green Supply Chain Analyst",
+      "family": "Sustainability",
+      "sector": "Manufacturing & logistics",
+      "summary": "Models emissions, materials and supplier risk across a supply chain, then wires the numbers into procurement decisions and disclosure reports.",
+      "outlook": "Growth follows mandatory climate disclosure and reshoring. The role blends traditional supply-chain analysis with carbon accounting and AI-assisted data collection.",
+      "salary": {
+        "min": 65000,
+        "max": 92000,
+        "currency": "USD"
+      },
+      "demandIndex": 79,
+      "demandTrend": "rising",
+      "automationRisk": 15,
+      "requiredSkills": [
+        {
+          "skillId": "sustainability-literacy",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "process-design",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "data-visualisation",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "sql",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "systems-thinking",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 12,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Turns procurement and material flows toward circular, responsible production."
+        },
+        {
+          "number": 13,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Quantifies and reduces supply-chain emissions."
+        },
+        {
+          "number": 8,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Protects employment by making local supply chains more competitive."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Upgrades industrial infrastructure with traceable data."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Requires shared supplier reporting standards."
+        }
+      ]
+    },
+    {
+      "id": "climate-data-steward",
+      "title": "Climate Data Steward",
+      "family": "Sustainability",
+      "sector": "Energy & environment",
+      "summary": "Curates climate and environmental datasets — emissions inventories, sensor feeds, adaptation models — so planners can act on evidence rather than vendor dashboards.",
+      "outlook": "Small but rising occupation. Cities and utilities need people who can judge data quality and translate model uncertainty for decision-makers.",
+      "salary": {
+        "min": 70000,
+        "max": 98000,
+        "currency": "USD"
+      },
+      "demandIndex": 76,
+      "demandTrend": "rising",
+      "automationRisk": 10,
+      "requiredSkills": [
+        {
+          "skillId": "data-literacy",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "statistics",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "data-visualisation",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "python",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "sustainability-literacy",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "policy-literacy",
+          "level": 2,
+          "importance": 3
+        },
+        {
+          "skillId": "systems-thinking",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 13,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Makes climate action measurable and auditable."
+        },
+        {
+          "number": 11,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Supplies the evidence base for resilient urban planning."
+        },
+        {
+          "number": 6,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Improves water and sanitation monitoring data."
+        },
+        {
+          "number": 15,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Supports land and biodiversity measurement."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Aligns local data with international reporting."
+        }
+      ]
+    },
+    {
+      "id": "ai-product-owner",
+      "title": "AI Product Owner",
+      "family": "Product",
+      "sector": "Cross-sector",
+      "summary": "Decides which AI-enabled services get built, defines acceptable performance and safety thresholds, and holds the line when a demo cannot survive contact with users.",
+      "outlook": "Demand is strong but concentrated in organisations that already ship software. The differentiator is evaluation discipline, not model access.",
+      "salary": {
+        "min": 85000,
+        "max": 125000,
+        "currency": "USD"
+      },
+      "demandIndex": 82,
+      "demandTrend": "rising",
+      "automationRisk": 20,
+      "requiredSkills": [
+        {
+          "skillId": "stakeholder-comms",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "model-evaluation",
+          "level": 3,
+          "importance": 5
+        },
+        {
+          "skillId": "ai-governance",
+          "level": 3,
+          "importance": 5
+        },
+        {
+          "skillId": "process-design",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "project-management",
+          "level": 5,
+          "importance": 4
+        },
+        {
+          "skillId": "prompt-engineering",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 4,
+          "importance": 3
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 8,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Directs AI investment toward productivity that supports decent work."
+        },
+        {
+          "number": 9,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Turns research capability into dependable public services."
+        },
+        {
+          "number": 4,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Builds internal capability through delivery."
+        },
+        {
+          "number": 10,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Sets inclusion requirements at product definition."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Coordinates vendors, agencies and users."
+        }
+      ]
+    },
+    {
+      "id": "human-ai-interaction-designer",
+      "title": "Human–AI Interaction Designer",
+      "family": "Design & research",
+      "sector": "Cross-sector",
+      "summary": "Designs how people delegate to, check and override AI: interfaces, escalation patterns and explanations that hold up under stress.",
+      "outlook": "Emerging but durable. As agents take more actions, accountability and interface design become procurement requirements.",
+      "salary": {
+        "min": 78000,
+        "max": 115000,
+        "currency": "USD"
+      },
+      "demandIndex": 71,
+      "demandTrend": "rising",
+      "automationRisk": 14,
+      "requiredSkills": [
+        {
+          "skillId": "accessibility-inclusion",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "process-design",
+          "level": 5,
+          "importance": 4
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "prompt-engineering",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "systems-thinking",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 10,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Keeps AI services usable by people with disabilities and low digital confidence."
+        },
+        {
+          "number": 8,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Designs human oversight into automated work."
+        },
+        {
+          "number": 4,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Embeds learning and explanation into tools."
+        },
+        {
+          "number": 5,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Tests for gendered and other bias in interaction patterns."
+        },
+        {
+          "number": 11,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Improves access to local public services."
+        }
+      ]
+    },
+    {
+      "id": "workforce-transition-coach",
+      "title": "Workforce Transition Coach",
+      "family": "People & skills",
+      "sector": "Public & education",
+      "summary": "Guides people displaced or reshaped by automation into adjacent roles: assesses capability, builds a plan and brokers access to training and employers.",
+      "outlook": "Publicly funded and employer-funded demand is rising together, especially in mid-career transitions where retraining has the highest wage return.",
+      "salary": {
+        "min": 58000,
+        "max": 84000,
+        "currency": "USD"
+      },
+      "demandIndex": 74,
+      "demandTrend": "rising",
+      "automationRisk": 8,
+      "requiredSkills": [
+        {
+          "skillId": "stakeholder-comms",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "change-facilitation",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "systems-thinking",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "project-management",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "accessibility-inclusion",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 4,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Delivers lifelong learning and recognised reskilling outcomes."
+        },
+        {
+          "number": 8,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Keeps displaced workers in decent employment."
+        },
+        {
+          "number": 10,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Prioritises groups furthest from opportunity."
+        },
+        {
+          "number": 5,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Addresses gendered participation in reskilling."
+        }
+      ]
+    },
+    {
+      "id": "civic-tech-program-manager",
+      "title": "Civic Technology Program Manager",
+      "family": "Public sector",
+      "sector": "Government",
+      "summary": "Runs digital and AI programmes in the public interest: procurement, delivery, community engagement and the unglamorous work of making services usable.",
+      "outlook": "Stable demand tied to digital public infrastructure budgets. AI procurement scrutiny is increasing the value of experienced programme leaders.",
+      "salary": {
+        "min": 80000,
+        "max": 112000,
+        "currency": "USD"
+      },
+      "demandIndex": 70,
+      "demandTrend": "stable",
+      "automationRisk": 9,
+      "requiredSkills": [
+        {
+          "skillId": "project-management",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "process-design",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "policy-literacy",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "systems-thinking",
+          "level": 4,
+          "importance": 3
+        },
+        {
+          "skillId": "ai-governance",
+          "level": 2,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 11,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Delivers better local services and inclusive urban systems."
+        },
+        {
+          "number": 16,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Makes public technology accountable and transparent."
+        },
+        {
+          "number": 17,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Brokers partnerships across sectors and levels of government."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Builds reusable public digital infrastructure."
+        },
+        {
+          "number": 10,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Designs services for those least able to navigate them."
+        }
+      ]
+    },
+    {
+      "id": "cyber-resilience-analyst",
+      "title": "Cyber Resilience Analyst",
+      "family": "Security",
+      "sector": "Cross-sector",
+      "summary": "Protects services that now depend on models and APIs: threat models AI pipelines, hardens identity and detects abuse of automated systems.",
+      "outlook": "Very strong demand. AI adoption expands the attack surface, and security teams are hiring for AI-specific assurance rather than classic perimeter work.",
+      "salary": {
+        "min": 82000,
+        "max": 118000,
+        "currency": "USD"
+      },
+      "demandIndex": 86,
+      "demandTrend": "rising",
+      "automationRisk": 11,
+      "requiredSkills": [
+        {
+          "skillId": "cybersecurity",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "cloud-fundamentals",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "api-integration",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "automation",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "ai-governance",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "sql",
+          "level": 2,
+          "importance": 2
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 16,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Protects public institutions and citizens from digital harm."
+        },
+        {
+          "number": 9,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Keeps critical digital infrastructure resilient."
+        },
+        {
+          "number": 8,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Safeguards business continuity and jobs."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Requires threat information sharing."
+        }
+      ]
+    },
+    {
+      "id": "ai-ethics-officer",
+      "title": "AI Ethics & Compliance Officer",
+      "family": "Governance",
+      "sector": "Public & corporate",
+      "summary": "Turns principles into controls: impact assessments, bias testing, vendor terms and incident processes that survive the first serious complaint.",
+      "outlook": "Growing from a low base. Regulation, procurement and reputational risk are converting voluntary frameworks into named responsibilities.",
+      "salary": {
+        "min": 90000,
+        "max": 130000,
+        "currency": "USD"
+      },
+      "demandIndex": 68,
+      "demandTrend": "rising",
+      "automationRisk": 7,
+      "requiredSkills": [
+        {
+          "skillId": "ai-governance",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "policy-literacy",
+          "level": 5,
+          "importance": 5
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "accessibility-inclusion",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "systems-thinking",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 16,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Builds accountable institutions for automated decision-making."
+        },
+        {
+          "number": 10,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Tests and mitigates discriminatory outcomes."
+        },
+        {
+          "number": 4,
+          "weight": 4,
+          "tier": "secondary",
+          "rationale": "Raises organisational AI literacy and transparency."
+        },
+        {
+          "number": 5,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Audits gendered impact of automated systems."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Aligns practice with international standards."
+        }
+      ]
+    },
+    {
+      "id": "energy-systems-analyst",
+      "title": "Energy Systems Data Analyst",
+      "family": "Energy",
+      "sector": "Utilities",
+      "summary": "Models demand, generation and grid constraints, increasingly including the electricity appetite of data centres and electrified transport.",
+      "outlook": "Rising demand driven by electrification and AI infrastructure. Utilities are hiring analysts who can work with both market data and engineering constraints.",
+      "salary": {
+        "min": 74000,
+        "max": 102000,
+        "currency": "USD"
+      },
+      "demandIndex": 77,
+      "demandTrend": "rising",
+      "automationRisk": 12,
+      "requiredSkills": [
+        {
+          "skillId": "statistics",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "python",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "data-visualisation",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "systems-thinking",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "sustainability-literacy",
+          "level": 3,
+          "importance": 4
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 4,
+          "importance": 3
+        },
+        {
+          "skillId": "sql",
+          "level": 3,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 7,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Improves energy access, efficiency and clean generation planning."
+        },
+        {
+          "number": 13,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Supports decarbonisation of power systems."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Strengthens resilient energy infrastructure."
+        },
+        {
+          "number": 11,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Informs sustainable city energy planning."
+        },
+        {
+          "number": 17,
+          "weight": 2,
+          "tier": "secondary",
+          "rationale": "Depends on regional grid cooperation."
+        }
+      ]
+    },
+    {
+      "id": "healthcare-automation-specialist",
+      "title": "Healthcare Automation Specialist",
+      "family": "Health operations",
+      "sector": "Healthcare",
+      "summary": "Automates scheduling, documentation and triage support in care settings while keeping clinicians accountable and patients safe.",
+      "outlook": "Rising but regulated. Adoption is fastest in administrative workflows, slower where clinical risk is high.",
+      "salary": {
+        "min": 76000,
+        "max": 108000,
+        "currency": "USD"
+      },
+      "demandIndex": 72,
+      "demandTrend": "rising",
+      "automationRisk": 13,
+      "requiredSkills": [
+        {
+          "skillId": "automation",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "process-design",
+          "level": 4,
+          "importance": 5
+        },
+        {
+          "skillId": "data-literacy",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "stakeholder-comms",
+          "level": 4,
+          "importance": 4
+        },
+        {
+          "skillId": "critical-evaluation",
+          "level": 4,
+          "importance": 3
+        },
+        {
+          "skillId": "cybersecurity",
+          "level": 3,
+          "importance": 3
+        },
+        {
+          "skillId": "api-integration",
+          "level": 2,
+          "importance": 3
+        }
+      ],
+      "sdgs": [
+        {
+          "number": 3,
+          "weight": 5,
+          "tier": "primary",
+          "rationale": "Frees clinical time and reduces administrative harm."
+        },
+        {
+          "number": 8,
+          "weight": 4,
+          "tier": "primary",
+          "rationale": "Reshapes care work rather than simply removing it."
+        },
+        {
+          "number": 9,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Modernises health information infrastructure."
+        },
+        {
+          "number": 10,
+          "weight": 3,
+          "tier": "secondary",
+          "rationale": "Extends access where clinical capacity is scarce."
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "baseline",
+      "name": "Baseline Adoption 2028",
+      "shortName": "Baseline",
+      "horizon": "Q4 2028",
+      "confidence": 0.58,
+      "summary": "Enterprises keep adopting AI at the current pace. Task-level automation spreads unevenly, reskilling demand grows steadily and policy remains mostly facilitative.",
+      "assumptions": [
+        "Enterprise AI adoption continues along its 2024–2026 trend",
+        "Regulation is implemented without major new obligations",
+        "Public reskilling budgets grow modestly with inflation"
+      ],
+      "drivers": [
+        {
+          "name": "Task-level automation",
+          "direction": "up",
+          "detail": "Clerical and first-line support tasks are partially automated; roles are reshaped rather than removed."
+        },
+        {
+          "name": "Evaluation maturity",
+          "direction": "up",
+          "detail": "Buyers start requiring evidence of model quality and incident handling."
+        },
+        {
+          "name": "Skills shortages",
+          "direction": "up",
+          "detail": "AI operations and governance talent remains the binding constraint."
+        }
+      ],
+      "metrics": {
+        "netEmploymentChangePct": 1.8,
+        "taskAutomationPct": 24,
+        "reskillingDemandIndex": 68,
+        "wagePolarisationIndex": 52
+      },
+      "rolesRising": [
+        "ai-ops-analyst",
+        "cyber-resilience-analyst",
+        "data-governance-specialist",
+        "energy-systems-analyst"
+      ],
+      "rolesDeclining": [],
+      "skillsInDemand": [
+        "model-evaluation",
+        "ai-governance",
+        "data-literacy",
+        "prompt-engineering"
+      ],
+      "roleAdjustments": {}
+    },
+    {
+      "id": "acceleration",
+      "name": "Accelerated Automation 2028",
+      "shortName": "Acceleration",
+      "horizon": "Q4 2028",
+      "confidence": 0.26,
+      "summary": "Agentic systems move from assistant to actor. Task displacement accelerates in mid-skill work, while demand spikes for people who can supervise, evaluate and repair automated operations.",
+      "assumptions": [
+        "Agent reliability improves enough for multi-step production use",
+        "Cost per automated task falls 60% below 2026 levels",
+        "Firms restructure teams around AI operations rather than adding tools"
+      ],
+      "drivers": [
+        {
+          "name": "Agentic deployment",
+          "direction": "up",
+          "detail": "Multi-step agents take over workflows in service operations, finance and back-office."
+        },
+        {
+          "name": "Evaluation gap",
+          "direction": "up",
+          "detail": "Failures in production increase demand for AI operations and assurance roles."
+        },
+        {
+          "name": "Entry-level compression",
+          "direction": "down",
+          "detail": "Junior analytical and administrative roles shrink, worsening transitions for new graduates."
+        }
+      ],
+      "metrics": {
+        "netEmploymentChangePct": -2.6,
+        "taskAutomationPct": 41,
+        "reskillingDemandIndex": 86,
+        "wagePolarisationIndex": 71
+      },
+      "rolesRising": [
+        "ai-ops-analyst",
+        "ai-product-owner",
+        "cyber-resilience-analyst",
+        "healthcare-automation-specialist",
+        "ai-ethics-officer",
+        "human-ai-interaction-designer"
+      ],
+      "rolesDeclining": [
+        "civic-tech-program-manager"
+      ],
+      "skillsInDemand": [
+        "model-evaluation",
+        "mlops",
+        "prompt-engineering",
+        "ai-governance",
+        "critical-evaluation"
+      ],
+      "roleAdjustments": {
+        "ai-ops-analyst": {
+          "fitDelta": 6,
+          "demandDelta": 8,
+          "note": "The bottleneck role when agents run production workflows."
+        },
+        "ai-product-owner": {
+          "fitDelta": 4,
+          "demandDelta": 6,
+          "note": "Owners are accountable for evaluation and rollback decisions."
+        },
+        "cyber-resilience-analyst": {
+          "fitDelta": 4,
+          "demandDelta": 7,
+          "note": "Agent credentials and tool access widen the attack surface."
+        },
+        "healthcare-automation-specialist": {
+          "fitDelta": 5,
+          "demandDelta": 6,
+          "note": "Administrative automation accelerates under capacity pressure."
+        },
+        "ai-ethics-officer": {
+          "fitDelta": 3,
+          "demandDelta": 4,
+          "note": "Incidents make assurance a board-level concern."
+        },
+        "human-ai-interaction-designer": {
+          "fitDelta": 3,
+          "demandDelta": 5,
+          "note": "Delegation and override design becomes a safety requirement."
+        },
+        "civic-tech-program-manager": {
+          "fitDelta": -3,
+          "demandDelta": -4,
+          "note": "Programme budgets shift from pilots to operations."
+        },
+        "workforce-transition-coach": {
+          "fitDelta": -2,
+          "demandDelta": 2,
+          "note": "Case volumes rise while funding lags."
+        },
+        "data-governance-specialist": {
+          "fitDelta": 2,
+          "demandDelta": 3,
+          "note": "Model and dataset provenance becomes audit-critical."
+        },
+        "green-supply-chain-analyst": {
+          "fitDelta": 1,
+          "demandDelta": 1,
+          "note": "Automation helps, but disclosure work still needs judgement."
+        },
+        "climate-data-steward": {
+          "fitDelta": 0,
+          "demandDelta": 1,
+          "note": "Demand is steady; data quality remains the constraint."
+        },
+        "energy-systems-analyst": {
+          "fitDelta": 1,
+          "demandDelta": 2,
+          "note": "Compute demand adds planning complexity."
+        }
+      }
+    },
+    {
+      "id": "green-regulated",
+      "name": "Green & Regulated 2028",
+      "shortName": "Green & regulated",
+      "horizon": "Q4 2028",
+      "confidence": 0.16,
+      "summary": "Climate disclosure and AI regulation tighten together. Automation proceeds, but compliance, sustainability and public accountability roles absorb much of the new demand.",
+      "assumptions": [
+        "Mandatory climate disclosure covers most listed firms and their suppliers",
+        "AI assurance requirements are enforced with named accountability",
+        "Public procurement favours demonstrably safe and inclusive systems"
+      ],
+      "drivers": [
+        {
+          "name": "Regulatory enforcement",
+          "direction": "up",
+          "detail": "Assurance, documentation and incident reporting become operating costs."
+        },
+        {
+          "name": "Climate disclosure",
+          "direction": "up",
+          "detail": "Supplier-level emissions data creates analytical roles across sectors."
+        },
+        {
+          "name": "Public trust",
+          "direction": "down",
+          "detail": "High-profile AI failures increase scrutiny of automated public services."
+        }
+      ],
+      "metrics": {
+        "netEmploymentChangePct": 0.9,
+        "taskAutomationPct": 29,
+        "reskillingDemandIndex": 79,
+        "wagePolarisationIndex": 58
+      },
+      "rolesRising": [
+        "ai-ethics-officer",
+        "green-supply-chain-analyst",
+        "climate-data-steward",
+        "energy-systems-analyst",
+        "data-governance-specialist"
+      ],
+      "rolesDeclining": [
+        "ai-ops-analyst"
+      ],
+      "skillsInDemand": [
+        "ai-governance",
+        "policy-literacy",
+        "sustainability-literacy",
+        "data-literacy",
+        "stakeholder-comms"
+      ],
+      "roleAdjustments": {
+        "ai-ethics-officer": {
+          "fitDelta": 6,
+          "demandDelta": 7,
+          "note": "Enforcement converts frameworks into permanent functions."
+        },
+        "green-supply-chain-analyst": {
+          "fitDelta": 6,
+          "demandDelta": 7,
+          "note": "Disclosure rules reach deep into supplier networks."
+        },
+        "climate-data-steward": {
+          "fitDelta": 5,
+          "demandDelta": 5,
+          "note": "Assurance depends on defensible climate data."
+        },
+        "energy-systems-analyst": {
+          "fitDelta": 5,
+          "demandDelta": 5,
+          "note": "Grid and emissions planning are coupled."
+        },
+        "data-governance-specialist": {
+          "fitDelta": 3,
+          "demandDelta": 4,
+          "note": "Data lineage becomes evidence in audits."
+        },
+        "civic-tech-program-manager": {
+          "fitDelta": 3,
+          "demandDelta": 3,
+          "note": "Procurement scrutiny rewards experienced public delivery."
+        },
+        "workforce-transition-coach": {
+          "fitDelta": 2,
+          "demandDelta": 3,
+          "note": "Just-transition funding expands coaching capacity."
+        },
+        "human-ai-interaction-designer": {
+          "fitDelta": 1,
+          "demandDelta": 2,
+          "note": "Accessibility requirements enter procurement."
+        },
+        "ai-ops-analyst": {
+          "fitDelta": -2,
+          "demandDelta": -2,
+          "note": "Some operational work is absorbed by vendors."
+        },
+        "ai-product-owner": {
+          "fitDelta": -1,
+          "demandDelta": 0,
+          "note": "Compliance gates slow delivery cycles."
+        },
+        "cyber-resilience-analyst": {
+          "fitDelta": 0,
+          "demandDelta": 2,
+          "note": "Security remains essential but not the growth story."
+        },
+        "healthcare-automation-specialist": {
+          "fitDelta": -1,
+          "demandDelta": 0,
+          "note": "Clinical automation faces tighter approval paths."
+        }
+      }
+    }
+  ]
+}

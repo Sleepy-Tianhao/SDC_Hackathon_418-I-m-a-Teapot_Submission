@@ -72,7 +72,7 @@ function renderSidebar() {
       <span class="brand-mark">${icon("compass", 21)}</span>
       <span class="brand-text">
         <span class="brand-name">AI Career Navigator</span>
-        <span class="brand-sub">SDC 2026 · Domain 1</span>
+        <span class="brand-sub">SDC 2026 · Argon edition</span>
       </span>
     </a>
     <nav class="sidebar__nav" aria-label="Sections">
@@ -137,6 +137,9 @@ function renderTopbar() {
             : html`<option value="baseline">Baseline</option>`}
         </select>
       </div>
+      <a class="design-switch" href="/legacy/" title="Switch back to the original Teapot design">
+        ${icon("layers", 15)}<span>Classic</span>
+      </a>
       <button class="icon-btn icon-btn--bordered" type="button" data-action="toggle-theme"
         aria-label="Switch to ${state.theme === "dark" ? "light" : "dark"} theme" title="Toggle theme">
         ${icon(state.theme === "dark" ? "sun" : "moon", 17)}

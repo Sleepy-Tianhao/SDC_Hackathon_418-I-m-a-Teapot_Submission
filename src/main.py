@@ -15,7 +15,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -24,6 +24,7 @@ sys.path.insert(0, str(ROOT))
 from src.backend import engine  # noqa: E402
 
 FRONTEND = ROOT / "src" / "frontend"
+LEGACY_FRONTEND = ROOT / "src" / "frontend_bak"
 mimetypes.add_type("image/webp", ".webp")
 
 app = FastAPI(title="AI Career Navigator API", version="1.0.0")
@@ -103,6 +104,30 @@ async def api(path: str, request: Request):
     except Exception as error:  # pragma: no cover - defensive
         return _error_response(error)
 
+
+# The current Argon design is the default. The previous visual design is kept
+# as a separate, self-contained site under /legacy/ so it can be compared and
+# restored without touching this one.
+if LEGACY_FRONTEND.is_dir():
+
+    @app.get("/legacy", include_in_schema=False)
+    def legacy_redirect():
+        return RedirectResponse("/legacy/")
+
+    @app.get("/legacy/", include_in_schema=False)
+    def legacy_index():
+        index = LEGACY_FRONTEND / "index.html"
+        if not index.is_file():
+            return RedirectResponse("/")
+        page = index.read_text(encoding="utf-8")
+        switch = """
+<a href="/" style="position:fixed;right:18px;bottom:18px;z-index:2147483647;display:inline-flex;align-items:center;gap:7px;padding:10px 14px;border-radius:999px;background:linear-gradient(135deg,#5e72e4,#825ee4);color:#fff;font:600 12px/1 'Segoe UI',sans-serif;text-decoration:none;box-shadow:0 12px 28px -10px rgba(94,114,228,.75)">Argon design</a>
+"""
+        if "</body>" in page:
+            page = page.replace("</body>", switch + "</body>", 1)
+        return HTMLResponse(page)
+
+    app.mount("/legacy", StaticFiles(directory=str(LEGACY_FRONTEND), html=True), name="legacy")
 
 app.mount("/", StaticFiles(directory=str(FRONTEND), html=True), name="frontend")
 
