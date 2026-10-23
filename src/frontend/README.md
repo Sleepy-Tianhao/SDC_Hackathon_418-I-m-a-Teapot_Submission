@@ -8,23 +8,34 @@ No npm, no bundler, no build step: the files here are the deployable artefact.
 
 ## Run it
 
-**With the reference API (recommended — live data, local database):**
+**Full stack — FastAPI backend plus this frontend (recommended for live data):**
 
 ~~~bash
-python docs/backend-integration/reference_api.py --port 8000
+pip install -r requirements.txt
+python src/main.py
 # open http://127.0.0.1:8000/
 ~~~
 
-**Frontend only (demo dataset):**
+The FastAPI entry serves this directory at `/` and the `/api/v1` API from the same origin. The
+frontend normally selects the live transport automatically after probing `/api/v1/health`.
+
+**Frontend only (offline demo dataset):**
 
 ~~~bash
-python tools/serve_frontend.py --port 8000
-# open http://127.0.0.1:8000/
+python tools/serve_frontend.py --port 8003
+# open http://127.0.0.1:8003/
 ~~~
+
+No API is required in this mode. The UI falls back to the files in `mock/` and shows the
+**Offline demo dataset** badge. This is intentionally separate from the live backend; the
+backend does not read `mock/*.json`.
 
 **Anything else static** — any HTTP server rooted at this directory works, e.g.
 `python -m http.server 8000 --directory src/frontend`. ES modules require HTTP; `file://` will
-not work.
+not work. If you only need API contract examples, the legacy
+`docs/backend-integration/reference_api.py` is still available, but it is not the runtime
+backend.
+
 
 ## Structure
 
@@ -95,7 +106,7 @@ the API; `demo` never does. The active transport is always visible in the sideba
 * `api.js` is the only module that talks to the network. Views call `api.match(...)`,
   `api.pathway(...)`, etc. and never see transport details.
 * In demo mode `mock.js` computes everything locally from `mock/*.json`; the scoring rules
-  mirror the reference API so both modes tell the same story.
+  mirror the backend contract so both modes tell the same story.
 * Changing the scenario clears derived results and re-fetches them for the current screen.
 
 ## Adding a screen or component
@@ -121,10 +132,15 @@ the API; `demo` never does. The active transport is always visible in the sideba
 
 ## Demo dataset
 
-`mock/*.json` is an illustrative dataset: 20 dated signals from realistic publishers, 12
-future roles with weighted SDG contributions, 3 scenarios and 37 modules. Figures are modelled
-for the pitch, not official statistics — the UI and docs say so. Replace the JSON with real
-ingestion output (same shapes) and the screens update without code changes.
+`mock/*.json` is the **offline demo** dataset used only when no API is available. It contains
+illustrative skills, roles, scenarios, dated signals and learning modules; figures are modelled
+for the demo, not official statistics, and the UI says so.
+
+The self-contained FastAPI backend does **not** read these files. It loads the real labour
+snapshots in `src/backend/data/` and builds its catalogue, signals and modules from them. The
+frontend contract stays the same in both modes, so the UI does not need a code change when the
+backend is present.
+
 
 ## Verification
 
@@ -137,4 +153,4 @@ node tools/screenshot.mjs --base http://127.0.0.1:8000 \
 
 The screenshot tool launches headless Edge through the DevTools protocol, waits for the SPA to
 finish rendering and writes full-page PNGs. It is Windows/macOS friendly and has no npm
-dependencies.
+dependencies. Start `src/main.py` first when taking live screenshots.

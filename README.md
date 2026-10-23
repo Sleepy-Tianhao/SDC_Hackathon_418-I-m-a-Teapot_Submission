@@ -45,9 +45,9 @@ evidence, their assumptions, or what happens if the future turns out differently
 
 **AI Career Navigator** is a separated frontend/backend web application:
 
-* **Skills profile intake** captures what a person can actually do (23 skills, self-rated 1–5),
+* **Skills profile intake** captures what a person can actually do, with self-rated skills,
   plus time, budget and interests.
-* **A dated signal layer** collects labour-market, policy and technology signals — every record
+* **A dated signal layer** draws its records from real institution/source rows — every signal
   has a publisher, a publication date and a source link, so the forecast can be audited.
 * **Scenario-aware matching** scores 12 future roles under three explicit 2028 futures, showing
   fit, the exact skills gap, salary band, automation risk and the reasons behind every score.
@@ -55,18 +55,19 @@ evidence, their assumptions, or what happens if the future turns out differently
   with hours, cost, milestones and evidence artefacts.
 * **SDG mapping** connects each matched role to the 17 goals with a weighted rationale and
   supporting signals.
-* **An LLM narrative** turns the structured result into a written briefing a mentor or manager
-  can act on — generated server-side, never exposing keys to the browser.
+* **A server-side narrative** turns the structured result into a written briefing a mentor or
+  manager can act on. The current build uses a deterministic evidence narrative; a model
+  provider can be added behind the same SSE interface.
 
-The frontend is a build-free SPA; the backend owns the database, scoring and third-party model
-calls. The UI can run on a complete demo dataset when the API is unavailable, and it says so.
+The frontend is a build-free SPA; the backend owns the database, scoring and narrative generation.
+The UI can run on a complete demo dataset when the API is unavailable, and it says so.
 
 ## Requirement coverage
 
 | Must-have from the Domain 1 brief | Where it is implemented |
 | --------------------------------- | ----------------------- |
-| Skills profile intake | `#/intake` — four-step wizard, validated, persisted via `POST /profiles` |
-| AI-trend signal layer (updatable, dated source) | `#/signals` — filters, evidence modal, source links, `POST /signals/refresh` |
+| Skills profile intake | `#/intake` — four-step wizard, validated, persisted via `POST /api/v1/profiles` |
+| AI-trend signal layer (updatable, dated source) | `#/signals` — filters, evidence modal, source links, `POST /api/v1/signals/refresh` |
 | Future-role matching + skills gap | `#/matches` and `#/overview` — fit scores, gap matrix, role detail |
 | Personalised reskilling pathway | `#/pathway` — phases, modules, cost, milestones, coverage, print/copy |
 | SDG mapping | `#/sdg` — all 17 goals, contribution scores, role and skill links, evidence |
@@ -78,7 +79,7 @@ calls. The UI can run on a complete demo dataset when the API is unavailable, an
 
 ![Landing page](docs/screenshots/landing.png)
 
-**Personal dashboard — readiness, top roles, capability radar, scenario sensitivity, SDG footprint**
+**Personal dashboard — life tree, readiness, top roles, capability radar, scenario sensitivity, SDG footprint**
 
 ![Overview dashboard](docs/screenshots/overview.png)
 
@@ -106,9 +107,9 @@ calls. The UI can run on a complete demo dataset when the API is unavailable, an
 
 ![API and integration](docs/screenshots/connect.png)
 
-**Streamed LLM briefing — grounded in the profile, scenario and pathway**
+**Streamed narrative briefing — grounded in the profile, scenario and pathway**
 
-![Streamed AI briefing](docs/screenshots/briefing.png)
+![Streamed narrative briefing](docs/screenshots/briefing.png)
 
 **Dark mode and mobile**
 
@@ -119,35 +120,31 @@ calls. The UI can run on a complete demo dataset when the API is unavailable, an
 ## Architecture
 
 ~~~text
-┌────────────────────────────┐         ┌────────────────────────────────────┐
-│ Browser                    │         │ Backend (FastAPI, planned)         │
-│  src/frontend              │  JSON   │ /api/v1/*                          │
-│  ES modules, no build step │ ──────► │  ├─ skills & profile service       │
-│  fetch + EventSource       │         │  ├─ signal ingestion & scoring     │
-│  localStorage: profile id  │  SSE    │  ├─ matcher / pathway / SDG map    │
-└────────────────────────────┘         │  └─ LLM client (provider API)      │
-                                       │                  │                 │
-                                       │      SQLite (profiles, signals,    │
-                                       │      analysis runs)                │
-                                       └──────────────────┬─────────────────┘
-                                                          │ HTTPS
-                                                ┌──────────────────┐
-                                                │ LLM provider API │
-                                                │ chat completions │
-                                                └──────────────────┘
+┌────────────────────────────┐        ┌─────────────────────────────────────┐
+│ Browser                    │        │ FastAPI  src/main.py                │
+│  src/frontend              │ JSON   │  /api/v1/*                          │
+│  ES modules, no build step │ ─────► │  ├─ src/backend/data.py             │
+│  fetch + EventSource       │        │  │   real labour CSVs + catalogue  │
+│  localStorage cache        │  SSE   │  ├─ src/backend/engine.py           │
+└────────────────────────────┘        │  │   matching / pathway / SDG      │
+                                      │  ├─ SQLite data/app.db              │
+                                      │  └─ static frontend mount at /      │
+                                      └─────────────────────────────────────┘
 ~~~
 
-The frontend never calls the model directly. The backend owns prompts, keys and persistence;
-the browser only sends ids and receives text or structured JSON.
+The frontend never reads the CSV files or the SQLite database directly. The backend owns the data
+load, scoring, catalogue and persistence; the browser only sends ids and receives structured JSON.
+The current narrative is deterministic and runs server-side; an external model can replace that
+step behind the same SSE contract.
 
 ## Tech stack
 
 | Layer | Technology | Why |
 | ----- | ---------- | --- |
 | Frontend | Native ES modules, modern CSS, inline SVG | No build step, instant deploys, nothing to break on Replit |
-| Backend | Python 3 + FastAPI (planned); reference implementation in the standard library | Simple deployment, typed routes |
-| Database | SQLite | Independent local database, zero setup, portable |
-| AI / compute | Third-party LLM API (provider-agnostic, called server-side) | No model hosting; swap providers through configuration |
+| Backend | Python 3 + FastAPI | Typed routes, same-origin UI, SSE, SQLite |
+| Database | SQLite | Profiles are persisted locally with zero setup |
+| Narrative | Deterministic evidence engine; provider adapter optional | Reproducible demo output; no key is needed for the default build |
 | Hosting / dev | Replit | One URL for UI + API |
 
 ## Repository structure
@@ -157,22 +154,23 @@ the browser only sends ids and receives text or structured JSON.
 ├── docs/
 │   ├── API.md                       # the frontend↔backend contract
 │   ├── openapi.json                 # machine-readable OpenAPI 3.1 spec
-│   ├── BACKEND_INTEGRATION.md       # step-by-step handover guide
+│   ├── BACKEND_INTEGRATION.md       # handover and endpoint notes
 │   ├── backend-integration/
-│   │   ├── reference_api.py         # working implementation of the whole contract
+│   │   ├── reference_api.py         # legacy contract reference (not runtime code)
 │   │   ├── smoke_test.py            # 53-check contract test
 │   │   ├── export_fixtures.py       # captures example responses
-│   │   └── fixtures/                # captured example responses
+│   │   └── fixtures/                # captured example responses (legacy shape reference)
 │   └── screenshots/                 # UI evidence
 ├── src/
-│   ├── frontend/                    # the application UI (serve this directory)
-│   ├── main.py                      # backend entry point (FastAPI, teammate)
-│   ├── api/                         # backend routes (teammate)
-│   ├── services/                    # matching / pathway / SDG / LLM (teammate)
-│   ├── db/                          # SQLite models & repositories (teammate)
+│   ├── frontend/                    # the application UI (build-free SPA)
+│   ├── main.py                      # FastAPI entry: /api/v1 + static UI + SSE
+│   ├── backend/
+│   │   ├── data.py                  # loads real labour CSVs; builds catalogue/signals/modules
+│   │   ├── engine.py                # matching, pathway, SDG, narrative, SQLite
+│   │   └── data/                    # real labour snapshots and source metadata
 │   └── utils.py
 ├── tools/
-│   ├── serve_frontend.py            # static server for frontend development
+│   ├── serve_frontend.py            # static server for frontend-only development
 │   └── screenshot.mjs               # headless screenshots (no npm)
 ├── tests/
 │   ├── test_frontend_assets.py      # assets, fixtures, module graph, contract checks
@@ -182,34 +180,10 @@ the browser only sends ids and receives text or structured JSON.
 └── README.md
 ~~~
 
+
 ## How to run
 
-### 1. Fastest full-stack demo (reference API, no install)
-
-~~~bash
-python docs/backend-integration/reference_api.py --port 8000
-# open http://127.0.0.1:8000/
-~~~
-
-This serves the real UI, implements every endpoint in `docs/API.md`, stores profiles in
-`data/reference.db` (SQLite) and streams the narrative over SSE. The sidebar should read
-**Live API connected**. The reference API is a contract reference for the backend owner, not
-the production service.
-
-### 2. Frontend only (offline demo dataset)
-
-~~~bash
-python tools/serve_frontend.py --port 8000
-# open http://127.0.0.1:8000/
-~~~
-
-No API needed: the UI detects the missing backend and runs on dated fixtures, with a visible
-**Offline demo dataset** badge. Add `#/overview?sample=1` to seed a sample profile.
-
-### 3. With the FastAPI backend
-
-`src/main.py` now exposes the same `/api/v1` contract as the reference API and serves
-`src/frontend` at the same origin, so the UI automatically uses live data:
+### 1. Full stack — FastAPI backend + frontend (recommended)
 
 ~~~bash
 pip install -r requirements.txt
@@ -217,15 +191,36 @@ python src/main.py
 # open http://127.0.0.1:8000/
 ~~~
 
-The FastAPI entry is self-contained under `src/backend/`. It reads the real labour
-datasets in `src/backend/data/` (national graduate statistics, salary, industry, MoHE
-employment, global comparisons and source URLs), builds the catalogue and signals from those
-tables, persists profiles in SQLite, and serves the frontend from the same origin. It does not
-import `docs/backend-integration/reference_api.py` and does not read the frontend mock JSON.
-Salary/employment/signal metadata is loaded from the CSV sources; role archetypes, the skill
-taxonomy and scenario assumptions are explicit product definitions, not random fixtures.
-Set `API_PORT` if port 8000 is already in use. Integration steps:
-[docs/BACKEND_INTEGRATION.md](docs/BACKEND_INTEGRATION.md).
+The FastAPI entry serves the frontend and the `/api/v1` API from the same origin, so the
+sidebar reads **Live API connected** without any extra configuration. It reads the real
+labour snapshots in `src/backend/data/`, persists profiles in `data/app.db`, and serves the
+UI from `src/frontend`.
+
+If port 8000 is already in use:
+
+~~~powershell
+$env:API_PORT="8022"
+python src/main.py
+# open http://127.0.0.1:8022/
+~~~
+
+### 2. Frontend only — offline demo dataset
+
+~~~bash
+python tools/serve_frontend.py --port 8003
+# open http://127.0.0.1:8003/
+~~~
+
+No API is required. The UI probes `/api/v1/health`, falls back to the browser demo fixtures,
+and visibly shows **Offline demo dataset**. Add `#/overview?sample=1` to seed a sample profile.
+This mode uses the files in `src/frontend/mock/`; it is intentionally separate from the
+live backend.
+
+### 3. Legacy reference API (contract shape only)
+
+`docs/backend-integration/reference_api.py` remains in the repository as a small, dependency-free
+contract reference and test fixture. It is **not imported by the runtime backend** and should
+not be used as the production service.
 
 ### Tests
 
@@ -233,6 +228,7 @@ Set `API_PORT` if port 8000 is already in use. Integration steps:
 python -m unittest discover tests
 python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v1
 ~~~
+
 
 ## API contract
 
@@ -242,54 +238,68 @@ python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v
 * Frontend notes: [src/frontend/README.md](src/frontend/README.md)
 
 The contract covers health and metadata, the catalogue, the signal layer, profile intake,
-matching, pathway generation, SDG mapping, scenarios, and the streamed LLM narrative. The
+matching, pathway generation, SDG mapping, scenarios, and the server-side narrative stream. The
 frontend's transport is switchable at runtime (`auto` / `live` / `demo`) and visible in the UI.
 
 ## Two-minute demo script
 
 1. **Landing** — state the problem and the six must-haves. Click *Explore with a sample profile*.
-2. **Overview** — readiness 72/100, top three roles, capability radar, SDG footprint.
+2. **Overview** — the exploration tree, readiness score, top roles, capability radar and SDG footprint.
 3. **Intake** — show honest self-rating and the time/budget constraints that drive the plan.
 4. **Signals** — open one signal's evidence: publisher, date, source link, affected roles.
 5. **Matches** — compare two roles, open the gap matrix, then change the scenario in the top bar:
    the same profile re-ranks.
-6. **Pathway** — phases, costs, milestones, coverage; generate or regenerate the AI briefing.
+6. **Pathway** — phases, costs, milestones, coverage; generate or regenerate the evidence briefing.
 7. **SDG map** — pick a goal and show the role, skills and evidence behind its score.
 8. **Connect** — show live/demo status and the endpoint contract. This is the backend handover.
 
 ## Data and provenance
 
-The bundled dataset (`src/frontend/mock/*.json`) is **illustrative**: 23 skills, 12 future
-roles, 3 scenarios, 20 dated signals and 37 learning modules. Publishers and dates are realistic
-so the evidence layer can be demonstrated, but the figures are modelled, not official
-statistics. The UI labels the dataset as a prototype, and the backend can replace the JSON with
-real ingestion output without changing the frontend.
+The live backend is data-driven:
+
+* `src/backend/data/01_national_annual_series.csv` — national graduate labour series;
+* `src/backend/data/02_salary_by_qualification_skill_gender_location.csv` — salary by qualification;
+* `src/backend/data/03_industry_distribution.csv` — sector distribution and starting ranges;
+* `src/backend/data/04_salary_by_state.csv` — salary by state/territory;
+* `src/backend/data/05_mohe_employment_rate.csv` — MoHE employment rates;
+* `src/backend/data/06_global_annual_series.csv` and `07_global_salary_employment_detail.csv` — global comparisons;
+* `src/backend/data/08_source_urls.csv` — publisher, URL and release metadata used by the signal layer.
+
+Salary, employment and signal metadata are loaded from those tables. Role archetypes, the skill
+taxonomy and scenario parameterisation are explicit product definitions on top of the real data;
+they are not random mock records. The backend does **not** read `src/frontend/mock/*.json`.
+
+The files in `src/frontend/mock/` are a separate **offline demo** dataset used only when the
+frontend is started without an API. They are labelled as illustrative in the UI and are not
+served by the FastAPI backend as live data.
+
 
 ## How we use Replit *(required)*
 
 * **Development:** the repository is imported into a Repl; the backend entry point
-  (`src/main.py`) serves both the API and the frontend once implemented.
+  (`src/main.py`) serves both the API and the frontend.
 * **Hosting:** the app is deployed with Replit Deployments; the live demo link above points at it.
-* **Secrets:** `LLM_API_KEY`, `LLM_BASE_URL` and `LLM_MODEL` live in Replit Secrets, never in the repo.
+* **Secrets:** if an external narrative provider is enabled later, its keys belong in Replit Secrets,
+  never in the repository. The default deterministic narrative needs no model key.
 
 Proof of use: [`submission/REPLIT PROOF OF USE.pdf`](submission/REPLIT%20PROOF%20OF%20USE.pdf)
 
-## AI / LLM integration
+## Narrative generation
 
-The narrative briefing is generated by a third-party LLM called directly from the backend.
-The backend builds the prompt from the matched profile, scenario, pathway and the two most
-relevant signals, then streams tokens to the browser as Server-Sent Events.
+The default backend generates a deterministic, evidence-based narrative from the selected
+profile, scenario, matched roles, pathway and relevant signals. It streams that narrative to the
+browser over the same Server-Sent Events contract the UI already consumes:
 
-~~~bash
-curl "$LLM_BASE_URL/chat/completions" \
-  -H "Authorization: Bearer $LLM_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"model": "your-model", "messages": [{"role": "user", "content": "Write a 250-word careers briefing…"}], "stream": true}'
+~~~text
+event: meta
+event: token
+event: done
 ~~~
 
-Provider choice is configuration rather than architecture: set `LLM_BASE_URL`, `LLM_API_KEY`
-and `LLM_MODEL` on the server. The frontend only receives `event: token` frames; it never
-sees a key or a prompt.
+No model key is required for the default build. The engine boundary is intentionally separate,
+so a provider adapter can be added later without changing the frontend. If a provider is enabled,
+its key stays server-side; the browser receives only `event: token` frames and never sees a key
+or prompt.
 
 ## Challenges and learnings
 
@@ -299,8 +309,8 @@ sees a key or a prompt.
 * **Making a demo survivable.** Backends fail during demos. The frontend ships a complete demo
   transport, probes `/health` with a three-second timeout, and always displays which mode is
   active.
-* **Keeping the contract honest.** The API contract, OpenAPI spec, reference implementation,
-  fixtures and a 53-check smoke test are all in the repo, so "the frontend expects this shape"
+* **Keeping the contract honest.** The API contract, OpenAPI spec, self-contained FastAPI
+  backend and a 53-check smoke test are all in the repo, so "the frontend expects this shape"
   is testable rather than a claim.
 * **Ten packages of scope.** Six must-haves means six screens; the design system (tokens,
   components, charts) made it possible to keep them coherent.
@@ -330,12 +340,12 @@ sees a key or a prompt.
 * [x] All six must-haves implemented and demonstrated
 * [x] Working frontend with a live/demo transport switch
 * [x] API contract + OpenAPI + integration guide
-* [x] Reference API and contract smoke test
+* [x] Self-contained FastAPI backend with real labour datasets and contract smoke test
 * [x] Automated tests for assets, fixtures and contract
 * [ ] Slide deck link added
 * [ ] Demo video link added
 * [ ] Replit deployment URL added
-* [ ] LLM provider credentials set in Secrets
+* [ ] Optional external narrative provider configured in Secrets
 * [ ] "How to Run" verified on a clean clone
 * [x] No API keys or secrets committed
 

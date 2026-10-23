@@ -1,70 +1,103 @@
 # Backend integration kit
 
-Reference material for the FastAPI owner. Everything here runs on the Python standard library,
-so you can verify the frontend integration before writing a single route.
+This directory is the contract and verification kit for the FastAPI backend. The production
+service is now self-contained under `src/backend/`; the old `reference_api.py` is kept only as a
+small legacy contract reference and is **not imported by the runtime backend**.
 
 | File | Purpose |
 | ---- | ------- |
-| `reference_api.py` | Complete implementation of `docs/API.md`: static UI, profiles in SQLite, deterministic matching, pathway assembly, SDG map, SSE narrative |
-| `smoke_test.py` | 53-check contract test; run it against any backend |
-| `export_fixtures.py` | Captures example responses into `fixtures/` |
-| `fixtures/` | Real responses from the reference implementation, for shape comparison |
+| `smoke_test.py` | 53-check contract test; run it against the FastAPI backend |
+| `reference_api.py` | Legacy standard-library contract reference; not runtime code |
+| `export_fixtures.py` | Captures response examples for shape comparison |
+| `fixtures/` | Legacy captured responses; compare field names, not current data |
 
-## Run it
+## Current runtime
 
-~~~bash
-python docs/backend-integration/reference_api.py --port 8000
-# UI:  http://127.0.0.1:8000/
-# API: http://127.0.0.1:8000/api/v1/health
-# DB:  data/reference.db (created on first run)
+~~~text
+src/main.py                         FastAPI entry: /api/v1, static frontend, CORS, SSE
+  └── src/backend/engine.py         matching, pathway, SDG, narrative, SQLite
+        ├── src/backend/data.py     builds catalogue/signals/modules from real CSVs
+        └── src/backend/data/       labour snapshots and source URL metadata
+              └── data/app.db       created on first profile write
 ~~~
 
-Then:
+Start the real backend:
+
+~~~bash
+pip install -r requirements.txt
+python src/main.py
+# UI:  http://127.0.0.1:8000/
+# API: http://127.0.0.1:8000/api/v1/health
+~~~
+
+If port 8000 is occupied, set `API_PORT`:
+
+~~~powershell
+$env:API_PORT="8022"
+python src/main.py
+~~~
+
+The FastAPI entry serves `src/frontend` at `/` and the API at `/api/v1` on the same origin, so
+the UI does not need a separate CORS configuration or a second static server.
+
+## Contract test
 
 ~~~bash
 python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v1
-python docs/backend-integration/export_fixtures.py --base http://127.0.0.1:8000/api/v1
 ~~~
 
-The reference API serves the real frontend from `src/frontend`. Open the UI and the sidebar
-should read **Live API connected**.
+The test covers health/metadata, catalogue, signals, profile CRUD, matching, pathway, SDG
+mapping, narrative SSE and the error envelope. It should finish with:
 
-## Where each endpoint lives
+~~~text
+All 53 checks passed.
+~~~
 
-| Endpoint | Function |
-| -------- | -------- |
-| `GET /health` | `route()` → inline payload |
+## Endpoint implementation
+
+| Endpoint | Implementation |
+| -------- | -------------- |
+| `GET /health` | `src/backend/engine.py` → inline payload |
 | `GET /meta` | `meta_payload()` |
-| `GET /catalog` | `route()` → loads `mock/catalog.json` |
-| `GET /signals` | `list_signals()` |
-| `POST /signals/refresh` | `route()` → updates `LAST_REFRESHED` |
+| `GET /catalog` | `CATALOG` built by `src/backend/data.py` |
+| `GET /scenarios` | `CATALOG["scenarios"]` |
+| `GET /signals` | `list_signals()` over real source rows |
+| `POST /signals/refresh` | `route()` updates the refresh timestamp |
 | `POST /profiles` | `normalise_profile()` + `db_save()` |
 | `GET/PATCH /profiles/{id}` | `db_get()` / `db_save()` |
 | `POST /profiles/{id}/match` | `build_matches()` → `score_role()` |
 | `POST /profiles/{id}/pathway` | `build_pathway()` → `pick_module()` |
 | `GET /profiles/{id}/sdg-map` | `build_sdg_map()` |
 | `POST /analysis` | `build_analysis()` |
-| `GET /analysis/stream` | `Handler.stream_analysis()` |
+| `GET /analysis/stream` | deterministic SSE adapter in `src/main.py` |
 
-## Porting to FastAPI
+## Data and fixtures
 
-The reference is deliberately plain, so the move is mechanical:
+The runtime data is not the frontend mock set. It comes from:
 
-1. Replace `Handler.dispatch` with `APIRouter` route decorators; keep the same payloads.
-2. Replace `db_*` helpers with your repository layer (SQLAlchemy or raw sqlite3).
-3. Replace `build_analysis` with a provider client that streams tokens, and keep the SSE frame
-   format from `Handler.stream_analysis`.
-4. Serve `src/frontend` with `StaticFiles(directory=..., html=True)` **after** mounting the API
-   router, as shown in [`docs/BACKEND_INTEGRATION.md`](../BACKEND_INTEGRATION.md#5-option-a--fastapi-serves-the-ui-recommended).
+~~~text
+src/backend/data/
+  01_national_annual_series.csv
+  02_salary_by_qualification_skill_gender_location.csv
+  03_industry_distribution.csv
+  04_salary_by_state.csv
+  05_mohe_employment_rate.csv
+  06_global_annual_series.csv
+  07_global_salary_employment_detail.csv
+  08_source_urls.csv
+  malaysia_graduate_labour_market.xlsx
+~~~
 
-Keep the deterministic scoring in Python rather than delegating it to the LLM: the demo needs
-reproducible numbers and an audit trail.
+`data.py` loads the salary/employment/source tables and builds the role/skill/scenario
+catalogue. Role archetypes, the skill taxonomy and scenario assumptions are explicit product
+definitions on top of the real tables; they are not random fixtures.
 
-## About the dataset and fixtures
+The fixtures in `fixtures/` were captured from the legacy reference implementation and its
+illustrative mock catalogue. They are useful for field-name comparison only. To inspect current
+shapes, run the FastAPI backend and use `export_fixtures.py` against its `/api/v1` URL.
 
-`src/frontend/mock/*.json` is an **illustrative** dataset built for the pitch: 23 skills, 12
-future roles, 3 scenarios, 20 dated signals and 37 learning modules. Sources, publishers and
-dates are realistic so the evidence layer can be demonstrated, but the figures are modelled,
-not official statistics. Replace the JSON with your ingestion output (same shapes) and every
-screen updates without a frontend change. `fixtures/` contains responses captured from this
-dataset — use them to compare field names, not as current data.
+## Legacy reference
+
+`reference_api.py` remains useful for a quick no-install contract replay, but it must not be
+used as the production service and must not be imported by `src/main.py`. The runtime backend
+lives entirely under `src/backend/`.

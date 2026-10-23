@@ -1,7 +1,9 @@
-# Example responses
+# Example responses (legacy fixture set)
 
-Captured from `reference_api.py` with the sample profile (Aisha Rahman, baseline scenario) so
-the backend team can diff their own output field by field.
+These JSON files were captured from the legacy reference implementation and its illustrative
+mock catalogue, using the sample profile. They are **shape references only**; the current
+self-contained FastAPI backend reads real labour tables from `src/backend/data/` and produces
+different values.
 
 | File | Endpoint |
 | ---- | -------- |
@@ -15,9 +17,11 @@ the backend team can diff their own output field by field.
 | `analysis.json` | `POST /analysis` |
 | `error-404.json` | `GET /profiles/{id}` with an unknown id |
 
-Ids and timestamps differ on every run; compare structure and field names.
-Regenerate with:
+Use them to compare field names and nesting, not as current live data. To capture examples from
+the current backend, start `python src/main.py` and run:
 
 ~~~bash
 python docs/backend-integration/export_fixtures.py --base http://127.0.0.1:8000/api/v1
 ~~~
+
+Ids and timestamps differ on every run.
