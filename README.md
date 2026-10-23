@@ -217,9 +217,14 @@ python src/main.py
 # open http://127.0.0.1:8000/
 ~~~
 
-It uses the contract-complete implementation in
-`docs/backend-integration/reference_api.py` for routing, matching, pathways, SDG mapping,
-SQLite persistence and SSE. Set `API_PORT` if port 8000 is already in use. Integration steps:
+The FastAPI entry is self-contained under `src/backend/`. It reads the real labour
+datasets in `src/backend/data/` (national graduate statistics, salary, industry, MoHE
+employment, global comparisons and source URLs), builds the catalogue and signals from those
+tables, persists profiles in SQLite, and serves the frontend from the same origin. It does not
+import `docs/backend-integration/reference_api.py` and does not read the frontend mock JSON.
+Salary/employment/signal metadata is loaded from the CSV sources; role archetypes, the skill
+taxonomy and scenario assumptions are explicit product definitions, not random fixtures.
+Set `API_PORT` if port 8000 is already in use. Integration steps:
 [docs/BACKEND_INTEGRATION.md](docs/BACKEND_INTEGRATION.md).
 
 ### Tests
