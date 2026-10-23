@@ -35,10 +35,17 @@
   --gold: #8a5e29;
   --gold-soft: #f7ecd9;
 
-  --sidebar: #1a1110;
-  --sidebar-2: #241817;
-  --sidebar-ink: #e6d8d3;
-  --sidebar-muted: #a9938c;
+  --sidebar: #ffffff;
+  --sidebar-2: #ffffff;
+  --sidebar-surface: #ffffff;
+  --sidebar-surface-2: #faf7f5;
+  --sidebar-surface-3: #f2eae6;
+  --sidebar-line: #e8ddd7;
+  --sidebar-hover: #f2eae6;
+  --sidebar-active: #f4e5e1;
+  --sidebar-active-ink: #7a3f37;
+  --sidebar-ink: #3c2a26;
+  --sidebar-muted: #6d5954;
 
   --radius-xl: 22px;
   --radius-lg: 18px;
@@ -95,8 +102,17 @@
   --gold: #d6ab6e;
   --gold-soft: rgba(214, 171, 110, 0.14);
 
-  --sidebar: #100b0a;
-  --sidebar-2: #18100f;
+  --sidebar: #ffffff;
+  --sidebar-2: #ffffff;
+  --sidebar-surface: #ffffff;
+  --sidebar-surface-2: #faf7f5;
+  --sidebar-surface-3: #f2eae6;
+  --sidebar-line: #e8ddd7;
+  --sidebar-hover: #f2eae6;
+  --sidebar-active: #f4e5e1;
+  --sidebar-active-ink: #7a3f37;
+  --sidebar-ink: #3c2a26;
+  --sidebar-muted: #6d5954;
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.42);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.36);
