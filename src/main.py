@@ -104,14 +104,17 @@ def generate_pathway(profile: PathwayRequest):
 
     context_parts = []
 
-    # 数据文件放在仓库根目录（不是 src/），文件名以磁盘上的实际名字为准
+    # 数据文件放在 src/backend/data/ 目录下
     data_files = {
-        "全国年度数据": ROOT / "01_national.csv",
-        "技能薪资": ROOT / "02_salary.csv",
-        "行业分布": ROOT / "03_industry.csv",
-        "各州薪资": ROOT / "04_state..csv",
-        "就业率": ROOT / "05_employment.csv",
-        "综合Excel": ROOT / "06_comprehensive..xlsx",
+        "全国年度数据": ROOT / "src" / "backend" / "data" / "01_national_annual_series.csv",
+        "技能薪资": ROOT / "src" / "backend" / "data" / "02_salary_by_qualification_skill_gender_location.csv",
+        "行业分布": ROOT / "src" / "backend" / "data" / "03_industry_distribution.csv",
+        "各州薪资": ROOT / "src" / "backend" / "data" / "04_salary_by_state.csv",
+        "就业率": ROOT / "src" / "backend" / "data" / "05_mohe_employment_rate.csv",
+        "全球年度数据": ROOT / "src" / "backend" / "data" / "06_global_annual_series.csv",
+        "全球薪资": ROOT / "src" / "backend" / "data" / "07_global_salary_employment_detail.csv",
+        "数据来源": ROOT / "src" / "backend" / "data" / "08_source_urls.csv",
+        "综合Excel": ROOT / "src" / "backend" / "data" / "malaysia_graduate_labour_market.xlsx",
     }
 
     for name, path in data_files.items():
