@@ -1,402 +1,368 @@
-/**
- * Application shell: sidebar, topbar, routing, global actions.
- */
+/* AI Career Navigator — Argon Edition application layer.
+   The visual system is the vendored Argon theme (argon_css_merged.css + style.css).
+   This file contains product data flow and the small app layout classes only. */
 
-import { api, resolveTransport, transportInfo } from "./core/api.js";
-import { config } from "./core/config.js";
-import { copyText, fmt, html, icon, qs, scrollToTop, setHtml, toHtml } from "./core/dom.js";
-import { closeModal, confirmDialog, errorPanel, loadingPanel, toast } from "./core/ui.js";
-import { currentRoute, navigate, onRoute, refreshRoute, startRouter } from "./core/router.js";
-import * as store from "./core/store.js";
-import * as demo from "./core/mock.js";
-import { views } from "./views/index.js";
+var API = "/api/v1";
+var STORAGE_PROFILE = "aicn:argon:profile";
+var STORAGE_THEME = "aicn:argon:theme";
 
-/** Small diagnostic surface used by tools/screenshot.mjs and the smoke tests. */
-window.__AICN = { booted: false, route: null, errors: [], startedAt: Date.now() };
-window.addEventListener("error", (event) => {
-  window.__AICN.errors.push(String(event.message || event.error || "unknown error"));
-});
-
-const NAV_SECTIONS = [
-  {
-    label: "Workspace",
-    items: [
-      { path: "/overview", label: "Overview", icon: "compass" },
-      { path: "/intake", label: "Skills profile", icon: "user", step: "01" },
-    ],
-  },
-  {
-    label: "Foresight",
-    items: [
-      { path: "/signals", label: "Signal layer", icon: "activity", step: "02" },
-      { path: "/scenarios", label: "Scenario lab", icon: "compare" },
-    ],
-  },
-  {
-    label: "Your plan",
-    items: [
-      { path: "/matches", label: "Role matches", icon: "target", step: "03" },
-      { path: "/pathway", label: "Reskilling pathway", icon: "route", step: "04" },
-      { path: "/sdg", label: "SDG map", icon: "globe", step: "05" },
-    ],
-  },
-  {
-    label: "Build",
-    items: [{ path: "/connect", label: "API & integration", icon: "plug" }],
-  },
+var INTERESTS = [
+  ["ai", "AI & automation"],
+  ["public", "Public services"],
+  ["climate", "Climate & sustainability"],
+  ["health", "Health & care"],
+  ["design", "Design & research"],
+  ["data", "Data & analysis"],
+  ["security", "Security & risk"],
+  ["people", "People & skills"],
+  ["governance", "Governance & policy"]
 ];
 
-let currentViewTitle = "Overview";
+var SAMPLE_SKILLS = {
+  "data-literacy": 3, "stakeholder-comms": 4, "critical-evaluation": 3,
+  "process-design": 3, "sql": 2, "automation": 3, "prompt-engineering": 2,
+  "model-evaluation": 2, "ai-governance": 1, "project-management": 3,
+  "change-facilitation": 2, "systems-thinking": 3
+};
 
-function modeLabel() {
-  return store.getState().mode === "live" ? "Live API connected" : "Offline demo dataset";
+var state = {
+  meta: null, catalog: null, signals: [], scenarios: [], scenarioId: null,
+  profile: null, matches: null, pathway: null, sdg: null
+};
+
+function $(selector, root) { return (root || document).querySelector(selector); }
+function $$(selector, root) { return Array.prototype.slice.call((root || document).querySelectorAll(selector)); }
+function escapeHtml(value) {
+  return String(value == null ? "" : value)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
-
-function modeDotClass() {
-  return store.getState().mode === "live" ? "dot" : "dot dot--demo";
+function money(value, currency) {
+  var n = Number(value);
+  if (!isFinite(n)) return "—";
+  try { return new Intl.NumberFormat("en-US", { style: "currency", currency: currency || "USD", maximumFractionDigits: 0 }).format(n); }
+  catch (e) { return String(n); }
 }
+function number(value) { var n = Number(value); return isFinite(n) ? n.toLocaleString("en-US") : "—"; }
 
-function renderSidebar() {
-  const sidebar = qs("#sidebar");
-  if (!sidebar) return;
-  const state = store.getState();
-  const route = currentRoute();
-  const info = transportInfo();
-  const signalCount = state.meta?.counts?.signals;
-  const modeDetail =
-    state.mode === "live"
-      ? "Requests go to " + config.apiBaseUrl
-      : info.reason || "No backend answered — the UI is running on fixture data.";
-
-  sidebar.innerHTML = toHtml(html`<a class="sidebar__brand" href="#/overview" aria-label="AI Career Navigator home">
-      <span class="brand-mark">${icon("compass", 21)}</span>
-      <span class="brand-text">
-        <span class="brand-name">AI Career Navigator</span>
-        <span class="brand-sub">SDC 2026 · Argon edition</span>
-      </span>
-    </a>
-    <nav class="sidebar__nav" aria-label="Sections">
-      ${NAV_SECTIONS.map(
-        (section) => html`<p class="nav__label">${section.label}</p>
-          ${section.items.map((item) => {
-            const active = route.path === item.path || (item.path === "/overview" && route.path === "/");
-            const count = item.path === "/signals" && signalCount ? html`<span class="nav__count">${signalCount}</span>` : "";
-            return html`<a class="nav__item ${active ? "is-active" : ""}" href="#${item.path}"
-                ${active ? 'aria-current="page"' : ""}>
-              ${icon(item.icon, 17)}
-              <span>${item.label}</span>
-              ${count || (item.step ? html`<span class="nav__step">${item.step}</span>` : "")}
-            </a>`;
-          })}`,
-      )}
-    </nav>
-    <div class="sidebar__foot">
-      <div class="mode-card">
-        <div class="mode-card__top"><span class="${modeDotClass()}"></span>${modeLabel()}</div>
-        <p class="mode-card__meta">${modeDetail}</p>
-        <a class="mode-card__link" href="#/connect">Connection settings ${icon("arrowRight", 12)}</a>
-      </div>
-      <p class="sidebar__legal">
-        Built by 418 I'm a Teapot. Signals, roles and pathways in demo mode are illustrative seed data.
-      </p>
-    </div>`);
-
-}
-
-function renderTopbar() {
-  const topbar = qs("#topbar");
-  if (!topbar) return;
-  const state = store.getState();
-  const route = currentRoute();
-  const view = views[route.path];
-  currentViewTitle = view ? view.title : "Not found";
-  const scenarios = state.catalog?.scenarios || [];
-  const scenarioId = state.scenarioId;
-  const lastRefreshed = state.meta?.lastRefreshedAt;
-  const profile = state.profile;
-
-  topbar.innerHTML = toHtml(html`<button class="icon-btn menu-btn" type="button" data-action="menu-open" aria-label="Open navigation">
-      ${icon("menu", 20)}
-    </button>
-    <div class="crumb">
-      <span>Workspace</span>${icon("chevronRight", 12)}<strong data-role="crumb-title">${currentViewTitle}</strong>
-    </div>
-    <div class="topbar__right">
-      <a class="freshness" href="#/signals" title="Open the signal layer">
-        <span class="dot"></span>
-        ${lastRefreshed ? html`Signals · ${fmt.relative(lastRefreshed)}` : "Signals loading"}
-      </a>
-      <div class="scenario-picker">
-        <span class="scenario-picker__label">Scenario</span>
-        <select id="scenario-select" aria-label="Future scenario">
-          ${scenarios.length
-            ? scenarios.map(
-                (scenario) =>
-                  html`<option value="${scenario.id}" ${scenario.id === scenarioId ? "selected" : ""}>${scenario.shortName}</option>`,
-              )
-            : html`<option value="baseline">Baseline</option>`}
-        </select>
-      </div>
-      <a class="design-switch" href="/legacy/" title="Switch back to the original Teapot design">
-        ${icon("layers", 15)}<span>Classic</span>
-      </a>
-      <button class="icon-btn icon-btn--bordered" type="button" data-action="toggle-theme"
-        aria-label="Switch to ${state.theme === "dark" ? "light" : "dark"} theme" title="Toggle theme">
-        ${icon(state.theme === "dark" ? "sun" : "moon", 17)}
-      </button>
-      <a class="avatar" href="#/intake" title="${profile ? "Edit skills profile" : "Build your skills profile"}">
-        <span class="avatar__initials">${profile ? fmt.initials(profile.name) : "?"}</span>
-        <span class="avatar__name">${profile ? profile.name : "New profile"}</span>
-      </a>
-    </div>`);
-
-  const select = qs("#scenario-select");
-  if (select) {
-    select.addEventListener("change", () => {
-      store.setScenario(select.value);
-      const label = (store.getState().catalog?.scenarios || []).find((item) => item.id === select.value);
-      toast("Recalculating for " + (label ? label.name : "the selected scenario") + ".", { tone: "brand" });
-      refreshRoute();
-    });
+async function request(path, options) {
+  options = options || {};
+  var response = await fetch(API + path, {
+    method: options.method || "GET",
+    headers: { Accept: "application/json", "Content-Type": options.body ? "application/json" : "application/json" },
+    body: options.body ? JSON.stringify(options.body) : undefined,
+    credentials: "same-origin"
+  });
+  var text = await response.text();
+  var data = null;
+  try { data = text ? JSON.parse(text) : null; } catch (e) { data = null; }
+  if (!response.ok) {
+    throw new Error((data && data.error && data.error.message) || ("HTTP " + response.status));
   }
+  return data;
 }
 
-function openNav() {
-  const sidebar = qs("#sidebar");
-  const scrim = qs("#sidebar-scrim");
-  if (!sidebar) return;
-  sidebar.classList.add("is-open");
-  if (scrim) scrim.classList.remove("hidden");
-  document.body.classList.add("is-locked");
+function notice(message, tone) {
+  var el = $("#notice"); if (!el) return;
+  el.className = "alert alert-" + (tone || "warning") + " app-notice";
+  el.textContent = message;
+}
+function hideNotice() { var el = $("#notice"); if (el) el.className = "alert alert-warning app-notice d-none"; }
+function setStatus(label, tone) { var el = $("#apiStatus"); if (el) { el.className = "badge badge-" + (tone || "success"); el.textContent = label; } }
+function setWorkflow(label, tone) { var el = $("#workflowState"); if (el) { el.className = "badge badge-" + (tone || "neutral"); el.textContent = label; } }
+function loading(message) { return '<div class="col-12"><div class="app-loading">' + escapeHtml(message) + '</div></div>'; }
+function ring(value) {
+  var pct = Math.max(0, Math.min(100, Number(value) || 0));
+  var c = 2 * Math.PI * 38;
+  var offset = c - (pct / 100) * c;
+  return '<span class="app-score-ring" aria-label="' + pct + ' out of 100"><svg viewBox="0 0 100 100" aria-hidden="true"><circle class="app-score-ring__track" cx="50" cy="50" r="38"></circle><circle class="app-score-ring__value" cx="50" cy="50" r="38" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + offset.toFixed(1) + '"></circle></svg><strong>' + Math.round(pct) + '</strong></span>';
 }
 
-function closeNav() {
-  const sidebar = qs("#sidebar");
-  const scrim = qs("#sidebar-scrim");
-  if (!sidebar) return;
-  sidebar.classList.remove("is-open");
-  if (scrim) scrim.classList.add("hidden");
-  if (!qs("#modal-root")?.classList.contains("is-open")) document.body.classList.remove("is-locked");
+function renderSkillFields(catalog) {
+  var root = $("#skillFields"); if (!root) return;
+  root.innerHTML = (catalog.skills || []).map(function (skill) {
+    return '<div class="app-skill" data-skill="' + escapeHtml(skill.id) + '"><label><input type="checkbox" data-skill-check="' + escapeHtml(skill.id) + '" /><span>' + escapeHtml(skill.name) + '</span></label><select data-skill-level="' + escapeHtml(skill.id) + '" aria-label="' + escapeHtml(skill.name) + ' level"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select></div>';
+  }).join("");
 }
 
-async function loadSampleProfile(options = {}) {
-  const buttonToast = toast("Loading the sample profile…", { tone: "brand", duration: 2000 });
-  try {
-    const profile = await api.saveProfile(demo.SAMPLE_PROFILE, null);
-    store.recordJourney("profileSaved");
-    store.setState({ profile, matches: null, pathway: null, sdgMap: null, analysis: null });
-    window.dispatchEvent(new CustomEvent("aicn:workspace-changed"));
-    renderTopbar();
-    if (!options.silent) {
-      toast("Aisha Rahman's profile is ready. Explore matches, pathway and SDG mapping.", {
-        tone: "success",
-        title: "Sample profile loaded",
-      });
-    }
-    if (options.navigate !== false) navigate("/overview");
-    else refreshRoute();
-    return profile;
-  } catch (error) {
-    toast(error.message || "Could not load the sample profile.", { tone: "danger", title: "Load failed" });
-    throw error;
-  } finally {
-    if (buttonToast) buttonToast.remove();
-  }
+function renderInterests() {
+  var root = $("#interestFields"); if (!root) return;
+  root.innerHTML = INTERESTS.map(function (item) {
+    return '<label class="app-interest"><input type="checkbox" data-interest="' + item[0] + '" /><span>' + item[1] + '</span></label>';
+  }).join("");
 }
 
-async function copyToClipboard(value) {
-  const ok = await copyText(value);
-  toast(ok ? "Copied to clipboard." : "Copy failed — select and copy manually.", {
-    tone: ok ? "success" : "danger",
-    duration: 2400,
+function applySample() {
+  if (!state.catalog) return;
+  var ids = {};
+  (state.catalog.skills || []).forEach(function (skill) { ids[skill.id] = true; });
+  Object.keys(SAMPLE_SKILLS).forEach(function (id) {
+    if (!ids[id]) return;
+    var check = document.querySelector('[data-skill-check="' + CSS.escape(id) + '"]');
+    var level = document.querySelector('[data-skill-level="' + CSS.escape(id) + '"]');
+    if (check) check.checked = true;
+    if (level) level.value = String(SAMPLE_SKILLS[id]);
+  });
+  ["ai", "public", "people"].forEach(function (id) {
+    var input = document.querySelector('[data-interest="' + id + '"]');
+    if (input) input.checked = true;
   });
 }
 
-function bindGlobalEvents() {
-  document.addEventListener("click", (event) => {
-    const target = event.target instanceof Element ? event.target : null;
-    if (!target) return;
+function collectProfile() {
+  var skills = $$("[data-skill-check]").filter(function (input) { return input.checked; }).map(function (input) {
+    var id = input.getAttribute("data-skill-check");
+    var level = document.querySelector('[data-skill-level="' + CSS.escape(id) + '"]');
+    return { skillId: id, level: Number((level && level.value) || 1) };
+  });
+  return {
+    name: ($("#name") && $("#name").value.trim()) || "Anonymous learner",
+    headline: ($("#headline") && $("#headline").value.trim()) || "",
+    currentRole: ($("#currentRole") && $("#currentRole").value.trim()) || "",
+    sector: ($("#sector") && $("#sector").value) || "Other",
+    region: ($("#region") && $("#region").value) || "Global",
+    yearsExperience: Number(($("#yearsExperience") && $("#yearsExperience").value) || 0),
+    education: ($("#education") && $("#education").value) || "Other",
+    skills: skills,
+    interests: $$("[data-interest]:checked").map(function (input) { return input.getAttribute("data-interest"); }),
+    constraints: {
+      hoursPerWeek: Number(($("#hoursPerWeek") && $("#hoursPerWeek").value) || 8),
+      budget: Number(($("#budget") && $("#budget").value) || 0),
+      remoteOnly: false
+    },
+    goal: ($("#goal") && $("#goal").value.trim()) || "",
+    source: "argon-web"
+  };
+}
 
-    const copyEl = target.closest("[data-copy]");
-    if (copyEl) {
-      event.preventDefault();
-      copyToClipboard(copyEl.getAttribute("data-copy") || "");
+async function saveProfile(event) {
+  event.preventDefault();
+  var payload = collectProfile();
+  var button = $("#saveProfileBtn");
+  if (button) button.disabled = true;
+  try {
+    var result;
+    if (state.profile && state.profile.id) {
+      result = await request("/profiles/" + encodeURIComponent(state.profile.id), { method: "PATCH", body: payload });
+    } else {
+      result = await request("/profiles", { method: "POST", body: payload });
+    }
+    state.profile = result.profile || result;
+    localStorage.setItem(STORAGE_PROFILE, JSON.stringify(state.profile));
+    hideNotice();
+    setWorkflow("Profile saved", "success");
+    await runPipeline();
+  } catch (error) {
+    notice("Could not save the profile: " + error.message, "danger");
+  } finally {
+    if (button) button.disabled = false;
+  }
+}
+
+async function loadSignals() {
+  var root = $("#signalList"); if (!root) return;
+  root.innerHTML = loading("Loading dated signals…");
+  try {
+    var data = await request("/signals?limit=6&sort=impact");
+    state.signals = data.items || [];
+    root.innerHTML = state.signals.map(function (signal) {
+      return '<div class="col-md-6 col-lg-4 mb-4"><article class="app-signal h-100"><div class="card-body d-flex flex-column"><div class="d-flex justify-content-between"><span class="badge badge-primary">' + escapeHtml(signal.type || "signal") + '</span><span class="app-role-meta">' + escapeHtml(String(signal.publishedAt || "").slice(0, 10)) + '</span></div><h3>' + escapeHtml(signal.title) + '</h3><p>' + escapeHtml(signal.summary) + '</p><div class="mt-auto pt-3 d-flex justify-content-between"><small class="text-muted">' + escapeHtml(signal.publisher || "Source") + '</small><a class="small font-weight-bold" href="' + escapeHtml(signal.sourceUrl) + '" target="_blank" rel="noopener">Source ↗</a></div></div></article></div>';
+    }).join("");
+  } catch (error) {
+    root.innerHTML = loading("Signals unavailable: " + error.message);
+  }
+}
+
+function renderScenarios() {
+  var root = $("#scenarioCards"); var select = $("#scenarioSelect");
+  var scenarios = (state.catalog && state.catalog.scenarios) || [];
+  state.scenarios = scenarios;
+  if (select && scenarios.length) {
+    select.innerHTML = scenarios.map(function (scenario) { return '<option value="' + escapeHtml(scenario.id) + '">' + escapeHtml(scenario.shortName || scenario.name) + '</option>'; }).join("");
+    select.value = state.scenarioId || scenarios[0].id;
+  }
+  if (root) {
+    root.innerHTML = scenarios.map(function (scenario) {
+      return '<div class="col-md-4 mb-4"><article class="app-scenario ' + (scenario.id === state.scenarioId ? "is-active" : "") + '" data-scenario="' + escapeHtml(scenario.id) + '"><div class="card-body"><span class="badge badge-primary mb-2">' + escapeHtml(scenario.shortName || "Scenario") + '</span><h3>' + escapeHtml(scenario.name) + '</h3><p class="small text-muted">' + escapeHtml(scenario.summary || "") + '</p><div class="app-role-meta">Confidence ' + Math.round((scenario.confidence || 0) * 100) + '%</div></div></article></div>';
+    }).join("");
+  }
+}
+
+function renderOverview() {
+  var root = $("#overviewCards"); if (!root) return;
+  var top = state.matches && state.matches.matches && state.matches.matches[0];
+  var sdgScore = state.sdg && state.sdg.goals && state.sdg.goals.length ? Math.round(state.sdg.goals.reduce(function (s, g) { return s + (Number(g.score) || 0); }, 0) / state.sdg.goals.length) : "—";
+  var cards = [
+    ["Readiness score", top ? Math.round(top.fitScore || 0) + "/100" : "—", top ? top.title : "Save a profile to calculate"],
+    ["Top role", top ? top.title : "Not calculated", top ? "Best fit in this scenario" : "No matches yet"],
+    ["Dated signals", number((state.meta && state.meta.counts && state.meta.counts.signals) || state.signals.length), "Source-linked evidence records"],
+    ["SDG alignment", sdgScore === "—" ? "—" : sdgScore + "/100", state.sdg ? "Average across 17 goals" : "Awaiting profile"]
+  ];
+  root.innerHTML = cards.map(function (card) {
+    return '<div class="col-sm-6 col-xl-3 mb-4"><div class="app-stat"><div class="card-body"><div class="app-stat__label">' + escapeHtml(card[0]) + '</div><div class="app-stat__value">' + escapeHtml(card[1]) + '</div><p class="app-stat__hint">' + escapeHtml(card[2]) + '</p></div></div></div>';
+  }).join("");
+}
+
+async function runMatches() {
+  var root = $("#matchList"); if (!root || !state.profile) return;
+  root.innerHTML = loading("Scoring roles…");
+  var data = await request("/profiles/" + encodeURIComponent(state.profile.id) + "/match", { method: "POST", body: { scenarioId: state.scenarioId, profile: state.profile } });
+  state.matches = data;
+  var matches = data.matches || [];
+  var meta = $("#matchMeta"); if (meta) { meta.className = "badge badge-success"; meta.textContent = matches.length + " roles scored"; }
+  root.innerHTML = matches.map(function (match, index) {
+    var gaps = (match.skillsGap || []).slice(0, 4).map(function (gap) { return '<span class="app-gap">' + escapeHtml(gap.name) + ' ' + gap.currentLevel + '→' + gap.requiredLevel + '</span>'; }).join("");
+    return '<div class="col-lg-6 mb-4"><article class="app-role-card h-100"><div class="card-body"><div class="d-flex justify-content-between"><div><span class="badge badge-primary">' + escapeHtml(match.family || "Role") + '</span><div class="app-role-meta mt-2">' + escapeHtml(match.sector || "") + '</div></div><div class="text-right"><div class="app-role-score">' + Math.round(match.fitScore || 0) + '</div><div class="app-role-meta">fit / 100</div></div></div><h3 class="app-role-title">' + (index === 0 ? "★ " : "") + escapeHtml(match.title) + '</h3><p class="small text-muted">' + escapeHtml(match.summary || "") + '</p><div class="app-role-meta mb-2">Demand ' + number(match.demandIndex) + ' · Automation ' + number(match.automationRisk) + '% · ' + money(match.salary && match.salary.min, match.salary && match.salary.currency) + '–' + money(match.salary && match.salary.max, match.salary && match.salary.currency) + '</div><div class="mb-2">' + (gaps || '<span class="badge badge-success">No skill gaps</span>') + '</div><button class="btn btn-sm btn-outline-primary mt-2" type="button" data-pick-role="' + escapeHtml(match.roleId) + '">Build this pathway</button></div></article></div>';
+  }).join("");
+  renderOverview();
+}
+
+async function loadPathway(roleId) {
+  var root = $("#pathwayContent"); if (!root || !state.profile) return;
+  root.classList.remove("app-empty");
+  root.innerHTML = '<div class="app-loading">Building a three-phase pathway…</div>';
+  try {
+    var data = await request("/profiles/" + encodeURIComponent(state.profile.id) + "/pathway", { method: "POST", body: { scenarioId: state.scenarioId, roleId: roleId || (state.matches && state.matches.matches && state.matches.matches[0] && state.matches.matches[0].roleId) || null, profile: state.profile } });
+    state.pathway = data;
+    root.innerHTML = (data.phases || []).map(function (phase, index) {
+      var modules = (phase.modules || []).map(function (module) {
+        return '<div class="app-module"><div><strong>' + escapeHtml(module.title || "Learning module") + '</strong><br><small>' + escapeHtml(module.provider || "") + ' · ' + escapeHtml(module.level || "") + '</small></div><small>' + number(module.hours) + 'h · ' + (module.cost ? money(module.cost) : "Free") + '</small></div>';
+      }).join("");
+      return '<div class="app-phase"><span class="app-phase__marker">' + (index + 1) + '</span><h3>' + escapeHtml(phase.title || "Phase " + (index + 1)) + '</h3><p>' + escapeHtml(phase.goal || "") + (phase.weeks ? " · " + phase.weeks + " weeks" : "") + '</p><div class="mt-2">' + (modules || '<p class="small text-muted">No modules in this phase.</p>') + '</div></div>';
+    }).join("");
+  } catch (error) {
+    root.classList.add("app-empty");
+    root.innerHTML = '<div class="card-body p-4 text-danger">Pathway unavailable: ' + escapeHtml(error.message) + '</div>';
+  }
+}
+
+async function loadSdg() {
+  var root = $("#sdgGrid"); if (!root || !state.profile) return;
+  root.innerHTML = loading("Mapping roles and skills to the 17 goals…");
+  try {
+    var data = await request("/profiles/" + encodeURIComponent(state.profile.id) + "/sdg-map?scenarioId=" + encodeURIComponent(state.scenarioId));
+    state.sdg = data;
+    var goals = (data.goals || []).slice().sort(function (a, b) { return (b.score || 0) - (a.score || 0); });
+    root.innerHTML = goals.map(function (goal) {
+      return '<div class="col-sm-6 col-lg-4 col-xl-3 mb-3"><article class="app-sdg" style="--sdg:' + escapeHtml(goal.color || "#5e72e4") + '"><div class="d-flex justify-content-between"><span class="app-role-meta">SDG ' + escapeHtml(goal.number) + '</span><strong>' + Math.round(goal.score || 0) + '</strong></div><h3>' + escapeHtml(goal.shortName || goal.name) + '</h3><p>' + escapeHtml(goal.rationale || "") + '</p></article></div>';
+    }).join("");
+    renderOverview();
+  } catch (error) {
+    root.innerHTML = loading("SDG map unavailable: " + error.message);
+  }
+}
+
+async function generateBriefing() {
+  if (!state.profile) return;
+  var output = $("#narrativeOutput"); var button = $("#briefingBtn");
+  if (!output) return;
+  output.textContent = "Streaming the evidence briefing…";
+  output.classList.remove("text-muted");
+  if (button) button.disabled = true;
+  try {
+    if (!window.EventSource) {
+      var data = await request("/analysis", { method: "POST", body: { profileId: state.profile.id, scenarioId: state.scenarioId } });
+      output.textContent = (data.analysis && data.analysis.narrative) || data.narrative || "No narrative returned.";
       return;
     }
-
-    const actionEl = target.closest("[data-action]");
-    if (!actionEl) return;
-    const action = actionEl.getAttribute("data-action");
-
-    if (action === "menu-open") openNav();
-    else if (action === "menu-close") closeNav();
-    else if (action === "toggle-theme") {
-      store.toggleTheme();
-      renderTopbar();
-    } else if (action === "use-sample") {
-      loadSampleProfile();
-    } else if (action === "reset-workspace") {
-      confirmDialog({
-        title: "Reset this workspace?",
-        message: "Your saved profile, matches, pathway and narrative will be removed from this browser.",
-        confirmLabel: "Reset workspace",
-        onConfirm: () => {
-          store.resetWorkspace();
-          window.dispatchEvent(new CustomEvent("aicn:workspace-changed"));
-          renderTopbar();
-          navigate("/overview");
-          toast("Workspace cleared.", { tone: "info" });
-        },
-      });
-    } else if (action === "retry-route") {
-      refreshRoute();
-    } else if (action === "retry-boot") {
-      window.location.reload();
-    } else if (action === "goto") {
-      const to = actionEl.getAttribute("data-to");
-      if (to) navigate(to);
-    }
-  });
-
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeNav();
-  });
-
-  const scrim = qs("#sidebar-scrim");
-  if (scrim) scrim.addEventListener("click", closeNav);
-
-  window.addEventListener("hashchange", () => closeNav());
+    var url = API + "/analysis/stream?profileId=" + encodeURIComponent(state.profile.id) + "&scenarioId=" + encodeURIComponent(state.scenarioId);
+    var source = new EventSource(url);
+    output.textContent = "";
+    source.addEventListener("token", function (event) {
+      try { output.textContent += JSON.parse(event.data).text || ""; } catch (e) { /* ignore */ }
+    });
+    source.addEventListener("done", function () { source.close(); if (button) button.disabled = false; });
+    source.addEventListener("error", function () {
+      source.close();
+      output.textContent += "\n\nThe stream stopped. You can retry.";
+      if (button) button.disabled = false;
+    });
+  } catch (error) {
+    output.textContent = "Briefing unavailable: " + error.message;
+    if (button) button.disabled = false;
+  }
 }
 
-let rendering = false;
-let renderQueued = false;
-
-async function renderRoute() {
-  if (rendering) {
-    renderQueued = true;
-    return;
-  }
-  rendering = true;
-  const route = currentRoute();
-  const view = views[route.path];
-  const viewEl = qs("#view");
-  if (!viewEl) {
-    rendering = false;
-    return;
-  }
-
-  closeModal();
-  renderSidebar();
-  renderTopbar();
-
-  if (!view) {
-    viewEl.innerHTML = toHtml(html`<div class="empty">
-      <span class="empty__icon">${icon("compass", 26)}</span>
-      <h3 class="empty__title">This route does not exist</h3>
-      <p class="empty__body">The address <code>${route.path}</code> is not part of the application.</p>
-      <div class="empty__action"><a class="btn btn--primary" href="#/overview">Back to overview</a></div>
-    </div>`);
-    document.title = "Not found · AI Career Navigator";
-    rendering = false;
-    return;
-  }
-
-  currentViewTitle = view.title;
-  window.__AICN.route = route.path;
-  document.title = view.title + " · AI Career Navigator";
-  viewEl.innerHTML = toHtml(
-    html`<div class="view-loading">
-      ${loadingPanel(view.loadingMessage || "Loading…")}
-    </div>`,
-  );
-
+async function runPipeline() {
+  if (!state.profile) return;
+  setWorkflow("Calculating…", "primary");
+  hideNotice();
   try {
-    const content = await view.render({ route, state: store.getState() });
-    setHtml(viewEl, content);
-    scrollToTop();
-    if (typeof view.mount === "function") {
-      await view.mount(viewEl, { route, state: store.getState() });
+    await runMatches();
+    var top = state.matches && state.matches.matches && state.matches.matches[0];
+    await loadPathway(top && top.roleId);
+    await loadSdg();
+    if ($("#briefingBtn")) $("#briefingBtn").disabled = false;
+    setWorkflow("Plan ready", "success");
+  } catch (error) {
+    setWorkflow("Needs attention", "danger");
+    notice("Calculation failed: " + error.message, "danger");
+  }
+}
+
+function bindEvents() {
+  var form = $("#profileForm"); if (form) form.addEventListener("submit", saveProfile);
+  var sample = $("#sampleBtn"); if (sample) sample.addEventListener("click", function () { applySample(); var p = $("#profile"); if (p) p.scrollIntoView({ behavior: "smooth", block: "start" }); });
+  var briefing = $("#briefingBtn"); if (briefing) briefing.addEventListener("click", generateBriefing);
+  var theme = $("#themeToggle"); if (theme) theme.addEventListener("click", function () {
+    var dark = document.documentElement.classList.toggle("darkmode");
+    localStorage.setItem(STORAGE_THEME, dark ? "dark" : "light");
+    theme.textContent = dark ? "Light mode" : "Dark mode";
+  });
+  var select = $("#scenarioSelect"); if (select) select.addEventListener("change", function (event) {
+    state.scenarioId = event.target.value;
+    renderScenarios();
+    if (state.profile) runPipeline();
+  });
+  var matchList = $("#matchList"); if (matchList) matchList.addEventListener("click", function (event) {
+    var button = event.target.closest("[data-pick-role]"); if (!button) return;
+    loadPathway(button.getAttribute("data-pick-role"));
+    var p = $("#pathway"); if (p) p.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  var scenarios = $("#scenarioCards"); if (scenarios) scenarios.addEventListener("click", function (event) {
+    var card = event.target.closest("[data-scenario]"); if (!card) return;
+    state.scenarioId = card.getAttribute("data-scenario");
+    if (select) select.value = state.scenarioId;
+    renderScenarios();
+    if (state.profile) runPipeline();
+  });
+}
+
+async function bootstrap() {
+  var savedTheme = localStorage.getItem(STORAGE_THEME);
+  var dark = savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if (dark) document.documentElement.classList.add("darkmode");
+  var themeButton = $("#themeToggle"); if (themeButton) themeButton.textContent = dark ? "Light mode" : "Dark mode";
+  bindEvents();
+  renderInterests();
+  try {
+    var loaded = await Promise.all([request("/meta"), request("/catalog")]);
+    state.meta = loaded[0]; state.catalog = loaded[1];
+    state.scenarioId = (state.catalog.scenarios && state.catalog.scenarios[0] && state.catalog.scenarios[0].id) || "baseline";
+    renderSkillFields(state.catalog);
+    renderScenarios();
+    setStatus("Live API", "success");
+    hideNotice();
+    await loadSignals();
+    renderOverview();
+    var cached = localStorage.getItem(STORAGE_PROFILE);
+    if (cached) {
+      try {
+        var profile = JSON.parse(cached);
+        if (profile && profile.id) {
+          state.profile = profile;
+          var check = await request("/profiles/" + encodeURIComponent(profile.id));
+          state.profile = check.profile || profile;
+          setWorkflow("Profile saved", "success");
+          await runPipeline();
+        }
+      } catch (e) { /* stale local profile: keep the form */ }
     }
   } catch (error) {
-    console.error("view failed", route.path, error);
-    setHtml(
-      viewEl,
-      errorPanel({
-        title: "This view could not load",
-        message: error.message || "Unknown error",
-        code: error.code ? error.code + (error.status ? " · HTTP " + error.status : "") : "",
-        retry: true,
-        extra: html`<p class="tiny muted" style="margin-top:8px">
-          You can also switch to the demo dataset in <a href="#/connect">connection settings</a>.
-        </p>`,
-      }),
-    );
-  } finally {
-    rendering = false;
-    if (renderQueued) {
-      renderQueued = false;
-      renderRoute();
-    }
+    setStatus("API offline", "danger");
+    notice("The API is not reachable. Start the backend with python src/main.py, then reload. " + error.message, "danger");
+    $$("#profileForm input, #profileForm select, #profileForm textarea, #profileForm button").forEach(function (input) { input.disabled = true; });
   }
 }
 
-function renderFatal(error) {
-  const viewEl = qs("#view");
-  if (!viewEl) return;
-  viewEl.innerHTML = toHtml(
-    errorPanel({
-      title: "The workspace could not start",
-      message:
-        (error && error.message) ||
-        "The catalog could not be loaded. Start the API or serve the frontend over HTTP.",
-      code: error && error.code ? error.code : "",
-      retry: false,
-      extra: html`<div class="row" style="margin-top:12px">
-        <button class="btn btn--primary btn--sm" type="button" data-action="retry-boot">Reload</button>
-        <a class="btn btn--secondary btn--sm" href="#/connect">Check API settings</a>
-      </div>`,
-    }),
-  );
-}
-
-async function boot() {
-  store.restore();
-  store.applyTheme(store.getState().theme || "light");
-  renderSidebar();
-  renderTopbar();
-  bindGlobalEvents();
-  startRouter();
-  onRoute(() => renderRoute());
-
-  try {
-    await resolveTransport();
-    renderSidebar();
-    const [meta, catalog] = await Promise.all([api.meta(), api.catalog()]);
-    store.setState({ meta, catalog, booted: true }, { persist: false });
-    if (store.getState().mode === "live" && store.getState().profile) {
-      try {
-        await api.ensureRemoteProfile(store.getState().profile);
-      } catch (error) {
-        console.warn("profile sync failed", error);
-      }
-    }
-    if ((config.sampleProfile || currentRoute().query.sample === "1") && !store.getState().profile) {
-      try {
-        await loadSampleProfile({ silent: true, navigate: false });
-      } catch {
-        /* sample profile is optional */
-      }
-    }
-    renderSidebar();
-    renderTopbar();
-    window.__AICN.booted = true;
-    await renderRoute();
-  } catch (error) {
-    console.error("boot failed", error);
-    renderFatal(error);
-  }
-}
-
-boot();
-
-export { loadSampleProfile };
+document.addEventListener("DOMContentLoaded", bootstrap);

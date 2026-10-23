@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 FRONTEND = ROOT / "src" / "frontend"
 DOCS = ROOT / "docs"
-MOCK = FRONTEND / "mock"
+MOCK = ROOT / "src" / "frontend_bak" / "mock"  # legacy demo data, kept for regression coverage
 
 
 def read_json(path: Path):
@@ -27,44 +27,35 @@ class FrontendAssetTests(unittest.TestCase):
     def test_referenced_assets_exist(self):
         html = (FRONTEND / "index.html").read_text(encoding="utf-8")
         references = re.findall(r'(?:href|src)="([^"]+)"', html)
-        local = [ref for ref in references if not ref.startswith(("http", "#", "mailto:", "data:"))]
+        local = [ref for ref in references if not ref.startswith(("http", "#", "mailto:", "data:", "/"))]
         self.assertTrue(local, "index.html should reference local css and js files")
         for ref in local:
             self.assertTrue((FRONTEND / ref).is_file(), "missing asset referenced by index.html: " + ref)
 
-    def test_module_graph_resolves(self):
-        entry = FRONTEND / "js" / "app.js"
-        self.assertTrue(entry.is_file(), "app.js is missing")
-        visited = set()
-        pending = [entry]
-        import_pattern = re.compile(r'(?:from|import\s*\()\s*["\'](\.[^"\']+)["\']')
-        while pending:
-            current = pending.pop()
-            if current in visited:
-                continue
-            visited.add(current)
-            source = current.read_text(encoding="utf-8")
-            for spec in import_pattern.findall(source):
-                target = (current.parent / spec).resolve()
-                self.assertTrue(
-                    target.is_file(),
-                    "unresolved import " + spec + " in " + str(current.relative_to(ROOT)),
-                )
-                pending.append(target)
-        self.assertGreater(len(visited), 15, "expected the full module graph to be reachable")
+    def test_argon_sources_are_vendored(self):
+        required = (
+            FRONTEND / "vendor" / "argon" / "argon_css_merged.css",
+            FRONTEND / "vendor" / "argon" / "style.css",
+            FRONTEND / "vendor" / "argon" / "argon.min.js",
+            FRONTEND / "vendor" / "argon" / "bootstrap.bundle.min.js",
+            FRONTEND / "vendor" / "argon" / "jquery.min.js",
+            FRONTEND / "css" / "app.css",
+            FRONTEND / "js" / "app.js",
+        )
+        for path in required:
+            self.assertTrue(path.is_file(), "missing Argon frontend file: " + str(path.relative_to(ROOT)))
 
-    def test_views_are_registered(self):
-        index = (FRONTEND / "js" / "views" / "index.js").read_text(encoding="utf-8")
+    def test_primary_sections_are_present(self):
+        index = (FRONTEND / "index.html").read_text(encoding="utf-8")
         app = (FRONTEND / "js" / "app.js").read_text(encoding="utf-8")
-        for route in ("overview", "intake", "signals", "matches", "pathway", "sdg", "scenarios", "connect"):
-            self.assertIn('"/' + route + '"', index, "route not registered: " + route)
-            self.assertIn('"/' + route + '"', app, "route missing from the sidebar: " + route)
+        for section in ("overview", "profile", "signals", "matches", "pathway", "sdg", "scenarios", "narrative"):
+            self.assertIn('id="' + section + '"', index, "missing section: " + section)
+            self.assertIn(section, app.lower(), "app does not reference section: " + section)
 
-    def test_api_facade_is_exported(self):
-        source = (FRONTEND / "js" / "core" / "api.js").read_text(encoding="utf-8")
-        self.assertRegex(source, r"export\s+const\s+api\s*=")
-        for method in ("saveProfile", "match", "pathway", "sdgMap", "listSignals", "refreshSignals", "analysis"):
-            self.assertIn(method, source, "api facade is missing " + method)
+    def test_api_calls_are_present(self):
+        source = (FRONTEND / "js" / "app.js").read_text(encoding="utf-8")
+        for fragment in ('"/meta"', '"/catalog"', '"/signals', '"/profiles', '"/match"', '"/pathway"', '/sdg-map', '/analysis'):
+            self.assertIn(fragment, source, "app.js does not call " + fragment)
 
     def test_no_secrets_in_frontend_bundle(self):
         forbidden = ("LLM_API_KEY", "OPENAI_API_KEY", "sk-", "Bearer ey", "AWS_SECRET")
@@ -179,11 +170,11 @@ class ContractTests(unittest.TestCase):
             self.assertIn(name, schemas, "OpenAPI is missing the " + name + " schema")
 
     def test_frontend_calls_documented_endpoints(self):
-        source = (FRONTEND / "js" / "core" / "api.js").read_text(encoding="utf-8")
-        for fragment in ('"health"', '"meta"', '"catalog"', '"signals"', '"signals/refresh"', '"scenarios"', '"analysis"', '"analysis/stream"'):
-            self.assertIn(fragment, source, "api.js does not call " + fragment)
-        for fragment in ("/match", "/pathway", "/sdg-map", "profiles/"):
-            self.assertIn(fragment, source, "api.js does not call an endpoint containing " + fragment)
+        source = (FRONTEND / "js" / "app.js").read_text(encoding="utf-8")
+        for fragment in ('/meta', '/catalog', '/signals', '/profiles', '/analysis'):
+            self.assertIn(fragment, source, "app.js does not call " + fragment)
+        for fragment in ("/match", "/pathway", "/sdg-map"):
+            self.assertIn(fragment, source, "app.js does not call an endpoint containing " + fragment)
 
         paths = self.spec["paths"]
         self.assertIn("/profiles/{id}/match", paths)

@@ -162,7 +162,7 @@ step behind the same SSE contract.
 │   │   └── fixtures/                # captured example responses (legacy shape reference)
 │   └── screenshots/                 # UI evidence
 ├── src/
-│   ├── frontend/                    # default Argon-inspired UI (build-free SPA)
+│   ├── frontend/                    # default Argon Theme UI, using vendored Argon source
 │   ├── frontend_bak/                # complete, independent classic design at /legacy/
 │   ├── main.py                      # FastAPI entry: /api/v1 + static UI + SSE
 │   ├── backend/
@@ -195,7 +195,7 @@ python src/main.py
 The FastAPI entry serves the frontend and the `/api/v1` API from the same origin, so the
 sidebar reads **Live API connected** without any extra configuration. It reads the real
 labour snapshots in `src/backend/data/`, persists profiles in `data/app.db`, and serves the
-default Argon-inspired UI from `src/frontend`.
+default Argon frontend from `src/frontend` (built on the vendored Argon Theme source).
 
 The previous teapot design is preserved independently in `src/frontend_bak`. Open
 `http://127.0.0.1:8000/legacy/` or use the **Classic** pill in the top bar to switch back
@@ -209,17 +209,11 @@ python src/main.py
 # open http://127.0.0.1:8022/
 ~~~
 
-### 2. Frontend only — offline demo dataset
+### 2. Legacy frontend only
 
-~~~bash
-python tools/serve_frontend.py --port 8003
-# open http://127.0.0.1:8003/
-~~~
-
-No API is required. The UI probes `/api/v1/health`, falls back to the browser demo fixtures,
-and visibly shows **Offline demo dataset**. Add `#/overview?sample=1` to seed a sample profile.
-This mode uses the files in `src/frontend/mock/`; it is intentionally separate from the
-live backend.
+The previous frontend is complete and independent in `src/frontend_bak`. In the FastAPI
+entry it is available at `/legacy/`; it can also be served by any static server rooted at
+`src/frontend_bak`. The Argon frontend is the default and has no offline mock dataset.
 
 ### 3. Legacy reference API (contract shape only)
 
@@ -272,11 +266,10 @@ The live backend is data-driven:
 
 Salary, employment and signal metadata are loaded from those tables. Role archetypes, the skill
 taxonomy and scenario parameterisation are explicit product definitions on top of the real data;
-they are not random mock records. The backend does **not** read `src/frontend/mock/*.json`.
+they are not random mock records. The new Argon frontend has no mock dataset and uses the `/api/v1` contract directly.
 
-The files in `src/frontend/mock/` are a separate **offline demo** dataset used only when the
-frontend is started without an API. They are labelled as illustrative in the UI and are not
-served by the FastAPI backend as live data.
+The legacy frontend in `src/frontend_bak` retains its offline demo fixtures for comparison;
+they are not used by the default Argon frontend or served as live backend data.
 
 
 ## How we use Replit *(required)*
