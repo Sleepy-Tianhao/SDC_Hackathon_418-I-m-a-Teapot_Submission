@@ -35,7 +35,7 @@ app.add_middleware(
 # ================= 接入真实大模型 =================
 ROOT = Path(__file__).resolve().parent.parent # 获取根目录
 
-@app.post("/api/pathway")
+@app.post("/api/v1/pathway")
 def generate_pathway(profile: UserProfile):
     api_key = os.getenv("DEEPSEEK_API_KEY")
     if not api_key:
