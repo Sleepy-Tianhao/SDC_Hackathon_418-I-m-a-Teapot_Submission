@@ -13,6 +13,10 @@ data/
 *.sqlite
 *.sqlite3
 
+# The real labour snapshots are source data, unlike local runtime databases.
+!src/backend/data/
+!src/backend/data/**
+
 # Test / tooling caches
 .pytest_cache/
 .coverage
