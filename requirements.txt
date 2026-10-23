@@ -1,1 +1,20 @@
-# Add your project dependencies here, one per line.
+# Backend runtime dependencies for the FastAPI service in src/main.py.
+#
+#   pip install -r requirements.txt
+#   uvicorn src.main:app --port 8000
+#
+# Version floors and ceilings keep the install working on Python 3.9, which is
+# the interpreter this project was developed against. pandas 3.x requires
+# Python 3.11+, so it is capped below 3.0.
+
+# HTTP API layer
+fastapi>=0.100,<1.0
+uvicorn[standard]>=0.23
+pydantic>=2.4,<3.0
+
+# Labour-market dataset ingestion (01_national.csv ... 06_comprehensive..xlsx)
+pandas>=2.0,<3.0
+openpyxl>=3.1          # required by pandas.read_excel for .xlsx workbooks
+
+# Outbound calls to the DeepSeek narrative endpoint
+requests>=2.31

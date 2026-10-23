@@ -5,6 +5,7 @@ import { radarChart } from "../core/charts.js";
 import { fmt, html, icon } from "../core/dom.js";
 import * as store from "../core/store.js";
 import { momentumBadge, progressBar, statCard, toast } from "../core/ui.js";
+import { journeySnapshot } from "../core/journey.js";
 
 async function loadSignals(limit) {
   try {
@@ -20,22 +21,37 @@ function animateLifeTree(root) {
   const context = canvas?.getContext("2d", { alpha: true });
   if (!stage || !canvas || !context) return;
 
-  const images = {
-    colorful: new Image(),
-    harvest: new Image(),
-    botanical: new Image(),
+  const sources = {
+    colorful: new URL("../../assets/tree-colorful.webp", import.meta.url).href,
+    harvest: new URL("../../assets/tree-harvest.jpg", import.meta.url).href,
+    botanical: new URL("../../assets/tree-botanical-preview.webp", import.meta.url).href,
   };
-  images.colorful.src = new URL("../../assets/tree-colorful.png", import.meta.url).href;
-  images.harvest.src = new URL("../../assets/tree-harvest.jpg", import.meta.url).href;
-  images.botanical.src = new URL("../../assets/tree-botanical-preview.png", import.meta.url).href;
-
+  const fallbacks = {
+    colorful: new URL("../../assets/tree-colorful.png", import.meta.url).href,
+    harvest: new URL("../../assets/tree-harvest.jpg", import.meta.url).href,
+    botanical: new URL("../../assets/tree-botanical-preview.png", import.meta.url).href,
+  };
+  const images = {};
   const startedAt = performance.now();
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  let visible = true;
+  let rafId = 0;
 
-  function frame(now) {
+  Object.entries(sources).forEach(([key, src]) => {
+    const image = new Image();
+    image.decoding = "async";
+    image.src = src;
+    image.addEventListener("error", () => {
+      if (image.src !== fallbacks[key]) image.src = fallbacks[key];
+    }, { once: true });
+    images[key] = image;
+  });
+
+  function draw(now) {
     if (!canvas.isConnected) return;
     const { width, height } = stage.getBoundingClientRect();
+    if (!width || !height) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const pixelWidth = Math.round(width * dpr);
     const pixelHeight = Math.round(height * dpr);
@@ -46,65 +62,121 @@ function animateLifeTree(root) {
 
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     context.clearRect(0, 0, width, height);
-    const image = images[stage.dataset.treeStyle] || images.colorful;
-    if (image.complete && image.naturalWidth) {
-      const elapsed = now - startedAt;
-      const growth = reduceMotion || stage.dataset.treeStyle === "botanical" ? 1 : clamp((elapsed - 150) / 2800, 0, 1);
-      const phase = now * 0.00062;
-      const imageHeight = height * 1.1;
-      const imageWidth = imageHeight * (image.naturalWidth / image.naturalHeight);
-      const imageY = (height - imageHeight) / 2;
-      const bandHeight = 8;
-      const animateArtwork = stage.dataset.treeStyle === "colorful" && !reduceMotion;
+    const style = stage.dataset.treeStyle || "botanical";
+    const image = images[style] || images.botanical;
+    if (!image.complete || !image.naturalWidth) return;
 
-      context.save();
-      context.beginPath();
-      context.rect(0, height * (1 - growth), width, height * growth);
-      context.clip();
-      context.globalAlpha = growth;
+    const animateArtwork = style === "colorful" && !reduceMotion;
+    const growth = animateArtwork ? clamp((now - startedAt - 150) / 2800, 0, 1) : 1;
+    const phase = now * 0.00062;
+    const imageHeight = height * 1.1;
+    const imageWidth = imageHeight * (image.naturalWidth / image.naturalHeight);
+    const imageY = (height - imageHeight) / 2;
+    const bandHeight = 8;
 
-      for (let sourceY = 0; sourceY < image.naturalHeight; sourceY += bandHeight) {
-        const sourceHeight = Math.min(bandHeight + 1, image.naturalHeight - sourceY);
-        const y = sourceY / image.naturalHeight;
-        const crownWeight = clamp((0.72 - y) / 0.42, 0, 1);
-        const rootWeight = clamp((y - 0.72) / 0.28, 0, 1);
-        const branchWave = animateArtwork ? Math.sin(phase + y * 3.4) : 0;
-        const rootWave = animateArtwork ? Math.sin(phase * 0.82 + y * 2.1) : 0;
-        const spread = 1 + crownWeight * branchWave * 0.022 + rootWeight * (animateArtwork ? 0.022 + rootWave * 0.018 : 0);
-        const drift = crownWeight * branchWave * 9 + rootWeight * rootWave * 4;
-        const destinationY = imageY + y * imageHeight;
-        const destinationHeight = (sourceHeight / image.naturalHeight) * imageHeight + 1;
-        const destinationWidth = imageWidth * spread;
-        const destinationX = (width - destinationWidth) / 2 + drift;
-        context.drawImage(
-          image,
-          0, sourceY, image.naturalWidth, sourceHeight,
-          destinationX, destinationY, destinationWidth, destinationHeight,
-        );
-      }
-      context.restore();
+    context.save();
+    context.beginPath();
+    context.rect(0, height * (1 - growth), width, height * growth);
+    context.clip();
+    context.globalAlpha = growth;
+
+    for (let sourceY = 0; sourceY < image.naturalHeight; sourceY += bandHeight) {
+      const sourceHeight = Math.min(bandHeight + 1, image.naturalHeight - sourceY);
+      const y = sourceY / image.naturalHeight;
+      const crownWeight = clamp((0.72 - y) / 0.42, 0, 1);
+      const rootWeight = clamp((y - 0.72) / 0.28, 0, 1);
+      const branchWave = animateArtwork ? Math.sin(phase + y * 3.4) : 0;
+      const rootWave = animateArtwork ? Math.sin(phase * 0.82 + y * 2.1) : 0;
+      const spread = 1 + crownWeight * branchWave * 0.022 + rootWeight * (animateArtwork ? 0.022 + rootWave * 0.018 : 0);
+      const drift = crownWeight * branchWave * 9 + rootWeight * rootWave * 4;
+      const destinationY = imageY + y * imageHeight;
+      const destinationHeight = (sourceHeight / image.naturalHeight) * imageHeight + 1;
+      const destinationWidth = imageWidth * spread;
+      const destinationX = (width - destinationWidth) / 2 + drift;
+      context.drawImage(
+        image,
+        0, sourceY, image.naturalWidth, sourceHeight,
+        destinationX, destinationY, destinationWidth, destinationHeight,
+      );
     }
-    requestAnimationFrame(frame);
+    context.restore();
   }
 
-  requestAnimationFrame(frame);
-}
+  function shouldAnimate() {
+    return stage.dataset.treeStyle === "colorful" && !reduceMotion;
+  }
 
-function lifeTreeOverview({ name = "there", signalTotal = 0, hasProfile = false, topRole = null } = {}) {
-  const modules = [
-    { title: "Profile", detail: "Your starting point", href: "#/intake", state: hasProfile ? "done" : "active" },
-    { title: "Skill trends", detail: "Signals and evidence", href: "#/signals", state: hasProfile ? "active" : "locked" },
-    { title: "Career matches", detail: "Fit and skill gaps", href: "#/matches", state: "locked" },
-    { title: "Future scenarios", detail: "Compare possible outcomes", href: "#/scenarios", state: "locked" },
-    { title: "Pathway", detail: "Learning modules and SDGs", href: "#/pathway", state: "locked" },
-  ];
-  const completed = hasProfile ? 1 : 0;
+  function schedule() {
+    if (!canvas.isConnected || !visible) return;
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function loop(now) {
+    rafId = 0;
+    if (!canvas.isConnected) {
+      observer?.disconnect();
+      styleObserver?.disconnect();
+      return;
+    }
+    if (!visible) return;
+    draw(now);
+    if (shouldAnimate()) rafId = requestAnimationFrame(loop);
+  }
+
+  Object.values(images).forEach((image) => {
+    if (image.complete && image.naturalWidth) schedule();
+    else {
+      image.addEventListener("load", schedule, { once: true });
+      image.addEventListener("error", schedule, { once: true });
+    }
+  });
+
+  let observer = null;
+  if (typeof IntersectionObserver === "function") {
+    observer = new IntersectionObserver((entries) => {
+      visible = entries.some((entry) => entry.isIntersecting);
+      if (visible) {
+        schedule();
+      } else if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    }, { rootMargin: "120px" });
+    observer.observe(stage);
+  }
+
+  const styleObserver = new MutationObserver(() => schedule());
+  styleObserver.observe(stage, { attributes: true, attributeFilter: ["data-tree-style"] });
+  schedule();
+}
+function lifeTreeOverview({ state, name = "there", signalTotal = 0, topRole = null } = {}) {
+  const progress = journeySnapshot(state);
+  const modules = progress.steps;
+  const completed = progress.completed;
+  const next = progress.next;
+  const hasProfile = progress.steps[0].complete;
+  const nextKicker = next
+    ? (completed === 0 ? "Start here" : "Growing now") + " · Step " + next.number + " of 5"
+    : "All five steps complete";
+  const nextTitle = next ? next.focusTitle : "Your tree is fully lit";
+  const nextBody = next
+    ? next.focusBody
+    : "You have explored your profile, signals, roles, futures and pathway. Keep testing the plan as the future changes.";
+  const nextHref = next ? next.href : "#/scenarios";
+  const nextAction = next ? next.action : "Keep exploring futures";
+  const nextDetail = next ? next.actionDetail : "All five steps complete";
+  const note = !hasProfile
+    ? "Build your skills profile to start lighting up your interests and strengths."
+    : next
+      ? "Profile ready. Next: " + next.title + "."
+      : "All five steps are complete. Your tree records exploration, not ability certification.";
 
   return html`<section class="life-tree" aria-labelledby="life-tree-title">
     <div class="life-tree__head">
       <div>
         <p class="life-tree__eyebrow">Hey ${name}, take a moment to get to know yourself.</p>
-        <h1 id="life-tree-title">Explore yourself. Grow toward what’s next.</h1>
+        <h1 id="life-tree-title">Explore yourself. Grow toward what's next.</h1>
         <p class="life-tree__lead">Start with your interests, strengths and values to find a direction that feels like yours.</p>
       </div>
       <a class="life-tree__journal" href="#/pathway">${icon("calendar", 16)} Growth journal</a>
@@ -112,7 +184,7 @@ function lifeTreeOverview({ name = "there", signalTotal = 0, hasProfile = false,
 
     <div class="life-tree__progress" aria-label="Self-discovery progress">
       <div class="life-tree__count"><strong>${completed}</strong><span>/ 5 steps complete</span></div>
-      <div class="life-tree__progress-main"><div class="life-tree__progress-label"><span>Your journey through the tree</span><span>${Math.round((completed / modules.length) * 100)}%</span></div>
+      <div class="life-tree__progress-main"><div class="life-tree__progress-label"><span>Your journey through the tree</span><span>${progress.percent}%</span></div>
         <div class="life-tree__segments">${modules.map((_, index) => html`<i class="${index < completed ? "is-filled" : ""}"></i>`)}</div>
       </div>
     </div>
@@ -125,35 +197,34 @@ function lifeTreeOverview({ name = "there", signalTotal = 0, hasProfile = false,
 
     <div class="life-tree__stage" data-tree-style="botanical" data-tree-stage>
       <canvas class="life-tree__art" role="img" aria-label="Botanical tree of life illustration"></canvas>
-      ${modules.map((module, index) => html`<a class="life-tree__module life-tree__module--step-${index + 1} is-${module.state}" href="${module.href}" aria-label="Step ${index + 1}: ${module.title}. ${module.detail}. ${module.state === "done" ? "Complete" : module.state === "active" ? "In progress" : "Locked"}">
+      ${modules.map((module, index) => html`<a class="life-tree__module life-tree__module--step-${index + 1} is-${module.state}${module.isNew ? " is-new" : ""}" href="${module.href}" data-journey-step="${module.id}" aria-label="Step ${index + 1}: ${module.title}. ${module.detail}. ${module.stateLabel}">
         <span class="life-tree__module-step">0${index + 1}</span>
         <span><strong>${module.title}</strong><small>${module.detail}</small></span>
-      </a>`) }
+      </a>`)}
     </div>
     <p class="life-tree__caption">Start at the roots and follow upward: Profile → Skill trends → Career matches → Future scenarios → Pathway</p>
     <div class="life-tree__legend"><span>Complete</span><span>In progress</span><span>Locked</span></div>
 
     <div class="life-tree__focus">
       <div class="life-tree__focus-copy">
-        <span class="life-tree__focus-kicker">${hasProfile ? "Growing now · Step 2 of 5" : "Start here · Step 1 of 5"}</span>
-        <h2>${hasProfile ? "Skill trends" : "Build your profile"}</h2>
-        <p>${hasProfile ? "See which skills are gaining demand, and open the evidence behind each trend." : "Set your baseline so each trend, career match and learning step can connect back to you."}</p>
+        <span class="life-tree__focus-kicker">${nextKicker}</span>
+        <h2>${nextTitle}</h2>
+        <p>${nextBody}</p>
       </div>
       <div class="life-tree__focus-meta">${completed}<small> / 5 steps</small></div>
-      <a class="btn btn--primary life-tree__continue" href="${hasProfile ? "#/signals" : "#/intake"}"><span>${hasProfile ? "Explore skill trends" : "Build your profile"}<small>${hasProfile ? "Step 2 · Signals and evidence" : "Step 1 · Your starting point"}</small></span>${icon("arrowRight", 18)}</a>
+      <a class="btn btn--primary life-tree__continue" href="${nextHref}"><span>${nextAction}<small>${nextDetail}</small></span>${icon("arrowRight", 18)}</a>
     </div>
 
     <div class="life-tree__below">
-      <div class="life-tree__note">${icon("activity", 14)} ${hasProfile ? "Your profile is ready. Keep exploring your values and career directions." : "Build your skills profile to start lighting up your interests and strengths."}</div>
+      <div class="life-tree__note">${icon("activity", 14)} ${note}</div>
       ${topRole ? html`<a class="life-tree__role" href="#/matches"><span><small>Current career match</small><strong>${topRole.title}</strong></span><b>${topRole.fitScore}<small> / 100</small></b></a>` : html`<button class="life-tree__sample" type="button" data-action="use-sample">${icon("play", 14)} Preview the complete tree with a sample profile</button>`}
       <a class="life-tree__signals" href="#/signals">${icon("activity", 14)} ${signalTotal} sourced career signals <span>Explore signals ${icon("arrowRight", 13)}</span></a>
     </div>
   </section>`;
 }
-
-function landing(signalData) {
+function landing(signalData, state) {
   const total = signalData.total || (signalData.items || []).length;
-  return lifeTreeOverview({ signalTotal: total });
+  return lifeTreeOverview({ state, signalTotal: total });
 }
 const RADAR_LABELS = {
   "Data & AI": "Data & AI",
@@ -244,7 +315,7 @@ function dashboard(state, matches, signals, sdgMap) {
   );
   const signalList = (related.length ? related : signals.items || []).slice(0, 3);
 
-  return html`${lifeTreeOverview({ name: profile.name.split(" ")[0], signalTotal: signals.total || (signals.items || []).length, hasProfile: true, topRole: top })}
+  return html`${lifeTreeOverview({ state, name: profile.name.split(" ")[0], signalTotal: signals.total || (signals.items || []).length, topRole: top })}
   <div class="kpi-grid">
     ${statCard({
       label: "Readiness score",
@@ -438,7 +509,7 @@ export const overviewView = {
   async render({ state }) {
     if (!state.profile) {
       const signals = await loadSignals(3);
-      return landing(signals);
+      return landing(signals, state);
     }
     let matches = store.getState().matches;
     if (!matches || matches.scenarioId !== state.scenarioId) {
@@ -458,6 +529,14 @@ export const overviewView = {
 
   mount(root) {
     animateLifeTree(root);
+    const newModule = root.querySelector(".life-tree__module.is-new");
+    if (newModule) {
+      const stepId = newModule.getAttribute("data-journey-step");
+      window.setTimeout(() => {
+        newModule.classList.remove("is-new");
+        store.clearJourneyPulse(stepId);
+      }, 1600);
+    }
     root.addEventListener("click", (event) => {
       const element = event.target instanceof Element ? event.target : null;
       const variant = element?.closest("[data-tree-variant]");

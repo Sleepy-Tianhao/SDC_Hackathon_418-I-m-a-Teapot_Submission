@@ -263,6 +263,7 @@ export const pathwayView = {
     if (!path || path.roleId !== roleId || path.scenarioId !== state.scenarioId) {
       path = await api.pathway(state.profile, state.scenarioId, roleId);
     }
+    store.recordJourney("pathwayViewed");
     return page(store.getState(), path, matches);
   },
 

@@ -7,6 +7,45 @@ import * as store from "../core/store.js";
 import { emptyState, levelDots, openModal, progressBar, scoreRing, scoreTone, toast, trendBadge } from "../core/ui.js";
 
 let sortBy = "fit";
+let layoutMode = "bubbles";
+
+const BUBBLE_MIN = 100;
+const BUBBLE_MAX = 230;
+const GOLDEN_ANGLE = (137.508 * Math.PI) / 180;
+const VBOX_W = 1000;
+const VBOX_H = 700;
+
+/** Greedy circle packing in a virtual box: biggest first, spiral search, shrink on
+ *  collision so every bubble lands somewhere without overlapping another one. */
+function packBubbles(diameters) {
+  const placed = [];
+  const gap = 12;
+  const maxRadius = Math.min(VBOX_W, VBOX_H) * 0.56;
+
+  diameters.forEach((diameter, index) => {
+    let radius = diameter / 2;
+    let spot = null;
+
+    for (let attempt = 0; attempt < 10 && !spot; attempt += 1) {
+      for (let step = 0; step < 1400; step += 1) {
+        const progress = step / 1400;
+        const distance = (radius + gap) * 0.2 + Math.sqrt(progress) * maxRadius;
+        const angle = index * GOLDEN_ANGLE + step * 0.35;
+        const x = VBOX_W / 2 + distance * Math.cos(angle);
+        const y = VBOX_H / 2 + distance * Math.sin(angle);
+        if (x - radius < 4 || x + radius > VBOX_W - 4 || y - radius < 4 || y + radius > VBOX_H - 4) continue;
+        if (placed.some((item) => Math.hypot(item.x - x, item.y - y) < item.r + radius + gap)) continue;
+        spot = { x, y, r: radius };
+        break;
+      }
+      if (!spot) radius *= 0.9;
+    }
+
+    placed.push(spot || { x: VBOX_W / 2, y: VBOX_H / 2, r: radius });
+  });
+
+  return placed;
+}
 
 function sortedMatches(matches) {
   const list = [...matches.matches];
@@ -165,6 +204,90 @@ function sideColumn(state, matches) {
   </aside>`;
 }
 
+const TONE_LABEL = {
+  success: "strong fit",
+  brand: "good fit",
+  gold: "stretch",
+  danger: "distant",
+};
+
+function layoutToggle() {
+  return html`<div class="segmented" role="group" aria-label="Match layout">
+    <button type="button" class="segmented__item ${layoutMode === "bubbles" ? "is-active" : ""}" data-action="layout" data-layout="bubbles">
+      ${icon("target", 13)} Bubbles
+    </button>
+    <button type="button" class="segmented__item ${layoutMode === "cards" ? "is-active" : ""}" data-action="layout" data-layout="cards">
+      ${icon("layers", 13)} Cards
+    </button>
+  </div>`;
+}
+
+function bubbleField(matches) {
+  const list = sortedMatches(matches);
+  const fits = list.map((match) => match.fitScore);
+  const lo = Math.min(...fits);
+  const hi = Math.max(...fits);
+  const span = Math.max(1, hi - lo);
+
+  /* Diameters live in the same virtual units as the packing box, then become a
+     percentage of the container width so the cloud scales with the layout. */
+  const diameters = list.map((match) => BUBBLE_MIN + ((match.fitScore - lo) / span) * (BUBBLE_MAX - BUBBLE_MIN));
+  const spots = packBubbles(diameters);
+
+  const bubbles = list.map((match, index) => {
+    const spot = spots[index];
+    const diameter = spot.r * 2;
+    const sizePct = (diameter / VBOX_W) * 100;
+    const x = (spot.x / VBOX_W) * 100;
+    const y = (spot.y / VBOX_H) * 100;
+    const compact = sizePct < 15.5;
+    const hero = sizePct >= 19;
+    const tone = scoreTone(match.fitScore);
+    const duration = (6.4 + (index % 5) * 0.85).toFixed(2);
+    const delay = (-index * 0.68).toFixed(2);
+    const driftX = (((index % 3) - 1) * 5).toFixed(0);
+    const driftY = ((((index + 1) % 3) - 1) * 4).toFixed(0);
+
+    return html`<button
+      type="button"
+      class="bubble bubble--${tone}${compact ? " bubble--compact" : ""}${hero ? " bubble--hero" : ""}"
+      style="--size:${sizePct.toFixed(2)}%;--x:${x.toFixed(2)}%;--y:${y.toFixed(2)}%;--fit:${(sizePct * 0.3).toFixed(2)}cqw;--name:${(sizePct * 0.12).toFixed(2)}cqw;--dur:${duration}s;--delay:${delay}s;--dx:${driftX}px;--dy:${driftY}px"
+      data-action="view-role"
+      data-role="${match.roleId}"
+      title="${match.title} · fit ${match.fitScore}/100 · ${match.family}"
+      aria-label="${match.title}, ${match.fitScore} out of 100 fit, ${match.family}"
+    >
+      <span class="bubble__fit">${match.fitScore}</span>
+      <span class="bubble__name">${match.title}</span>
+    </button>`;
+  });
+
+  const tones = ["success", "brand", "gold", "danger"];
+
+  return html`<section class="bubble-card">
+    <div class="bubble-card__head">
+      <div>
+        <p class="eyebrow">${icon("target", 14)} Role constellation</p>
+        <h2 class="bubble-card__title">Twelve future roles — bubble size is fit, colour is the score band</h2>
+        <p class="bubble-card__hint">
+          Hover to pause the drift, click a bubble for the gap analysis. Switch to <strong>Cards</strong> for the full
+          evidence trail.
+        </p>
+      </div>
+      <div class="bubble-legend">
+        ${tones.map((tone) => html`<span class="bubble-legend__item"
+          ><i class="bubble-legend__dot bubble-legend__dot--${tone}"></i>${TONE_LABEL[tone]}</span
+        >`)}
+      </div>
+    </div>
+    <div class="bubble-field" role="group" aria-label="Future roles sized by fit score">${bubbles}</div>
+    <p class="bubble-card__foot tiny faint">
+      ${icon("info", 12)} Bubble area scales with fit score; the ranking still follows the
+      <strong>${sortBy === "fit" ? "best fit" : sortBy === "demand" ? "demand" : "salary"}</strong> sort above.
+    </p>
+  </section>`;
+}
+
 function page(state, matches) {
   const catalog = state.catalog;
   const scenario = (catalog.scenarios || []).find((item) => item.id === matches.scenarioId) || catalog.scenarios[0];
@@ -189,23 +312,29 @@ function page(state, matches) {
     </div>
 
     <div class="row row--between row--wrap" style="margin-bottom:14px">
-      <div class="segmented" role="group" aria-label="Sort matches">
-        <button type="button" class="segmented__item ${sortBy === "fit" ? "is-active" : ""}" data-action="sort" data-sort="fit">Best fit</button>
-        <button type="button" class="segmented__item ${sortBy === "demand" ? "is-active" : ""}" data-action="sort" data-sort="demand">Demand</button>
-        <button type="button" class="segmented__item ${sortBy === "salary" ? "is-active" : ""}" data-action="sort" data-sort="salary">Salary</button>
+      <div class="row row--wrap" style="--gap:10px">
+        <div class="segmented" role="group" aria-label="Sort matches">
+          <button type="button" class="segmented__item ${sortBy === "fit" ? "is-active" : ""}" data-action="sort" data-sort="fit">Best fit</button>
+          <button type="button" class="segmented__item ${sortBy === "demand" ? "is-active" : ""}" data-action="sort" data-sort="demand">Demand</button>
+          <button type="button" class="segmented__item ${sortBy === "salary" ? "is-active" : ""}" data-action="sort" data-sort="salary">Salary</button>
+        </div>
+        ${layoutToggle()}
       </div>
       <p class="tiny faint">Scores update when you change the scenario in the top bar.</p>
     </div>
 
     <div class="match-layout">
-      <div class="match-list" data-role="match-list">
-        ${sortedMatches(matches).map((match, index) => matchCard(match, index, scenario))}
-      </div>
+      ${layoutMode === "bubbles"
+        ? bubbleField(matches)
+        : html`<div class="match-list" data-role="match-list">
+            ${sortedMatches(matches).map((match, index) => matchCard(match, index, scenario))}
+          </div>`}
       ${sideColumn(state, matches)}
     </div>`;
 }
 
 function roleModal(match, state) {
+  store.recordJourney("roleExplored", match.roleId);
   const catalog = state.catalog;
   const role = (catalog.roles || []).find((item) => item.id === match.roleId);
   const gaps = [...match.skillsGap].sort((a, b) => b.priority - a.priority);
@@ -293,22 +422,16 @@ function bind(root) {
     const state = store.getState();
     const matches = state.matches;
 
-    if (action === "sort") {
-      sortBy = target.getAttribute("data-sort") || "fit";
-      const listEl = root.querySelector('[data-role="match-list"]');
-      if (listEl && matches) {
-        listEl.innerHTML = sortedMatches(matches)
-          .map((match, index) => matchCard(match, index, null))
-          .join("");
-      }
-      root.querySelectorAll('[data-action="sort"]').forEach((button) => {
-        button.classList.toggle("is-active", button.getAttribute("data-sort") === sortBy);
-      });
+    if (action === "sort" || action === "layout") {
+      if (action === "sort") sortBy = target.getAttribute("data-sort") || "fit";
+      else layoutMode = target.getAttribute("data-layout") || "bubbles";
+      if (matches) root.innerHTML = page(store.getState(), matches).value;
     } else if (action === "view-role" && matches) {
       const match = matches.matches.find((item) => item.roleId === target.getAttribute("data-role"));
       if (match) roleModal(match, state);
     } else if (action === "build-pathway") {
       const roleId = target.getAttribute("data-role");
+      if (roleId) store.recordJourney("roleExplored", roleId);
       navigate("/pathway" + (roleId ? "?role=" + roleId : ""));
     } else if (action === "method") {
       methodModal();

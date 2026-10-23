@@ -122,6 +122,7 @@ export async function resolveTransport(options = {}) {
     if (config.mode === "live") {
       transport = "live";
       transportReason = "Live mode selected in settings.";
+      setState({ mode: "live", health: healthCache }, { persist: false });
       return transport;
     }
     const result = await probe();

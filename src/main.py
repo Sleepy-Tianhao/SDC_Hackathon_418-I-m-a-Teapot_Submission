@@ -1,6 +1,31 @@
+import json
+import os
+from pathlib import Path
+from typing import Any, List, Optional
+
+import pandas as pd
+import requests
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional, Any
+
+
+def load_dotenv(path: Path) -> None:
+    """Load KEY=VALUE pairs from .env without pulling in an extra dependency."""
+    if not path.is_file():
+        return
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
+ROOT = Path(__file__).resolve().parent.parent
+load_dotenv(ROOT / ".env")
 
 app = FastAPI(title="SDC Hackathon Backend")
 
@@ -55,48 +80,46 @@ def match_roles(payload: dict = None):
 async def stream_analysis():
     return {"meta": {"status": "success"}, "tokens": ["mock", "stream"], "done": True, "analysis": "Full analysis"}
 # ---------- 以下为测试接口 ----------
-from pydantic import BaseModel
 
-# 模拟数据结构
-class UserProfile(BaseModel):
+# 模拟数据结构（原名 UserProfile，与上面的模型重名会让前者失效）
+class PathwayRequest(BaseModel):
     roleId: str
-    skills: list[str]
+    skills: List[str]
 
 # 1. 测试连通性接口 (GET)
 @app.get("/api/hello")
 def hello():
     return {"message": "后端连接成功！", "status": "ok"}
 
-import os
-import requests
-import pandas as pd
-import json
 
 # ================= 全量数据智能检索接口 =================
 @app.post("/api/pathway")
-def generate_pathway(profile: UserProfile):
-    api_key = os.getenv("DEEPSEEK_API_KEY")
+def generate_pathway(profile: PathwayRequest):
+    api_key = os.getenv("DEEPSEEK_API_KEY") or os.getenv("LLM_API_KEY")
     if not api_key:
-        return {"error": "请配置 DEEPSEEK_API_KEY"}
+        return {"error": "请配置 DEEPSEEK_API_KEY（或 LLM_API_KEY）"}
 
     user_skill = profile.skills[0] if profile.skills else ""
     user_role = profile.roleId
 
     context_parts = []
-    
-    # 这里严格对应你左侧重命名好的文件
+
+    # 数据文件放在仓库根目录（不是 src/），文件名以磁盘上的实际名字为准
     data_files = {
-        "全国年度数据": "src/01_national.csv",
-        "技能薪资": "src/02_salary.csv",
-        "行业分布": "src/03_industry.csv",
-        "各州薪资": "src/04_state.csv",
-        "就业率": "src/05_employment.csv",
-        "综合Excel": "src/06_comprehensive.xlsx"
+        "全国年度数据": ROOT / "01_national.csv",
+        "技能薪资": ROOT / "02_salary.csv",
+        "行业分布": ROOT / "03_industry.csv",
+        "各州薪资": ROOT / "04_state..csv",
+        "就业率": ROOT / "05_employment.csv",
+        "综合Excel": ROOT / "06_comprehensive..xlsx",
     }
 
     for name, path in data_files.items():
         try:
-            if path.endswith('.xlsx'):
+            if not path.is_file():
+                print(f"数据集缺失，跳过 {name}: {path}")
+                continue
+            if path.suffix == ".xlsx":
                 df = pd.read_excel(path)
             else:
                 df = pd.read_csv(path)
@@ -138,15 +161,29 @@ def generate_pathway(profile: UserProfile):
     """
 
     headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    base_url = os.getenv("DEEPSEEK_BASE_URL") or os.getenv("LLM_BASE_URL") or "https://api.deepseek.com"
     data = {
-        "model": "deepseek-chat",
+        "model": os.getenv("LLM_MODEL") or "deepseek-chat",
         "messages": [{"role": "user", "content": prompt}],
         "response_format": {"type": "json_object"}
     }
 
     try:
-        response = requests.post("https://api.deepseek.com/chat/completions", headers=headers, json=data)
+        response = requests.post(
+            f"{base_url.rstrip('/')}/chat/completions", headers=headers, json=data, timeout=60
+        )
+        response.raise_for_status()
         ai_content = response.json()["choices"][0]["message"]["content"]
         return json.loads(ai_content)
     except Exception as e:
         return {"status": "error", "message": str(e)}
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        app,
+        host=os.getenv("API_HOST", "127.0.0.1"),
+        port=int(os.getenv("API_PORT", "8000")),
+    )

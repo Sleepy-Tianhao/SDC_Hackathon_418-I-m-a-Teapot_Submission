@@ -417,6 +417,7 @@ async function save(root) {
 
   try {
     const profile = await api.saveProfile(payload, state.profile && state.profile.id ? state.profile : null);
+    store.recordJourney("profileSaved");
     store.setState({ profile, matches: null, pathway: null, sdgMap: null, analysis: null });
     toast("Profile saved. Scoring " + (state.catalog.roles || []).length + " future roles…", {
       tone: "success",

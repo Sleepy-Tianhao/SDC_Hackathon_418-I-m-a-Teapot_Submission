@@ -180,6 +180,7 @@ async function loadSampleProfile(options = {}) {
   const buttonToast = toast("Loading the sample profile…", { tone: "brand", duration: 2000 });
   try {
     const profile = await api.saveProfile(demo.SAMPLE_PROFILE, null);
+    store.recordJourney("profileSaved");
     store.setState({ profile, matches: null, pathway: null, sdgMap: null, analysis: null });
     window.dispatchEvent(new CustomEvent("aicn:workspace-changed"));
     renderTopbar();
