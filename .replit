@@ -1,0 +1,20 @@
+entrypoint = "src/main.py"
+modules = ["python-3.11"]
+run = "PORT=3000 python src/main.py"
+
+[nix]
+channel = "stable-24_05"
+
+[unitTest]
+language = "python3"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[deployment]
+run = ["python3", "src/main.py"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+internalPort = 3000
+externalPort = 80

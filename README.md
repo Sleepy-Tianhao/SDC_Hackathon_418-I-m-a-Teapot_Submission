@@ -132,6 +132,8 @@ JSON or SSE frames.
 ├── tests/
 │   ├── test_frontend_assets.py      # asset, fixture and contract checks
 │   └── test_utils.py
+├── .replit                         # Replit run + deployment + port mapping
+├── replit.nix                      # Replit Python 3.11 environment
 ├── requirements.txt
 ├── .env.example
 └── README.md
@@ -243,11 +245,15 @@ illustrative only; the backend never reads them as live data.
 
 ## How we use Replit *(required)*
 
-* **Development:** the repository is imported into a Repl; the backend entry point
-  (`src/main.py`) serves both the API and the frontend.
-* **Hosting:** the app is deployed with Replit Deployments; the live demo link above points at it.
-* **Secrets:** if the external model is enabled, `LLM_API_KEY` belongs in Replit Secrets,
-  never in the repository. Without it the deterministic engine remains fully operational.
+* **Development:** the repository is imported into a Repl; `.replit` starts
+  `PORT=3000 python src/main.py`. The entry point serves the API and static frontend.
+* **Hosting:** `.replit` [deployment] runs `python3 src/main.py`; the process binds
+  `0.0.0.0` and reads `PORT` / `API_PORT`. Port 3000 is mapped to external port 80.
+* **Secrets:** if the external model is enabled, add `LLM_API_KEY`, `LLM_BASE_URL` and
+  `LLM_MODEL` in Replit Secrets (not in the repository). Without a key the deterministic
+  engine remains fully operational.
+* **Storage:** SQLite is used for profiles. Treat deployed SQLite as disposable demo storage;
+  use an external database before relying on profiles across redeploys.
 
 Proof of use: [`submission/REPLIT PROOF OF USE.pdf`](submission/REPLIT%20PROOF%20OF%20USE.pdf)
 

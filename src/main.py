@@ -111,8 +111,10 @@ app.mount("/", StaticFiles(directory=str(FRONTEND), html=True), name="frontend")
 if __name__ == "__main__":
     import uvicorn
 
+    # Replit passes PORT and expects the app to bind on all interfaces.
+    # Local development keeps HOST/API_PORT as fallbacks.
     uvicorn.run(
         app,
-        host=os.getenv("API_HOST", "127.0.0.1"),
-        port=int(os.getenv("API_PORT", "8000")),
+        host=os.getenv("HOST") or os.getenv("API_HOST") or "0.0.0.0",
+        port=int(os.getenv("PORT") or os.getenv("API_PORT") or "8000"),
     )

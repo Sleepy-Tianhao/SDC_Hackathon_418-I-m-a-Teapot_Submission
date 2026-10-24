@@ -3,8 +3,8 @@
 #   pip install -r requirements.txt
 #   uvicorn src.main:app --port 8000
 #
-# Version floors and ceilings keep the install working on Python 3.9, which is
-# the interpreter this project was developed against. pandas 3.x requires
+# Version floors and ceilings keep the install working on Python 3.9+.
+# Replit uses Python 3.11 via .replit/replit.nix. pandas 3.x requires
 # Python 3.11+, so it is capped below 3.0.
 
 # HTTP API layer
