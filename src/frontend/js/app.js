@@ -323,18 +323,39 @@ function bindEvents() {
 }
 
 function bindReveal() {
-  var items = $(".app-reveal");
+  var items = $$(".app-reveal");
   if (!items.length) return;
-  if (!("IntersectionObserver" in window)) {
-    items.forEach(function (item) { item.classList.add("is-visible"); });
-    return;
-  }
-  var observer = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      entry.target.classList.toggle("is-visible", entry.isIntersecting);
+  var html = document.documentElement;
+  var ticking = false;
+
+  // Start visible, then hide only sections that are genuinely off-screen.
+  // This guarantees content stays readable if a script or observer is blocked.
+  items.forEach(function (item) { item.classList.add("is-pending"); });
+  html.classList.add("reveal-ready");
+
+  function sync() {
+    var viewport = window.innerHeight || html.clientHeight;
+    items.forEach(function (item) {
+      var rect = item.getBoundingClientRect();
+      var visible = rect.bottom > 0 && rect.top < viewport * 0.94;
+      item.classList.toggle("is-visible", visible);
+      item.classList.toggle("is-pending", !visible);
     });
-  }, { threshold: 0.04, rootMargin: "0px 0px -6% 0px" });
-  items.forEach(function (item) { observer.observe(item); });
+  }
+
+  function schedule() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(function () {
+      ticking = false;
+      sync();
+    });
+  }
+
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule);
+  window.addEventListener("load", sync);
+  sync();
 }
 
 async function bootstrap() {

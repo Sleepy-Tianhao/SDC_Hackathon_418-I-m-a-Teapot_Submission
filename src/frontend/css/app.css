@@ -40,21 +40,35 @@ html.darkmode body {
 }
 
 /* Narrow Argon cards in the five-column rail. */
+.app-span-5 .row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
 .app-span-5 .row > [class*="col-"] {
   flex: 0 0 100%;
   max-width: 100%;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.app-span-5 .app-section-head {
+  align-items: flex-start;
 }
 
 /* Scroll reveal: sections appear on the way down and fade out on the way up. */
 html.reveal-ready .app-reveal {
-  transform: translateY(28px);
-  opacity: 0;
-  filter: blur(3px);
   transition:
     opacity 0.68s cubic-bezier(0.2, 0.7, 0.25, 1),
     transform 0.68s cubic-bezier(0.2, 0.7, 0.25, 1),
     filter 0.68s cubic-bezier(0.2, 0.7, 0.25, 1);
   will-change: opacity, transform;
+}
+
+html.reveal-ready .app-reveal.is-pending:not(.is-visible) {
+  transform: translateY(28px);
+  opacity: 0;
+  filter: blur(3px);
 }
 
 html.reveal-ready .app-reveal.is-visible {
@@ -78,11 +92,12 @@ html.reveal-ready .app-reveal.is-visible {
 
 @media (prefers-reduced-motion: reduce) {
   html.reveal-ready .app-reveal,
+  html.reveal-ready .app-reveal.is-pending:not(.is-visible),
   html.reveal-ready .app-reveal.is-visible {
-    transform: none;
-    opacity: 1;
-    filter: none;
-    transition: none;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transition: none !important;
   }
 }
 
@@ -310,17 +325,28 @@ html.darkmode #navbar-main .navbar-nav .nav-link.active {
 }
 
 .app-section {
+  min-width: 0;
   padding: 56px 0 10px;
+  overflow-wrap: anywhere;
+  text-align: left;
   scroll-margin-top: 90px;
 }
 
 .app-section-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 22px;
+}
+
+.app-section-head > div {
+  min-width: 0;
+}
+
+.app-section-head h2 {
+  overflow-wrap: anywhere;
 }
 
 .app-section-head h2 {
@@ -437,9 +463,14 @@ html.darkmode .app-skill {
 .app-skill label {
   display: flex;
   align-items: center;
+  min-width: 0;
   gap: 7px;
   margin: 0;
   cursor: pointer;
+}
+
+.app-skill label span {
+  overflow-wrap: anywhere;
 }
 
 .app-skill input[type="checkbox"] {
@@ -516,6 +547,7 @@ html.darkmode .app-role-card {
   font-size: 1.02rem;
   font-weight: 700;
   line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 html.darkmode .app-role-title {
