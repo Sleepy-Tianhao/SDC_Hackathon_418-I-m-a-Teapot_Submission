@@ -1,7 +1,8 @@
 # AI Career Navigator — frontend
 
 A build-free single-page application (native ES modules + CSS) for the SDC 2026 Domain 1
-brief. It takes a skills profile, dated AI-trend signals and three 2028 scenarios, then
+brief. This directory is the preserved **classic** frontend; the default Argon frontend lives in
+`src/frontend`. It takes a skills profile, dated AI-trend signals and three 2028 scenarios, then
 produces role matches, a reskilling pathway and an SDG map.
 
 No npm, no bundler, no build step: the files here are the deployable artefact.
@@ -16,22 +17,25 @@ python src/main.py
 # open http://127.0.0.1:8000/
 ~~~
 
-The FastAPI entry serves this directory at `/` and the `/api/v1` API from the same origin. The
-frontend normally selects the live transport automatically after probing `/api/v1/health`.
+The FastAPI entry serves the default Argon frontend at `/`, this classic frontend at
+`/legacy/`, and the `/api/v1` API from the same origin. The classic frontend normally selects the
+live transport automatically after probing `/api/v1/health`.
 
 **Frontend only (offline demo dataset):**
 
 ~~~bash
-python tools/serve_frontend.py --port 8003
+python -m http.server 8003 --directory src/frontend_bak
 # open http://127.0.0.1:8003/
 ~~~
 
 No API is required in this mode. The UI falls back to the files in `mock/` and shows the
 **Offline demo dataset** badge. This is intentionally separate from the live backend; the
-backend does not read `mock/*.json`.
+backend does not read `mock/*.json`. `tools/serve_frontend.py` serves the default Argon
+frontend instead; point it at this directory or use the static-server command above for the
+classic design.
 
 **Anything else static** — any HTTP server rooted at this directory works, e.g.
-`python -m http.server 8000 --directory src/frontend`. ES modules require HTTP; `file://` will
+`python -m http.server 8000 --directory src/frontend_bak`. ES modules require HTTP; `file://` will
 not work. If you only need API contract examples, the legacy
 `docs/backend-integration/reference_api.py` is still available, but it is not the runtime
 backend.
@@ -147,7 +151,7 @@ backend is present.
 ~~~bash
 python -m unittest discover tests                  # asset + fixture + contract checks
 python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v1
-node tools/screenshot.mjs --base http://127.0.0.1:8000 \
+node tools/screenshot.mjs --base http://127.0.0.1:8000/legacy/ \
   --out docs/screenshots --routes "/overview?sample=1=overview.png,/matches=matches.png"
 ~~~
 

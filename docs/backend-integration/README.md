@@ -14,8 +14,9 @@ small legacy contract reference and is **not imported by the runtime backend**.
 ## Current runtime
 
 ~~~text
-src/main.py                         FastAPI entry: /api/v1, static frontend, CORS, SSE
-  └── src/backend/engine.py         matching, pathway, SDG, narrative, SQLite
+src/main.py                         FastAPI entry: /api/v1, / and /legacy, CORS, SSE
+  └── src/backend/engine.py         deterministic core + LLM-assisted matching/pathway/briefing
+        ├── src/backend/llm.py      optional OpenAI-compatible external model
         ├── src/backend/data.py     builds catalogue/signals/modules from real CSVs
         └── src/backend/data/       labour snapshots and source URL metadata
               └── data/app.db       created on first profile write
@@ -37,8 +38,14 @@ $env:API_PORT="8022"
 python src/main.py
 ~~~
 
-The FastAPI entry serves `src/frontend` at `/` and the API at `/api/v1` on the same origin, so
-the UI does not need a separate CORS configuration or a second static server.
+The FastAPI entry serves the default Argon frontend at `/`, the classic frontend at
+`/legacy/`, and the API at `/api/v1` on the same origin, so the UI does not need a separate CORS
+configuration or a second static server.
+
+The optional external model is configured server-side with `LLM_BASE_URL`, `LLM_API_KEY`,
+`LLM_MODEL` and `LLM_ENABLED`. When enabled it participates in match re-ranking and score
+adjustment, pathway role/module ordering, and the briefing. If the key is absent, the provider
+fails or its response is invalid, the deterministic engine handles the request unchanged.
 
 ## Contract test
 
@@ -65,11 +72,11 @@ All 53 checks passed.
 | `POST /signals/refresh` | `route()` updates the refresh timestamp |
 | `POST /profiles` | `normalise_profile()` + `db_save()` |
 | `GET/PATCH /profiles/{id}` | `db_get()` / `db_save()` |
-| `POST /profiles/{id}/match` | `build_matches()` → `score_role()` |
-| `POST /profiles/{id}/pathway` | `build_pathway()` → `pick_module()` |
+| `POST /profiles/{id}/match` | `build_matches()` → `score_role()` + optional LLM re-ranking |
+| `POST /profiles/{id}/pathway` | `build_pathway()` + optional LLM role/module ordering |
 | `GET /profiles/{id}/sdg-map` | `build_sdg_map()` |
-| `POST /analysis` | `build_analysis()` |
-| `GET /analysis/stream` | deterministic SSE adapter in `src/main.py` |
+| `POST /analysis` | `build_analysis()` + optional LLM narrative |
+| `GET /analysis/stream` | SSE adapter in `src/main.py`; LLM-assisted analysis when configured |
 
 ## Data and fixtures
 
