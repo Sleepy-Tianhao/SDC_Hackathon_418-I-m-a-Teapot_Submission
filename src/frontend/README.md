@@ -29,6 +29,10 @@ The page uses Argon's own classes and components (navbar, banner/shape, cards, b
 buttons, forms, grid, footer). `css/app.css` only adds product-specific layout, score-ring
 and section spacing; it does not replace the Argon palette or components.
 
+The frontend is light-only: the Argon dark-mode toggle and the app's dark-theme activation
+have been removed. Content sections are stacked normally; there is no reveal animation that
+hides content below the fold.
+
 Argon Theme is by [solstice23](https://github.com/solstice23/argon-theme) and is licensed
 under GPLv3. The theme name and link are retained in the footer as required by the project.
 
@@ -47,7 +51,9 @@ python tools/serve_frontend.py --port 8003
 
 The frontend calls the existing `/api/v1` contract. It loads meta/catalog/signals on boot,
 persists a profile, then requests matches, a three-phase pathway, the SDG map and a streamed
-narrative.
+narrative. The backend may optionally use an external OpenAI-compatible model for re-ranking
+matches, adjusting scores, ordering the pathway and writing the briefing; the browser only
+receives JSON/SSE and never a key or prompt.
 
 ## Files
 

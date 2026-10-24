@@ -3,7 +3,8 @@
 These JSON files were captured from the legacy reference implementation and its illustrative
 mock catalogue, using the sample profile. They are **shape references only**; the current
 self-contained FastAPI backend reads real labour tables from `src/backend/data/` and produces
-different values.
+different values. When the optional external model is enabled, current responses may additionally
+contain `llm` metadata and model-adjusted scores or ordering; those fields are additive.
 
 | File | Endpoint |
 | ---- | -------- |

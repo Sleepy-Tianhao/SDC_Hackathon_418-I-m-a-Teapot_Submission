@@ -56,95 +56,52 @@ evidence, their assumptions, or what happens if the future turns out differently
 * **SDG mapping** connects each matched role to the 17 goals with a weighted rationale and
   supporting signals.
 * **A server-side narrative** turns the structured result into a written briefing a mentor or
-  manager can act on. The current build uses a deterministic evidence narrative; a model
-  provider can be added behind the same SSE interface.
+  manager can act on. An optional OpenAI-compatible model can also re-rank matches, adjust the
+  fit scores and order the pathway modules; the deterministic engine remains the fallback.
 
-The frontend is a build-free SPA; the backend owns the database, scoring and narrative generation.
-The UI can run on a complete demo dataset when the API is unavailable, and it says so.
+The default frontend is built on the vendored Argon Theme source and calls the FastAPI API
+directly. The previous frontend is preserved independently in `src/frontend_bak` and remains
+available at `/legacy/`.
 
 ## Requirement coverage
 
 | Must-have from the Domain 1 brief | Where it is implemented |
 | --------------------------------- | ----------------------- |
-| Skills profile intake | `#/intake` — four-step wizard, validated, persisted via `POST /api/v1/profiles` |
-| AI-trend signal layer (updatable, dated source) | `#/signals` — filters, evidence modal, source links, `POST /api/v1/signals/refresh` |
-| Future-role matching + skills gap | `#/matches` and `#/overview` — fit scores, gap matrix, role detail |
-| Personalised reskilling pathway | `#/pathway` — phases, modules, cost, milestones, coverage, print/copy |
-| SDG mapping | `#/sdg` — all 17 goals, contribution scores, role and skill links, evidence |
-| More than one future scenario | `#/scenarios` + scenario selector in the top bar — three futures re-score everything |
-
-## Screens
-
-**Landing — the product in one screen**
-
-![Landing page](docs/screenshots/landing.png)
-
-**Personal dashboard — life tree, readiness, top roles, capability radar, scenario sensitivity, SDG footprint**
-
-![Overview dashboard](docs/screenshots/overview.png)
-
-**Signal layer — every trend dated and linked to its publisher**
-
-![Signal layer](docs/screenshots/signals.png)
-
-**Role matching — fit, gaps and reasons, with a cross-role gap matrix**
-
-![Role matches](docs/screenshots/matches.png)
-
-**Reskilling pathway — phases, modules, cost and evidence**
-
-![Reskilling pathway](docs/screenshots/pathway.png)
-
-**SDG mapping — all 17 goals, scored with rationale and evidence**
-
-![SDG mapping](docs/screenshots/sdg.png)
-
-**Scenario lab — three futures, one profile**
-
-![Scenario lab](docs/screenshots/scenarios.png)
-
-**Integration screen — live API status, endpoint contract and backend recipe**
-
-![API and integration](docs/screenshots/connect.png)
-
-**Streamed narrative briefing — grounded in the profile, scenario and pathway**
-
-![Streamed narrative briefing](docs/screenshots/briefing.png)
-
-**Dark mode and mobile**
-
-| Dark dashboard | Mobile dashboard |
-| -------------- | ---------------- |
-| ![Dark mode](docs/screenshots/overview-dark.png) | ![Mobile mode](docs/screenshots/overview-mobile.png) |
+| Skills profile intake | `Profile` section — validated form, persisted via `POST /api/v1/profiles` |
+| AI-trend signal layer (updatable, dated source) | `Signals` section — dated cards, source links, `POST /api/v1/signals/refresh` |
+| Future-role matching + skills gap | `Matches` section — fit scores, gap chips, reasons, score source |
+| Personalised reskilling pathway | `Pathway` section — LLM-ordered modules, phases, cost, milestones |
+| SDG mapping | `SDG map` section — all 17 goals, contribution scores, rationale, evidence |
+| More than one future scenario | `Scenarios` section + top-bar selector — three futures re-score everything |
 
 ## Architecture
 
 ~~~text
-┌────────────────────────────┐        ┌─────────────────────────────────────┐
-│ Browser                    │        │ FastAPI  src/main.py                │
-│  src/frontend              │ JSON   │  /api/v1/*                          │
-│  ES modules, no build step │ ─────► │  ├─ src/backend/data.py             │
-│  fetch + EventSource       │        │  │   real labour CSVs + catalogue  │
-│  localStorage cache        │  SSE   │  ├─ src/backend/engine.py           │
-└────────────────────────────┘        │  │   matching / pathway / SDG      │
-                                      │  ├─ SQLite data/app.db              │
-                                      │  └─ static frontend mount at /      │
-                                      └─────────────────────────────────────┘
+┌──────────────────────────────┐      ┌──────────────────────────────────────┐
+│ Browser                      │      │ FastAPI  src/main.py                 │
+│  src/frontend                │ JSON │  /api/v1/*                           │
+│  Argon Theme source + JS     │ ───► │  ├─ src/backend/engine.py            │
+│  fetch + EventSource         │      │  │   matching / pathway / SDG       │
+│  local profile cache         │ SSE  │  ├─ src/backend/llm.py               │
+└──────────────────────────────┘      │  │   optional external model        │
+                                      │  ├─ SQLite data/app.db               │
+                                      │  └─ static mounts: / and /legacy/    │
+                                      └──────────────────────────────────────┘
 ~~~
 
-The frontend never reads the CSV files or the SQLite database directly. The backend owns the data
-load, scoring, catalogue and persistence; the browser only sends ids and receives structured JSON.
-The current narrative is deterministic and runs server-side; an external model can replace that
-step behind the same SSE contract.
+The default frontend never reads the CSV files or the SQLite database directly. The backend owns
+the data load, scoring, LLM adapter and persistence; the browser only sends ids and receives
+structured JSON or SSE frames. The legacy frontend is a fully independent copy in
+`src/frontend_bak`.
 
 ## Tech stack
 
 | Layer | Technology | Why |
 | ----- | ---------- | --- |
-| Frontend | Native ES modules, modern CSS, inline SVG | No build step, instant deploys, nothing to break on Replit |
-| Backend | Python 3 + FastAPI | Typed routes, same-origin UI, SSE, SQLite |
+| Frontend | Vendored Argon Theme CSS/JS, Bootstrap and product JS | Uses the actual Argon source; no build step |
+| Backend | Python 3 + FastAPI + SQLite | /api/v1 contract, same-origin UI, SSE, profile persistence |
 | Database | SQLite | Profiles are persisted locally with zero setup |
-| Narrative | Deterministic evidence engine + optional OpenAI-compatible provider | Reproducible fallback; external model can participate in scoring and planning |
+| LLM | Optional OpenAI-compatible provider (`src/backend/llm.py`) | Model participates in matching, scoring, pathway order and briefing; deterministic fallback |
 | Hosting / dev | Replit | One URL for UI + API |
 
 ## Repository structure
@@ -152,36 +109,38 @@ step behind the same SSE contract.
 ~~~text
 .
 ├── docs/
-│   ├── API.md                       # the frontend↔backend contract
+│   ├── API.md                       # frontend↔backend contract, including SSE
 │   ├── openapi.json                 # machine-readable OpenAPI 3.1 spec
-│   ├── BACKEND_INTEGRATION.md       # handover and endpoint notes
+│   ├── BACKEND_INTEGRATION.md       # handover notes
 │   ├── backend-integration/
-│   │   ├── reference_api.py         # legacy contract reference (not runtime code)
+│   │   ├── reference_api.py         # legacy contract reference, not runtime
 │   │   ├── smoke_test.py            # 53-check contract test
-│   │   ├── export_fixtures.py       # captures example responses
-│   │   └── fixtures/                # captured example responses (legacy shape reference)
-│   └── screenshots/                 # UI evidence
+│   │   ├── export_fixtures.py       # example-response capture
+│   │   └── fixtures/                # legacy shape references
+│   └── screenshots/                 # image assets (not linked from this README)
 ├── src/
-│   ├── frontend/                    # default Argon Theme UI, using vendored Argon source
-│   ├── frontend_bak/                # complete, independent classic design at /legacy/
-│   ├── main.py                      # FastAPI entry: /api/v1 + static UI + SSE
-│   ├── backend/
-│   │   ├── data.py                  # loads real labour CSVs; builds catalogue/signals/modules
-│   │   ├── engine.py                # matching, pathway, SDG, narrative, SQLite
-│   │   └── data/                    # real labour snapshots and source metadata
-│   └── utils.py
+│   ├── frontend/                    # default Argon Theme frontend
+│   │   ├── vendor/argon/            # unchanged Argon source + LICENSE
+│   │   ├── css/app.css              # product layout on Argon components
+│   │   └── js/app.js                # API, profile, matches, pathway, SDG, SSE
+│   ├── frontend_bak/                # independent classic frontend at /legacy/
+│   ├── argon-theme/                 # upstream Argon source tree
+│   ├── main.py                      # FastAPI: /api/v1, static mounts, SSE
+│   └── backend/
+│       ├── data.py                  # real CSVs → catalogue/signals/modules
+│       ├── engine.py                # deterministic core + LLM orchestration
+│       ├── llm.py                   # OpenAI-compatible model adapter
+│       └── data/                    # labour snapshots and source metadata
 ├── tools/
-│   ├── serve_frontend.py            # static server for frontend-only development
-│   └── screenshot.mjs               # headless screenshots (no npm)
+│   ├── serve_frontend.py            # static server for frontend work
+│   └── screenshot.mjs               # optional headless screenshots
 ├── tests/
-│   ├── test_frontend_assets.py      # assets, fixtures, module graph, contract checks
+│   ├── test_frontend_assets.py      # asset, backup-data and contract checks
 │   └── test_utils.py
 ├── requirements.txt
 ├── .env.example
 └── README.md
 ~~~
-
-
 ## How to run
 
 ### 1. Full stack — FastAPI backend + frontend (recommended)
@@ -200,6 +159,18 @@ default Argon frontend from `src/frontend` (built on the vendored Argon Theme so
 The previous teapot design is preserved independently in `src/frontend_bak`. Open
 `http://127.0.0.1:8000/legacy/` or use the **Classic** pill in the top bar to switch back
 immediately; the legacy page has an **Argon design** link back.
+
+Optional external model configuration (server-side only):
+
+~~~bash
+LLM_BASE_URL=https://api.deepseek.com/v1
+LLM_API_KEY=your-key
+LLM_MODEL=deepseek-chat
+LLM_ENABLED=true
+~~~
+
+`.env` is loaded automatically; real environment variables take precedence. With no key the
+deterministic engine handles matching, pathway and narrative unchanged.
 
 If port 8000 is already in use:
 
@@ -237,20 +208,25 @@ python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v
 * Frontend notes: [src/frontend/README.md](src/frontend/README.md)
 
 The contract covers health and metadata, the catalogue, the signal layer, profile intake,
-matching, pathway generation, SDG mapping, scenarios, and the server-side narrative stream. The
-frontend's transport is switchable at runtime (`auto` / `live` / `demo`) and visible in the UI.
+matching, pathway generation, SDG mapping, scenarios, and the server-side narrative stream.
+The default Argon frontend calls the live API directly. The classic frontend in
+`src/frontend_bak` retains its own demo/live transport for offline review.
+
+When configured, the optional model also participates in matching scores and pathway ordering.
+Its provider/model/configured state is exposed through `GET /api/v1/meta`; keys and prompts
+never cross into the browser.
 
 ## Two-minute demo script
 
-1. **Landing** — state the problem and the six must-haves. Click *Explore with a sample profile*.
-2. **Overview** — the exploration tree, readiness score, top roles, capability radar and SDG footprint.
-3. **Intake** — show honest self-rating and the time/budget constraints that drive the plan.
-4. **Signals** — open one signal's evidence: publisher, date, source link, affected roles.
-5. **Matches** — compare two roles, open the gap matrix, then change the scenario in the top bar:
+1. **Banner** — introduce the product and the six must-haves; use *Load sample profile*.
+2. **Overview** — readiness score, top role, dated signals and SDG footprint.
+3. **Profile** — show honest self-rating, interests and time/budget constraints.
+4. **Signals** — open one signal's evidence: publisher, date, source link and affected roles.
+5. **Matches** — compare two roles, inspect gaps and reasons, then change the scenario:
    the same profile re-ranks.
-6. **Pathway** — phases, costs, milestones, coverage; generate or regenerate the evidence briefing.
-7. **SDG map** — pick a goal and show the role, skills and evidence behind its score.
-8. **Connect** — show live/demo status and the endpoint contract. This is the backend handover.
+6. **Pathway** — LLM-ordered modules, phases, costs and milestones; regenerate the briefing.
+7. **SDG map** — inspect goals, contribution scores and rationale.
+8. **Classic** — switch to `/legacy/` to show the fully independent previous design.
 
 ## Data and provenance
 
@@ -277,8 +253,8 @@ they are not used by the default Argon frontend or served as live backend data.
 * **Development:** the repository is imported into a Repl; the backend entry point
   (`src/main.py`) serves both the API and the frontend.
 * **Hosting:** the app is deployed with Replit Deployments; the live demo link above points at it.
-* **Secrets:** if an external narrative provider is enabled later, its keys belong in Replit Secrets,
-  never in the repository. The default deterministic narrative needs no model key.
+* **Secrets:** if the external model is enabled, `LLM_API_KEY` belongs in Replit Secrets,
+  never in the repository. Without it the deterministic engine remains fully operational.
 
 Proof of use: [`submission/REPLIT PROOF OF USE.pdf`](submission/REPLIT%20PROOF%20OF%20USE.pdf)
 
@@ -313,14 +289,15 @@ key or prompt.
 * **Showing evidence, not just answers.** Every score had to be explainable, so the matcher is a
   weighted overlap with published weights rather than an opaque model. The UI shows the gaps,
   the reasons and the scenario delta.
-* **Making a demo survivable.** Backends fail during demos. The frontend ships a complete demo
-  transport, probes `/health` with a three-second timeout, and always displays which mode is
-  active.
+* **Making a demo survivable.** The classic frontend retains a complete offline demo
+  transport; the Argon frontend reports an API-offline state instead of inventing data.
+  The backend also falls back to its deterministic engine when the external model fails.
 * **Keeping the contract honest.** The API contract, OpenAPI spec, self-contained FastAPI
   backend and a 53-check smoke test are all in the repo, so "the frontend expects this shape"
   is testable rather than a claim.
-* **Ten packages of scope.** Six must-haves means six screens; the design system (tokens,
-  components, charts) made it possible to keep them coherent.
+* **Six must-haves, two frontends.** The Argon page groups the six requirements into one
+  scrollable workspace, while the classic backup keeps the original routed views and offline
+  demo; both use the same `/api/v1` contract.
 
 ## Future improvements
 
@@ -345,14 +322,14 @@ key or prompt.
 
 * [x] Domain 1 and SDG track filled in
 * [x] All six must-haves implemented and demonstrated
-* [x] Working frontend with a live/demo transport switch
+* [x] Argon frontend with an independent classic fallback at `/legacy/`
 * [x] API contract + OpenAPI + integration guide
 * [x] Self-contained FastAPI backend with real labour datasets and contract smoke test
 * [x] Automated tests for assets, fixtures and contract
 * [ ] Slide deck link added
 * [ ] Demo video link added
 * [ ] Replit deployment URL added
-* [ ] Optional external narrative provider configured in Secrets
+* [x] External LLM adapter implemented; credentials are optional and server-side
 * [ ] "How to Run" verified on a clean clone
 * [x] No API keys or secrets committed
 
