@@ -106,7 +106,7 @@ User ──► Replit (FastAPI · src/main.py) ──► SQLite profiles / CSV l
 
 ### Option 1 — Run on Replit (Recommended)
 
-1. Open the [Replit Project](https://replit.com/@CufoFlux/SDCHackathon418-I-m-a-TeapotSubmission), or import this repository via **Create Repl → Import from GitHub**.
+1. Open the [Replit Project](https://aicareer.replit.app), or import this repository via **Create Repl → Import from GitHub**.
 2. Open the **Secrets** tab (🔒) and add the model variables used by the backend. Matching, pathway and SDG mapping work without a key; the AI briefing requires a key:
 
    * Required for model calls: `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`
