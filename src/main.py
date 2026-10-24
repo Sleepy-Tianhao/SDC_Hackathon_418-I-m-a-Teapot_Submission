@@ -70,10 +70,36 @@ def _sse_frame(event: str, payload: dict) -> str:
 def _stream_analysis(profile: dict, scenario_id: str, role_id: str | None) -> StreamingResponse:
     async def generate():
         scenario = engine.SCENARIOS.get(scenario_id) or engine.CATALOG["scenarios"][0]
-        matches = engine.build_matches(profile, scenario["id"])
-        pathway = engine.build_pathway(profile, matches, scenario["id"], role_id)
-        analysis = engine.build_analysis(profile, matches, scenario, pathway)
-        yield _sse_frame("meta", {"provider": analysis["provider"], "model": analysis["model"], "scenarioId": scenario["id"]})
+        info = engine.llm.provider_info()
+        # Open the stream before the model call. A cold container or a slow provider
+        # must not look like a dead connection to the browser or to a proxy.
+        yield _sse_frame(
+            "meta",
+            {"provider": info["provider"], "model": info["model"], "scenarioId": scenario["id"], "pending": True},
+        )
+
+        def compute() -> dict:
+            matches = engine.build_matches(profile, scenario["id"])
+            pathway = engine.build_pathway(profile, matches, scenario["id"], role_id)
+            return engine.build_analysis(profile, matches, scenario, pathway)
+
+        # The engine and the provider client are blocking; run them off the event loop
+        # so health checks and other requests stay responsive while the model thinks.
+        task = asyncio.create_task(asyncio.to_thread(compute))
+        try:
+            while True:
+                try:
+                    analysis = await asyncio.wait_for(asyncio.shield(task), timeout=10)
+                    break
+                except asyncio.TimeoutError:
+                    # SSE comment lines are ignored by EventSource but keep idle
+                    # connections (Replit/Cloud Run proxies) from being closed.
+                    yield ": keep-alive\n\n"
+        except Exception:
+            task.cancel()
+            yield _sse_frame("error", {"message": "The analysis could not be generated."})
+            return
+
         words = analysis["narrative"].split(" ")
         for index, word in enumerate(words):
             yield _sse_frame("token", {"text": word + (" " if index < len(words) - 1 else "")})
@@ -83,7 +109,11 @@ def _stream_analysis(profile: dict, scenario_id: str, role_id: str | None) -> St
     return StreamingResponse(
         generate(),
         media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        headers={
+            "Cache-Control": "no-cache, no-transform",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
     )
 
 

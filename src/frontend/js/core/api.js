@@ -333,15 +333,28 @@ export async function analysis(payload, onEvent) {
   }
 
   if (config.stream && typeof onEvent === "function") {
-    return streamLive(payload, onEvent);
+    try {
+      return await streamLive(payload, onEvent);
+    } catch (error) {
+      const retryable = error && (error.code === "stream_timeout" || error.code === "stream_error");
+      if (!retryable) throw error;
+      // Proxies in front of the API may buffer or drop SSE; the buffered endpoint
+      // still produces the same analysis, so retry there once instead of failing.
+      if (onEvent) onEvent({ type: "meta", meta: { pending: true } });
+      return analysisRequest(payload, onEvent);
+    }
   }
+  return analysisRequest(payload, onEvent);
+}
+
+async function analysisRequest(payload, onEvent) {
   const result = await request("analysis", {
     method: "POST",
     body: { profileId: payload.profile.id, scenarioId: payload.scenarioId, roleId: payload.roleId || null },
-    timeout: config.streamTimeoutMs,
+    timeout: Math.max(config.streamTimeoutMs || 0, 180000),
   });
   const analysisResult = result.analysis || result;
-  if (onEvent) onEvent({ type: "done", analysis: analysisResult });
+  if (typeof onEvent === "function") onEvent({ type: "done", analysis: analysisResult });
   setState({ analysis: analysisResult });
   return analysisResult;
 }
@@ -369,10 +382,10 @@ function streamLive(payload, onEvent) {
         source.close();
         if (!settled) {
           settled = true;
-          reject(new ApiError("The analysis stream did not start within 20 seconds.", { code: "stream_timeout" }));
+          reject(new ApiError("The analysis stream did not start within 30 seconds.", { code: "stream_timeout" }));
         }
       }
-    }, 20000);
+    }, 30000);
 
     const finish = (analysis) => {
       if (settled) return;
