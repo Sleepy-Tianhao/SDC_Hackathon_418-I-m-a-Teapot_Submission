@@ -4,7 +4,7 @@
 #   uvicorn src.main:app --port 8000
 #
 # Version floors and ceilings keep the install working on Python 3.9+.
-# Replit uses Python 3.11 via .replit/replit.nix. pandas 3.x requires
+# Replit uses Python 3.12 via .replit. pandas 3.x requires
 # Python 3.11+, so it is capped below 3.0.
 
 # HTTP API layer
@@ -18,3 +18,10 @@ openpyxl>=3.1          # required by pandas.read_excel for .xlsx workbooks
 
 # Outbound calls to the DeepSeek narrative endpoint
 requests>=2.31
+
+# Explicit patched versions for transitive HTTP dependencies, so both clean
+# installs and dependency scans resolve patched versions.
+anyio==4.15.1
+certifi==2026.10.23
+h11==0.16.0
+idna==3.20

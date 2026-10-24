@@ -1,0 +1,1 @@
+- [Publishing dependency scan](publishing-dependency-scan.md) — verify scanner results independently of installed versions; security-sensitive transitive dependencies may need exact pins.
