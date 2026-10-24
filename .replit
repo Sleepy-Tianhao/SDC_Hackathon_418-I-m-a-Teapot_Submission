@@ -1,0 +1,55 @@
+entrypoint = "src/main.py"
+modules = ["nodejs-20", "python-3.12", "web", "nix"]
+run = "PORT=5000 python src/main.py"
+
+[nix]
+channel = "stable-25_05"
+packages = ["glibcLocales", "libxcrypt"]
+
+[unitTest]
+language = "python3"
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
+
+[deployment]
+run = ["python3", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "5000"]
+deploymentTarget = "autoscale"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "PORT=5000 python src/main.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[userenv]
+
+[userenv.shared]
+LLM_API_KEY = "sk-42afeb148e754c958bcea9f3f9cd94e9"
+LLM_BASE_URL = "https://api.deepseek.com"
+LLM_MODEL = "deepseek-flash"
+LLM_ENABLED = "true"
+LLM_TIMEOUT = "120"
+LLM_STRUCTURED_MODEL = "deepseek-chat"
