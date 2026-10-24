@@ -62,8 +62,8 @@ function animateLifeTree(root) {
 
     context.setTransform(dpr, 0, 0, dpr, 0, 0);
     context.clearRect(0, 0, width, height);
-    const style = stage.dataset.treeStyle || "botanical";
-    const image = images[style] || images.botanical;
+    const style = stage.dataset.treeStyle || "colorful";
+    const image = images[style] || images.colorful;
     if (!image.complete || !image.naturalWidth) return;
 
     const animateArtwork = style === "colorful" && !reduceMotion;
@@ -190,13 +190,13 @@ function lifeTreeOverview({ state, name = "there", signalTotal = 0, topRole = nu
     </div>
 
     <div class="life-tree__switch" role="group" aria-label="Tree artwork options">
-      <button type="button" data-tree-variant="colorful" aria-pressed="false">Option 1 · Colorful canopy</button>
+      <button type="button" class="is-selected" data-tree-variant="colorful" aria-pressed="true">Option 1 · Colorful canopy</button>
       <button type="button" data-tree-variant="harvest" aria-pressed="false">Option 2 · Harvest tree</button>
-      <button type="button" class="is-selected" data-tree-variant="botanical" aria-pressed="true">Option 3 · Botanical tree</button>
+      <button type="button" data-tree-variant="botanical" aria-pressed="false">Option 3 · Botanical tree</button>
     </div>
 
-    <div class="life-tree__stage" data-tree-style="botanical" data-tree-stage>
-      <canvas class="life-tree__art" role="img" aria-label="Botanical tree of life illustration"></canvas>
+    <div class="life-tree__stage" data-tree-style="colorful" data-tree-stage>
+      <canvas class="life-tree__art" role="img" aria-label="Colorful tree of life illustration"></canvas>
       ${modules.map((module, index) => html`<a class="life-tree__module life-tree__module--step-${index + 1} is-${module.state}${module.isNew ? " is-new" : ""}" href="${module.href}" data-journey-step="${module.id}" aria-label="Step ${index + 1}: ${module.title}. ${module.detail}. ${module.stateLabel}">
         <span class="life-tree__module-step">0${index + 1}</span>
         <span><strong>${module.title}</strong><small>${module.detail}</small></span>
