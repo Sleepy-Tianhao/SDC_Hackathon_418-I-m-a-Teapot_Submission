@@ -3,7 +3,6 @@
 import { api } from "../core/api.js";
 import { fmt, html, icon } from "../core/dom.js";
 import { MOMENTUM_OPTIONS, SIGNAL_TYPES, SORT_OPTIONS } from "../core/options.js";
-import { currentRoute } from "../core/router.js";
 import * as store from "../core/store.js";
 import { momentumBadge, openModal, progressBar, toast } from "../core/ui.js";
 
@@ -39,7 +38,7 @@ function filterBar(data) {
   return html`<div class="filter-bar" data-role="filters">
     <div class="search-field">
       ${icon("search", 16)}
-      <input class="input" type="search" placeholder="Search signals, publishers, tags" value="${filters.query}"
+      <input class="input" type="search" placeholder="Search signals" value="${filters.query}"
         data-filter-input="query" aria-label="Search signals" />
     </div>
     <div class="filter-bar__group">
@@ -69,38 +68,24 @@ function filterBar(data) {
 }
 
 function signalCard(signal) {
-  const roles = (signal.affectedRoles || []).slice(0, 3);
-  return html`<article class="signal-item">
-    <div class="signal-item__top">
-      <div class="signal-item__main">
-        <div class="row row--wrap" style="--gap:6px;margin-bottom:7px">
-          ${momentumBadge(signal.momentum)}
-          <span class="tag">${SIGNAL_TYPES.find((type) => type.id === signal.type)?.label || signal.type}</span>
-          <span class="tag">${signal.region}</span>
-          <span class="tag tag--muted">${signal.velocity}</span>
-        </div>
-        <h3 class="signal-item__title">${signal.title}</h3>
-        <p class="signal-item__summary">${signal.summary}</p>
-      </div>
-      <div class="signal-item__side">
-        <span class="signal-item__impact">${signal.impact}<small>impact</small></span>
-        <span class="tiny faint">${Math.round(signal.confidence * 100)}% confidence</span>
-      </div>
+  const direction =
+    signal.momentum === "declining" ? "down" : signal.momentum === "stable" ? "steady" : "up";
+  const label = direction === "down" ? "Declining" : direction === "steady" ? "Steady" : "Rising";
+  const iconName = direction === "down" ? "trendDown" : direction === "steady" ? "arrowRight" : "trendUp";
+  const published = signal.publishedAt ? "Published " + fmt.date(signal.publishedAt) : "Source";
+  return html`<article class="signal-card signal-card--${direction}"
+    data-action="signal-detail" data-signal="${signal.id}"
+    role="button" tabindex="0"
+    aria-label="${signal.title}. ${label}. Source ${signal.publisher}.">
+    <div class="signal-card__trend">
+      <span class="signal-card__arrow" aria-hidden="true">${icon(iconName, 30)}</span>
+      <span class="signal-card__label">${label}</span>
     </div>
-    <div class="signal-item__foot">
-      <a class="signal-source" href="${signal.sourceUrl}" target="_blank" rel="noopener noreferrer">
-        ${icon("external", 12)} <strong>${signal.publisher}</strong> · ${fmt.date(signal.publishedAt)}
-      </a>
-      <div class="signal-tags">
-        ${(signal.tags || []).slice(0, 2).map((tag) => html`<span class="tag tag--muted">${tag}</span>`)}
-      </div>
-      <div class="signal-affected">
-        ${roles.map((role) => html`<span class="tag">${roleName(role.roleId)} ${role.direction === "demand-up" ? "↑" : "↓"}</span>`)}
-      </div>
-      <button class="btn btn--ghost btn--sm" type="button" data-action="signal-detail" data-signal="${signal.id}">
-        Evidence ${icon("arrowRight", 13)}
-      </button>
-    </div>
+    <h3 class="signal-card__title">${signal.title}</h3>
+    <a class="signal-card__source" href="${signal.sourceUrl}" target="_blank" rel="noopener noreferrer"
+      title="${published}">
+      ${icon("external", 12)}<span>${signal.publisher}</span>
+    </a>
   </article>`;
 }
 
@@ -109,80 +94,25 @@ function listHtml(data) {
     return html`<div class="empty">
       ${icon("search", 24)}
       <h3 class="empty__title">No signals match these filters</h3>
-      <p class="empty__body">Broaden the momentum, type or region filter, or clear the search term.</p>
+      <p class="empty__body">Adjust filters or clear the search.</p>
       <button class="btn btn--secondary btn--sm" type="button" data-action="clear-filters">Reset filters</button>
     </div>`;
   }
-  return html`<div class="signal-list">${data.items.map(signalCard)}</div>
-    <p class="tiny faint" style="margin-top:14px">
-      Showing ${data.items.length} of ${data.total} signals · sorted by ${filters.sort === "impact" ? "impact" : "most recent"}.
-      Each row links to the original publisher.
-    </p>`;
-}
-
-function pipelineHtml(data) {
-  if (!data) return "";
-  const pipeline = data.pipeline || {};
-  return html`<div class="pipeline-strip" data-role="pipeline">
-    <span class="row" style="--gap:7px"><span class="dot"></span><strong>Signal layer</strong> refreshed ${fmt.dateTime(data.lastRefreshedAt)}</span>
-    <span>${icon("database", 13)} ${pipeline.sourcesScanned || "—"} sources scanned</span>
-    <span>${icon("layers", 13)} ${fmt.int(pipeline.recordsIngested || 0)} records ingested</span>
-    <span>${icon("activity", 13)} ${data.total} signals surfaced</span>
-    <span class="grow"></span>
-    <span class="tiny faint">window ${fmt.date(data.window?.from)} → ${fmt.date(data.window?.to)} · model ${pipeline.model || "signal-extractor"}</span>
-    <button class="btn btn--secondary btn--sm" type="button" data-action="refresh-signals">
-      ${icon("refresh", 14)} Refresh signals
-    </button>
-  </div>`;
-}
-
-function trendSummary(data) {
-  const counts = { rising: 0, stable: 0, declining: 0 };
-  (data?.items || []).forEach((signal) => {
-    if (Object.prototype.hasOwnProperty.call(counts, signal.momentum)) counts[signal.momentum] += 1;
-  });
-  const max = Math.max(1, ...Object.values(counts));
-  const rows = [
-    { key: "rising", label: "Rising", arrow: "↑", note: "More signals point upward", tone: "up" },
-    { key: "stable", label: "Steady", arrow: "→", note: "Signals remain broadly level", tone: "steady" },
-    { key: "declining", label: "Declining", arrow: "↓", note: "More signals point downward", tone: "down" },
-  ];
-  return html`<section class="trend-summary" data-role="signal-trends" aria-label="Signal momentum summary">
-    <div class="trend-summary__head"><div><p class="eyebrow">Market direction</p><h2>What is moving?</h2></div><span>${data?.items?.length || 0} signals in this view</span></div>
-    <div class="trend-summary__grid">
-      ${rows.map((row) => html`<article class="trend-summary__item trend-summary__item--${row.tone}">
-        <div class="trend-summary__top"><span class="trend-summary__arrow" aria-hidden="true">${row.arrow}</span><strong>${row.label}</strong><b>${counts[row.key]}</b></div>
-        <div class="trend-summary__bar"><i style="width:${Math.round((counts[row.key] / max) * 100)}%"></i></div>
-        <p>${row.note}</p>
-      </article>`)}
-    </div>
-    <p class="trend-summary__foot">Counts reflect the dated, source-linked signals below; they describe this snapshot, not a time-series forecast.</p>
-  </section>`;
+  return html`<div class="signal-grid">${data.items.map(signalCard)}</div>`;
 }
 
 function pageShell(data) {
-  const state = store.getState();
-  const roleFilter = filters.roleId ? roleName(filters.roleId) : "";
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("activity", 14)} Step 02 · AI-trend signal layer</p>
       <div class="page-head__row">
-        <h1 class="page-title">Signals you can date, cite and challenge</h1>
+        <h1 class="page-title">Signal layer</h1>
         <div class="page-head__actions">
           <a class="btn btn--secondary btn--sm" href="#/scenarios">${icon("compare", 15)} Scenario lab</a>
+          <button class="btn btn--secondary btn--sm" type="button" data-action="refresh-signals">
+            ${icon("refresh", 14)} Refresh
+          </button>
         </div>
       </div>
-      <p class="page-lead">
-        Labour-market, policy and technology signals extracted from reports, job-posting data and regulators.
-        Every record has a publisher, a publication date and a source link, so the forecast can be audited rather than trusted.
-      </p>
-      <div class="page-meta">
-        <span>${icon("calendar", 13)} Window ${fmt.date(data?.window?.from || state.meta?.signalWindow?.from)} → ${fmt.date(data?.window?.to || state.meta?.signalWindow?.to)}</span>
-        <span>${icon("database", 13)} Dataset ${state.meta?.datasetVersion || "—"}</span>
-        ${roleFilter ? html`<span class="badge badge--brand">${icon("target", 12)} Filtered to ${roleFilter}</span>` : ""}
-      </div>
     </div>
-    ${pipelineHtml(data)}
-    ${trendSummary(data)}
     ${filterBar(data)}
     <div data-role="signal-list">${listHtml(data)}</div>`;
 }
@@ -257,10 +187,6 @@ function openSignal(signal) {
         </div>
       </div>
 
-      <div class="notice">
-        ${icon("info", 15)}
-        <span>Signals are inputs to a model, not facts about your future. The scenario lab shows how sensitive your match is to them.</span>
-      </div>
     </div>`,
     footer: html`<button class="btn btn--ghost" type="button" data-modal-close="true">Close</button>
       <a class="btn btn--primary" href="#/signals?roleId=${roles[0]?.roleId || ""}" data-modal-close="true">
@@ -286,19 +212,14 @@ async function fetchData() {
 async function updateList(root, options = {}) {
   const listEl = root.querySelector('[data-role="signal-list"]');
   if (!listEl) return;
-  listEl.innerHTML = html`<div class="stack" style="--gap:11px">
-    <div class="skeleton skeleton-card" style="height:100px"></div>
-    <div class="skeleton skeleton-card" style="height:100px"></div>
+  listEl.innerHTML = html`<div class="signal-grid">
+    ${Array.from({ length: 6 }, () => html`<div class="skeleton skeleton-card" style="height:170px"></div>`)}
   </div>`.value;
   try {
     const data = await fetchData();
     listEl.innerHTML = listHtml(data).value;
     const filtersEl = root.querySelector('[data-role="filters"]');
     if (filtersEl && options.rebuildFilters !== false) filtersEl.outerHTML = filterBar(data).value;
-    const pipelineEl = root.querySelector('[data-role="pipeline"]');
-    if (pipelineEl) pipelineEl.outerHTML = pipelineHtml(data).value;
-    const trendsEl = root.querySelector('[data-role="signal-trends"]');
-    if (trendsEl) trendsEl.outerHTML = trendSummary(data).value;
   } catch (error) {
     listEl.innerHTML = html`<div class="error-panel" role="alert">
       <span class="error-panel__icon">${icon("alert", 20)}</span>
@@ -322,6 +243,7 @@ function bind(root) {
 
     const target = event.target instanceof Element ? event.target.closest("[data-action]") : null;
     if (!target) return;
+    if (event.target instanceof Element && event.target.closest(".signal-card__source")) return;
     const action = target.getAttribute("data-action");
 
     if (action === "signal-detail") {
@@ -347,7 +269,7 @@ function bind(root) {
         })
         .finally(() => {
           target.disabled = false;
-          target.innerHTML = html`${icon("refresh", 14)} Refresh signals`.value;
+          target.innerHTML = html`${icon("refresh", 14)} Refresh`.value;
         });
     } else if (action === "clear-filters") {
       filters.query = "";
@@ -377,6 +299,14 @@ function bind(root) {
     if (!key) return;
     filters[key] = target.value;
     updateList(root);
+  });
+
+  root.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const card = event.target instanceof Element ? event.target.closest(".signal-card[data-action]") : null;
+    if (!card || event.target.closest("a")) return;
+    event.preventDefault();
+    card.click();
   });
 }
 

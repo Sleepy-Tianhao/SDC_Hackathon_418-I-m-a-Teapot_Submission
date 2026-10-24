@@ -7,11 +7,11 @@
  */
 
 export const JOURNEY_STEPS = [
-  { id: "profile", number: 1, title: "Profile", detail: "Your starting point", href: "#/intake", action: "Build your profile", actionDetail: "Step 1 · Your starting point", focusTitle: "Build your profile", focusBody: "Set your baseline so each trend, career match and learning step can connect back to you." },
-  { id: "signals", number: 2, title: "Skill trends", detail: "Signals and evidence", href: "#/signals", action: "Explore skill trends", actionDetail: "Step 2 · Signals and evidence", focusTitle: "Skill trends", focusBody: "See which skills are gaining demand, and open the evidence behind each trend." },
-  { id: "roles", number: 3, title: "Career matches", detail: "Fit and skill gaps", href: "#/matches", action: "See career matches", actionDetail: "Step 3 · Fit and skill gaps", focusTitle: "Career matches", focusBody: "Open a role to understand the fit, the exact gaps and the reasons behind the match." },
-  { id: "scenarios", number: 4, title: "Future scenarios", detail: "Compare possible outcomes", href: "#/scenarios", action: "Compare future scenarios", actionDetail: "Step 4 · Compare possible outcomes", focusTitle: "Future scenarios", focusBody: "Switch to another future and see how the same profile changes its best-fit role." },
-  { id: "pathway", number: 5, title: "Pathway", detail: "Learning modules and SDGs", href: "#/pathway", action: "Open your pathway", actionDetail: "Step 5 · Learning modules and SDGs", focusTitle: "Open your pathway", focusBody: "Turn the matched role and skills gaps into a phased reskilling plan with evidence." },
+  { id: "profile", number: 1, title: "Profile", detail: "Your starting point", href: "#/intake", action: "Build your profile", actionDetail: "Step 1 · Your starting point", focusTitle: "Build your profile", focusBody: "Set your baseline for trends, matches and learning." },
+  { id: "signals", number: 2, title: "Skill trends", detail: "Signals and evidence", href: "#/signals", action: "Explore skill trends", actionDetail: "Step 2 · Signals and evidence", focusTitle: "Skill trends", focusBody: "See rising skills and their evidence." },
+  { id: "roles", number: 3, title: "Career matches", detail: "Fit and skill gaps", href: "#/matches", action: "See career matches", actionDetail: "Step 3 · Fit and skill gaps", focusTitle: "Career matches", focusBody: "Open a role for fit, gaps and reasons." },
+  { id: "scenarios", number: 4, title: "Future scenarios", detail: "Compare possible outcomes", href: "#/scenarios", action: "Compare future scenarios", actionDetail: "Step 4 · Compare possible outcomes", focusTitle: "Future scenarios", focusBody: "Switch futures to re-rank the same profile." },
+  { id: "pathway", number: 5, title: "Pathway", detail: "Learning modules and SDGs", href: "#/pathway", action: "Open your pathway", actionDetail: "Step 5 · Learning modules and SDGs", focusTitle: "Open your pathway", focusBody: "Turn your gaps into a phased plan." },
 ];
 
 const MAX_EVENTS = 30;

@@ -43,8 +43,9 @@ so the UI does not need a separate CORS configuration or a second static server.
 
 The optional external model is configured server-side with `LLM_BASE_URL`, `LLM_API_KEY`,
 `LLM_MODEL` and `LLM_ENABLED`. When enabled it participates in match re-ranking and score
-adjustment, pathway role/module ordering, and the briefing. If the key is absent, the provider
-fails or its response is invalid, the deterministic engine handles the request unchanged.
+adjustment, pathway role/module ordering, and the briefing. Matching and pathway retain their
+deterministic fallbacks; the AI briefing requires the model and returns an error instead of
+substituting fixed narrative text.
 
 ## Contract test
 
@@ -74,7 +75,7 @@ All 53 checks passed.
 | `POST /profiles/{id}/match` | `build_matches()` → `score_role()` + optional LLM re-ranking |
 | `POST /profiles/{id}/pathway` | `build_pathway()` + optional LLM role/module ordering |
 | `GET /profiles/{id}/sdg-map` | `build_sdg_map()` |
-| `POST /analysis` | `build_analysis()` + optional LLM narrative |
+| `POST /analysis` | `build_analysis()` with LLM-only narrative (503 if unavailable) |
 | `GET /analysis/stream` | SSE adapter in `src/main.py`; LLM-assisted analysis when configured |
 
 ## Data and fixtures

@@ -104,15 +104,15 @@ function page(state, path, matches) {
   const share = path.covers.length ? Math.round((covered / path.covers.length) * 100) : 100;
 
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("route", 14)} Step 04 · Personalised reskilling pathway</p>
+      <p class="eyebrow">${icon("route", 14)} Step 04 · Pathway</p>
       <div class="page-head__row">
-        <h1 class="page-title">A plan built from your gaps, not a catalogue</h1>
+        <h1 class="page-title">Your reskilling plan</h1>
         <div class="page-head__actions">
           <button class="btn btn--secondary btn--sm" type="button" data-action="print-pathway">${icon("printer", 15)} Print</button>
           <button class="btn btn--primary btn--sm" type="button" data-action="copy-pathway">${icon("copy", 15)} Copy plan</button>
         </div>
       </div>
-      <p class="page-lead">${path.rationale}</p>
+      <p class="page-lead">A phased plan built from your largest skill gaps.</p>
       <div class="page-meta">
         <span>${icon("compare", 13)} ${scenario.name}</span>
         <span>${icon("clock", 13)} ${path.hoursPerWeek}h per week</span>
@@ -156,13 +156,6 @@ function page(state, path, matches) {
           ${path.phases.map((phase, index) => phaseCard(phase, index))}
         </div>
 
-        <div class="notice" style="margin-top:16px">
-          ${icon("info", 16)}
-          <span>
-            <strong>Plan integrity.</strong> This pathway is assembled from the gaps in your top match and the curated module
-            catalogue. Costs and hours are estimates; confirm before enrolling.
-          </span>
-        </div>
       </div>
 
       <aside class="sticky">
@@ -245,8 +238,8 @@ export const pathwayView = {
     if (!state.profile) {
       return html`${emptyState({
         icon: "route",
-        title: "No pathway without a profile",
-        body: "The plan is assembled from your skills gap. Build a profile (or load the sample) and the navigator will sequence the modules.",
+        title: "Build a profile first",
+        body: "The plan uses your skill gaps. Build a profile or load the sample.",
         action: html`<div class="row" style="justify-content:center;--gap:8px">
           <a class="btn btn--primary" href="#/intake">Build my profile</a>
           <button class="btn btn--secondary" type="button" data-action="use-sample">Use sample profile</button>

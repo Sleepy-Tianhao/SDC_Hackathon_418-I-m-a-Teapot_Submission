@@ -162,29 +162,29 @@ function lifeTreeOverview({ state, name = "there", signalTotal = 0, topRole = nu
   const nextTitle = next ? next.focusTitle : "Your tree is fully lit";
   const nextBody = next
     ? next.focusBody
-    : "You have explored your profile, signals, roles, futures and pathway. Keep testing the plan as the future changes.";
+    : "All five steps explored. Keep testing as the future changes.";
   const nextHref = next ? next.href : "#/scenarios";
   const nextAction = next ? next.action : "Keep exploring futures";
   const nextDetail = next ? next.actionDetail : "All five steps complete";
   const note = !hasProfile
-    ? "Build your skills profile to start lighting up your interests and strengths."
+    ? "Build a profile to start lighting up your tree."
     : next
       ? "Profile ready. Next: " + next.title + "."
-      : "All five steps are complete. Your tree records exploration, not ability certification.";
+      : "All five steps complete. Exploration is not certification.";
 
   return html`<section class="life-tree" aria-labelledby="life-tree-title">
     <div class="life-tree__head">
       <div>
-        <p class="life-tree__eyebrow">Hey ${name}, take a moment to get to know yourself.</p>
-        <h1 id="life-tree-title">Explore yourself. Grow toward what's next.</h1>
-        <p class="life-tree__lead">Start with your interests, strengths and values to find a direction that feels like yours.</p>
+        <p class="life-tree__eyebrow">Hi ${name}</p>
+        <h1 id="life-tree-title">Explore yourself. Grow forward.</h1>
+        <p class="life-tree__lead">Find a direction that fits your interests and strengths.</p>
       </div>
       <a class="life-tree__journal" href="#/pathway">${icon("calendar", 16)} Growth journal</a>
     </div>
 
     <div class="life-tree__progress" aria-label="Self-discovery progress">
       <div class="life-tree__count"><strong>${completed}</strong><span>/ 5 steps complete</span></div>
-      <div class="life-tree__progress-main"><div class="life-tree__progress-label"><span>Your journey through the tree</span><span>${progress.percent}%</span></div>
+      <div class="life-tree__progress-main"><div class="life-tree__progress-label"><span>Journey progress</span><span>${progress.percent}%</span></div>
         <div class="life-tree__segments">${modules.map((_, index) => html`<i class="${index < completed ? "is-filled" : ""}"></i>`)}</div>
       </div>
     </div>
@@ -202,7 +202,7 @@ function lifeTreeOverview({ state, name = "there", signalTotal = 0, topRole = nu
         <span><strong>${module.title}</strong><small>${module.detail}</small></span>
       </a>`)}
     </div>
-    <p class="life-tree__caption">Start at the roots and follow upward: Profile → Skill trends → Career matches → Future scenarios → Pathway</p>
+    <p class="life-tree__caption">Roots → Profile → Signals → Matches → Scenarios → Pathway</p>
     <div class="life-tree__legend"><span>Complete</span><span>In progress</span><span>Locked</span></div>
 
     <div class="life-tree__focus">
@@ -217,7 +217,7 @@ function lifeTreeOverview({ state, name = "there", signalTotal = 0, topRole = nu
 
     <div class="life-tree__below">
       <div class="life-tree__note">${icon("activity", 14)} ${note}</div>
-      ${topRole ? html`<a class="life-tree__role" href="#/matches"><span><small>Current career match</small><strong>${topRole.title}</strong></span><b>${topRole.fitScore}<small> / 100</small></b></a>` : html`<button class="life-tree__sample" type="button" data-action="use-sample">${icon("play", 14)} Preview the complete tree with a sample profile</button>`}
+      ${topRole ? html`<a class="life-tree__role" href="#/matches"><span><small>Current career match</small><strong>${topRole.title}</strong></span><b>${topRole.fitScore}<small> / 100</small></b></a>` : html`<button class="life-tree__sample" type="button" data-action="use-sample">${icon("play", 14)} Preview with sample profile</button>`}
       <a class="life-tree__signals" href="#/signals">${icon("activity", 14)} ${signalTotal} sourced career signals <span>Explore signals ${icon("arrowRight", 13)}</span></a>
     </div>
   </section>`;
@@ -292,14 +292,12 @@ function analysisPanel(analysis) {
       <span class="analysis-panel__model">LLM narrative · grounded in this workspace</span>
     </div>
     <p class="small muted" data-role="analysis-text">
-      Turn this matched profile, skills gap and scenario into a short written briefing you can paste into a conversation
-      with a manager, a mentor or a careers adviser.
+      Generate a short briefing from your profile, gaps and scenario.
     </p>
     <div class="analysis-actions">
       <button class="btn btn--primary btn--sm" type="button" data-action="generate-briefing">
         ${icon("sparkles", 15)} Generate briefing
       </button>
-      <span class="tiny faint">Streams from the backend; demo mode replays a generated narrative.</span>
     </div>
   </div>`;
 }
@@ -322,20 +320,17 @@ function dashboard(state, matches, signals, sdgMap) {
       value: matches.summary.readinessScore + "/100",
       icon: "activity",
       tone: "brand",
-      hint: "Weighted fit across your top three adjacent roles.",
     })}
     ${statCard({ label: "Best-fit role", value: top.fitScore + "%", icon: "target", hint: top.title })}
     ${statCard({
       label: "Skills to close",
       value: matches.summary.skillsToClose,
       icon: "layers",
-      hint: "Distinct gaps across your top three matches.",
     })}
     ${statCard({
       label: "Signals tracked",
       value: signals.total || (signals.items || []).length,
       icon: "activity",
-      hint: "Each with a publisher, date and source link.",
     })}
   </div>
 
@@ -344,7 +339,6 @@ function dashboard(state, matches, signals, sdgMap) {
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Top future roles</h2>
-          <p class="panel__hint">Ranked by fit for this profile and scenario.</p>
         </div>
         <a class="btn btn--ghost btn--sm" href="#/matches">Compare ${icon("arrowRight", 14)}</a>
       </div>
@@ -364,16 +358,12 @@ function dashboard(state, matches, signals, sdgMap) {
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Capability profile</h2>
-          <p class="panel__hint">Average self-rated level per skill family.</p>
         </div>
         <a class="btn btn--ghost btn--sm" href="#/intake">${icon("sliders", 14)} Edit</a>
       </div>
       <div class="row" style="justify-content:center">
         ${radar.length >= 3 ? radarChart(radar, { size: 250, label: "Capability radar" }) : html`<p class="small muted">Add skills to see the radar.</p>`}
       </div>
-      <p class="tiny faint" style="text-align:center;margin-top:6px">
-        Self-assessment, not certification. The pathway starts by verifying your real level.
-      </p>
     </section>
   </div>
 
@@ -385,8 +375,7 @@ function dashboard(state, matches, signals, sdgMap) {
         <div class="panel__head">
           <div>
             <h2 class="panel__title">Scenario sensitivity</h2>
-            <p class="panel__hint">${top.title} across three 2028 futures.</p>
-          </div>
+            </div>
         </div>
         <div class="gauge-stack">
           ${sensitivity.map(
@@ -409,7 +398,6 @@ function dashboard(state, matches, signals, sdgMap) {
         <div class="panel__head">
           <div>
             <h2 class="panel__title">SDG footprint</h2>
-            <p class="panel__hint">Where this work creates public value.</p>
           </div>
           <a class="btn btn--ghost btn--sm" href="#/sdg">All 17 ${icon("arrowRight", 13)}</a>
         </div>
@@ -422,7 +410,6 @@ function dashboard(state, matches, signals, sdgMap) {
     <div class="panel__head">
       <div>
         <h2 class="panel__title">Signals behind your top match</h2>
-        <p class="panel__hint">Evidence that moved ${top.title} up the ranking.</p>
       </div>
       <a class="btn btn--ghost btn--sm" href="#/signals?roleId=${top.roleId}">Filter signals ${icon("arrowRight", 14)}</a>
     </div>
@@ -489,10 +476,18 @@ async function generateBriefing(root) {
       actions.innerHTML = html`<button class="btn btn--secondary btn--sm" type="button" data-action="generate-briefing">${icon("refresh", 14)} Regenerate</button>
         <button class="btn btn--ghost btn--sm" type="button" data-copy="${result.narrative}">${icon("copy", 14)} Copy</button>`.value;
     }
-    toast("Briefing ready. Ask a mentor to challenge it.", { tone: "success", title: "AI briefing" });
+    toast("Briefing ready.", { tone: "success", title: "AI briefing" });
   } catch (error) {
-    textEl.textContent = "The briefing could not be generated: " + (error.message || "unknown error");
-    toast(error.message || "Briefing failed.", { tone: "danger", title: "Generation failed" });
+    const partial = textEl.textContent.trim();
+    if (partial) {
+      // The model text is already visible; keep it instead of replacing it
+      // with a fixed fallback sentence.
+      textEl.querySelector(".analysis-cursor")?.remove();
+      toast("The stream stopped. Keeping the model's partial briefing.", { tone: "danger", title: "Briefing interrupted" });
+    } else {
+      textEl.textContent = "The briefing could not be generated: " + (error.message || "unknown error");
+      toast(error.message || "Briefing failed.", { tone: "danger", title: "Generation failed" });
+    }
   } finally {
     buttons.forEach((button) => {
       button.disabled = false;
@@ -511,19 +506,17 @@ export const overviewView = {
       const signals = await loadSignals(3);
       return landing(signals, state);
     }
-    let matches = store.getState().matches;
-    if (!matches || matches.scenarioId !== state.scenarioId) {
-      matches = await api.match(state.profile, state.scenarioId);
-    }
-    let sdgMap = store.getState().sdgMap;
-    if (!sdgMap || sdgMap.scenarioId !== state.scenarioId) {
-      try {
-        sdgMap = await api.sdgMap(state.profile, state.scenarioId);
-      } catch {
-        sdgMap = null;
-      }
-    }
-    const signals = await loadSignals(4);
+    const storedMatches = store.getState().matches;
+    const storedSdg = store.getState().sdgMap;
+    const matchPromise =
+      storedMatches && storedMatches.scenarioId === state.scenarioId
+        ? Promise.resolve(storedMatches)
+        : api.match(state.profile, state.scenarioId);
+    const sdgPromise =
+      storedSdg && storedSdg.scenarioId === state.scenarioId
+        ? Promise.resolve(storedSdg)
+        : api.sdgMap(state.profile, state.scenarioId).catch(() => null);
+    const [matches, sdgMap, signals] = await Promise.all([matchPromise, sdgPromise, loadSignals(4)]);
     return dashboard(store.getState(), matches, signals, sdgMap);
   },
 

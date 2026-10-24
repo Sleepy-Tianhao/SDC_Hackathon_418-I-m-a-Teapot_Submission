@@ -77,16 +77,15 @@ function page(state) {
   const base = config.apiBaseUrl === "demo" ? "/api/v1" : config.apiBaseUrl;
 
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("plug", 14)} Build · Backend handover</p>
+      <p class="eyebrow">${icon("plug", 14)} Backend</p>
       <div class="page-head__row">
-        <h1 class="page-title">Connect the frontend to your API</h1>
+        <h1 class="page-title">Connect the API</h1>
         <div class="page-head__actions">
           <button class="btn btn--secondary btn--sm" type="button" data-action="copy-endpoints">${icon("copy", 15)} Copy endpoints</button>
         </div>
       </div>
       <p class="page-lead">
-        This screen is the handover surface. The UI never holds an LLM key: it calls <code class="mono">/api/v1</code>, the
-        backend owns prompts, database writes and third-party model calls.
+        The browser calls <code class="mono">/api/v1</code>. The server owns data, keys and model calls.
       </p>
       <div class="page-meta">
         <span>${icon("database", 13)} Dataset ${meta?.datasetVersion || "—"}</span>
@@ -100,14 +99,10 @@ function page(state) {
     <div class="split" style="margin-top:18px">
       <section class="panel">
         <h2 class="panel__title">Connection settings</h2>
-        <p class="panel__hint" style="margin-bottom:14px">
-          Same-origin is the default. Change this only when the API runs on another host or port.
-        </p>
         <div class="stack" style="--gap:14px">
           <div class="field">
             <label class="field__label" for="api-base">API base URL</label>
             <input class="input" id="api-base" value="${base}" placeholder="/api/v1" />
-            <p class="field__hint">Examples: <code class="mono">/api/v1</code>, <code class="mono">http://127.0.0.1:8000/api/v1</code>, <code class="mono">demo</code></p>
           </div>
           <div class="field">
             <span class="field__label">Transport policy</span>
@@ -121,15 +116,10 @@ function page(state) {
                   data-action="set-mode" data-mode="${mode.id}" title="${mode.hint}">${mode.label}</button>`,
               )}
             </div>
-            <p class="field__hint">Auto is recommended for the demo: the UI stays usable if the API sleeps.</p>
           </div>
           <div class="row" style="--gap:8px">
             <button class="btn btn--primary btn--sm" type="button" data-action="apply-connection">${icon("save", 15)} Save &amp; test</button>
             <button class="btn btn--ghost btn--sm" type="button" data-action="reset-connection">${icon("refresh", 15)} Reset to default</button>
-          </div>
-          <div class="notice">
-            ${icon("info", 15)}
-            <span>Settings persist in <code class="mono">localStorage</code>. URL overrides: <code class="mono">?api=http://localhost:8000/api/v1&amp;mode=live</code>.</span>
           </div>
         </div>
 
@@ -143,7 +133,6 @@ function page(state) {
           <div class="panel__head">
             <div>
               <h2 class="panel__title">Serve the frontend from FastAPI</h2>
-              <p class="panel__hint">Two lines, no CORS needed when same-origin.</p>
             </div>
           </div>
           <pre class="code-block"><span class="c"># src/main.py</span>
@@ -156,8 +145,7 @@ app.include_router(api_router, prefix=<span class="s">"/api/v1"</span>)
 <span class="c"># mount LAST so /api keeps priority</span>
 app.mount(<span class="s">"/"</span>, StaticFiles(directory=<span class="s">"src/frontend"</span>, html=<span class="k">True</span>), name=<span class="s">"ui"</span>)</pre>
           <p class="tiny faint" style="margin-top:9px">
-            Separate origins? Add <code class="mono">CORSMiddleware</code> for the frontend origin and send the API base URL
-            in <code class="mono">assets/config.js</code>.
+            Separate origins: enable CORS and set the API URL in <code class="mono">assets/config.js</code>.
           </p>
         </section>
 
@@ -165,7 +153,6 @@ app.mount(<span class="s">"/"</span>, StaticFiles(directory=<span class="s">"src
           <div class="panel__head">
             <div>
               <h2 class="panel__title">Run the reference API</h2>
-              <p class="panel__hint">Python standard library — no install, serves the UI too.</p>
             </div>
           </div>
           <pre class="code-block">python docs/backend-integration/reference_api.py --port 8000
@@ -183,15 +170,10 @@ app.mount(<span class="s">"/"</span>, StaticFiles(directory=<span class="s">"src
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Endpoint contract</h2>
-          <p class="panel__hint">Versioned under <code class="mono">/api/v1</code>; errors use <code class="mono">{ "error": { "code", "message" } }</code>.</p>
         </div>
         <button class="btn btn--ghost btn--sm" type="button" data-copy="/api/v1/health">${icon("copy", 14)} Copy base</button>
       </div>
       ${endpointTable()}
-      <p class="tiny faint" style="margin-top:12px">
-        Full field tables and examples: <code class="mono">docs/API.md</code> · machine-readable:
-        <code class="mono">docs/openapi.json</code> · integration guide: <code class="mono">docs/BACKEND_INTEGRATION.md</code>.
-      </p>
     </section>
 
     <div class="grid grid--2" style="margin-top:18px">
@@ -202,17 +184,14 @@ app.mount(<span class="s">"/"</span>, StaticFiles(directory=<span class="s">"src
 curl -X POST http://127.0.0.1:8000/api/v1/profiles \
   -H <span class="s">'Content-Type: application/json'</span> \
   -d <span class="s">'{"name":"Aisha","currentRole":"Coordinator","sector":"Public sector","skills":[{"skillId":"data-literacy","level":3}]}'</span></pre>
-        <p class="tiny faint" style="margin-top:9px">
-          The backend may store the profile, call the LLM, or both. The UI only needs the documented shapes.
-        </p>
       </section>
       <section class="panel">
         <h2 class="panel__title">Integration checklist</h2>
         <ol class="stack" style="--gap:9px;margin-top:10px;padding-left:16px;list-style:decimal">
-          <li class="small muted">Serve <code class="mono">src/frontend</code> at <code class="mono">/</code> (or any static host).</li>
-          <li class="small muted">Implement <code class="mono">/api/v1/health</code> and <code class="mono">/catalog</code> first — the shell depends on them.</li>
-          <li class="small muted">Persist profiles in SQLite and return the stored profile shape.</li>
-          <li class="small muted">Implement matching, pathway and SDG-map endpoints; keep field names from <code class="mono">docs/API.md</code>.</li>
+          <li class="small muted">Serve <code class="mono">src/frontend</code> at <code class="mono">/</code>.</li>
+          <li class="small muted">Implement health and catalog first.</li>
+          <li class="small muted">Persist profiles in SQLite.</li>
+          <li class="small muted">Implement matching, pathway and SDG endpoints.</li>
           <li class="small muted">Add the LLM narrative behind <code class="mono">/analysis</code> with SSE tokens; keep keys server-side.</li>
           <li class="small muted">Run the smoke test above and watch the status card turn green.</li>
         </ol>

@@ -19,7 +19,7 @@ export class ApiError extends Error {
   }
 }
 
-const PROBE_TIMEOUT_MS = 3000;
+const PROBE_TIMEOUT_MS = 20000;
 let transport = null;
 let transportReason = "";
 let resolving = null;
@@ -333,13 +333,20 @@ export async function analysis(payload, onEvent) {
   }
 
   if (config.stream && typeof onEvent === "function") {
+    let receivedModelText = false;
+    const handleStreamEvent = (event) => {
+      if (event.type === "token" && event.text) receivedModelText = true;
+      onEvent(event);
+    };
     try {
-      return await streamLive(payload, onEvent);
+      return await streamLive(payload, handleStreamEvent);
     } catch (error) {
+      // Once model text is on screen, never replace it with a fallback response.
+      if (receivedModelText) throw error;
       const retryable = error && (error.code === "stream_timeout" || error.code === "stream_error");
       if (!retryable) throw error;
-      // Proxies in front of the API may buffer or drop SSE; the buffered endpoint
-      // still produces the same analysis, so retry there once instead of failing.
+      // Proxies in front of the API may buffer or drop SSE before the first
+      // token; retry the buffered endpoint rather than replacing partial text.
       if (onEvent) onEvent({ type: "meta", meta: { pending: true } });
       return analysisRequest(payload, onEvent);
     }
@@ -382,10 +389,10 @@ function streamLive(payload, onEvent) {
         source.close();
         if (!settled) {
           settled = true;
-          reject(new ApiError("The analysis stream did not start within 30 seconds.", { code: "stream_timeout" }));
+          reject(new ApiError("The analysis stream did not start within 90 seconds.", { code: "stream_timeout" }));
         }
       }
-    }, 30000);
+    }, 90000);
 
     const finish = (analysis) => {
       if (settled) return;

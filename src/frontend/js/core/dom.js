@@ -147,6 +147,13 @@ export const fmt = {
     if (list.length === 1) return list[0];
     return list.slice(0, -1).join(", ") + " and " + list[list.length - 1];
   },
+  short(value, max = 140) {
+    const text = String(value || "").trim().replace(/\s+/g, " ");
+    if (text.length <= max) return text;
+    const cut = text.slice(0, max);
+    const end = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("; "), cut.lastIndexOf(" "));
+    return cut.slice(0, end > 40 ? end : max).trimEnd() + "…";
+  },
   initials(name) {
     return String(name || "?")
       .trim()

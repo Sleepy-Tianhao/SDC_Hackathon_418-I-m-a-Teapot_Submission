@@ -63,7 +63,7 @@ function renderSidebar() {
   const modeDetail =
     state.mode === "live"
       ? "Requests go to " + config.apiBaseUrl
-      : info.reason || "No backend answered — the UI is running on fixture data.";
+      : info.reason || "No backend; using demo data.";
 
   sidebar.innerHTML = toHtml(html`<a class="sidebar__brand" href="#/overview" aria-label="AI Career Navigator home">
       <span class="brand-mark">${icon("compass", 21)}</span>
@@ -95,7 +95,7 @@ function renderSidebar() {
         <a class="mode-card__link" href="#/connect">Connection settings ${icon("arrowRight", 12)}</a>
       </div>
       <p class="sidebar__legal">
-        Built by 418 I'm a Teapot. Signals, roles and pathways in demo mode are illustrative seed data.
+        418 I'm a Teapot · Demo data is illustrative.
       </p>
     </div>`);
 

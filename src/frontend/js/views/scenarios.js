@@ -1,13 +1,12 @@
 /** Scenario lab: three defensible 2028 futures and their effect on the plan. */
 
 import { api } from "../core/api.js";
-import { fmt, html, icon } from "../core/dom.js";
+import { html, icon } from "../core/dom.js";
 import { refreshRoute } from "../core/router.js";
 import * as store from "../core/store.js";
 import { progressBar, scoreTone, toast } from "../core/ui.js";
 
 function scenarioCard(scenario, active, catalog) {
-  const keywords = (scenario.drivers || []).slice(0, 3);
   const rising = (scenario.rolesRising || [])
     .map((roleId) => (catalog.roles || []).find((role) => role.id === roleId))
     .filter(Boolean)
@@ -24,19 +23,11 @@ function scenarioCard(scenario, active, catalog) {
       </div>
       ${active ? html`<span class="badge badge--brand">${icon("check", 11)} Active</span>` : ""}
     </div>
-    <p class="scenario-card__summary">${scenario.summary}</p>
-    ${keywords.length
-      ? html`<div class="scenario-keywords" aria-label="Key forces in this scenario">
-          ${keywords.map((driver) => html`<span class="scenario-keyword scenario-keyword--${driver.direction}">
-            <span aria-hidden="true">${driver.direction === "up" ? "↑" : "↓"}</span>${driver.name}
-          </span>`)}
-        </div>`
-      : ""}
     <div class="scenario-card__metrics">
-      <div class="scenario-metric"><span>Net employment</span><strong>${scenario.metrics.netEmploymentChangePct > 0 ? "+" : ""}${scenario.metrics.netEmploymentChangePct}%</strong></div>
-      <div class="scenario-metric"><span>Task automation</span><strong>${scenario.metrics.taskAutomationPct}%</strong></div>
-      <div class="scenario-metric"><span>Reskilling demand</span><strong>${scenario.metrics.reskillingDemandIndex}/100</strong></div>
-      <div class="scenario-metric"><span>Wage polarisation</span><strong>${scenario.metrics.wagePolarisationIndex}/100</strong></div>
+      <div class="scenario-metric"><span>Net jobs</span><strong>${scenario.metrics.netEmploymentChangePct > 0 ? "+" : ""}${scenario.metrics.netEmploymentChangePct}%</strong></div>
+      <div class="scenario-metric"><span>Automation</span><strong>${scenario.metrics.taskAutomationPct}%</strong></div>
+      <div class="scenario-metric"><span>Reskilling</span><strong>${scenario.metrics.reskillingDemandIndex}/100</strong></div>
+      <div class="scenario-metric"><span>Wage spread</span><strong>${scenario.metrics.wagePolarisationIndex}/100</strong></div>
     </div>
     <div class="confidence">
       <span>Likelihood</span>
@@ -47,13 +38,13 @@ function scenarioCard(scenario, active, catalog) {
       ${scenario.drivers.map(
         (driver) => html`<div class="driver driver--${driver.direction}">
           ${icon(driver.direction === "up" ? "trendUp" : "trendDown", 14)}
-          <span><strong>${driver.name}.</strong> ${driver.detail}</span>
+          <span><strong>${driver.name}</strong></span>
         </div>`,
       )}
     </div>
     ${rising.length
       ? html`<div>
-          <p class="tiny faint" style="margin-bottom:5px">Roles rising</p>
+          <p class="tiny faint" style="margin-bottom:5px">Rising</p>
           <div class="tag-row">
             ${rising.map((role) => html`<a class="tag" href="#/matches?role=${role.id}">${role.title}</a>`)}
             ${(scenario.rolesRising || []).length > rising.length
@@ -64,7 +55,7 @@ function scenarioCard(scenario, active, catalog) {
       : ""}
     ${declining.length
       ? html`<div>
-          <p class="tiny faint" style="margin-bottom:5px">Roles under pressure</p>
+          <p class="tiny faint" style="margin-bottom:5px">At risk</p>
           <div class="tag-row">${declining.map((role) => html`<a class="tag tag--gap" href="#/matches?role=${role.id}">${role.title}</a>`)}</div>
         </div>`
       : ""}
@@ -86,10 +77,8 @@ function impactPanel(matches, catalog, activeId) {
   return html`<section class="panel">
     <div class="panel__head">
       <div>
-        <h2 class="panel__title">What each future does to your top match</h2>
-        <p class="panel__hint">${role.title} · baseline fit ${role.baselineFit || role.fitScore}</p>
+        <h2 class="panel__title">Top match by future</h2>
       </div>
-      <span class="badge badge--neutral">${rows.length} scenarios</span>
     </div>
     <div class="stack" style="--gap:13px">
       ${rows.map(
@@ -104,24 +93,18 @@ function impactPanel(matches, catalog, activeId) {
             </strong>
           </div>
           ${progressBar(row.fit, { className: "bar--sm", tone: row.delta > 0 ? "success" : row.delta < 0 ? "warning" : "brand" })}
-          ${row.scenario.roleAdjustments?.[role.roleId]?.note
-            ? html`<p class="tiny faint" style="margin-top:4px">${row.scenario.roleAdjustments[role.roleId].note}</p>`
-            : ""}
         </div>`,
       )}
     </div>
-    <p class="tiny faint" style="margin-top:14px">
-      Scenario deltas are applied to your baseline fit, so the comparison isolates the future rather than the intake.
-    </p>
   </section>`;
 }
 
 function comparisonTable(catalog, activeId, matches) {
   const metrics = [
-    { key: "netEmploymentChangePct", label: "Net employment change", suffix: "%" },
-    { key: "taskAutomationPct", label: "Tasks automated", suffix: "%" },
-    { key: "reskillingDemandIndex", label: "Reskilling demand index", suffix: "/100" },
-    { key: "wagePolarisationIndex", label: "Wage polarisation", suffix: "/100" },
+    { key: "netEmploymentChangePct", label: "Net jobs", suffix: "%" },
+    { key: "taskAutomationPct", label: "Automation", suffix: "%" },
+    { key: "reskillingDemandIndex", label: "Reskilling", suffix: "/100" },
+    { key: "wagePolarisationIndex", label: "Wage spread", suffix: "/100" },
   ];
   const top = matches.matches[0];
 
@@ -157,7 +140,7 @@ function comparisonTable(catalog, activeId, matches) {
           })}
         </tr>
         <tr>
-          <td>Skills in demand</td>
+          <td>Top skills</td>
           ${(catalog.scenarios || []).map(
             (scenario) => html`<td class="${scenario.id === activeId ? "is-active" : ""}">
               ${(scenario.skillsInDemand || [])
@@ -178,21 +161,12 @@ function page(state, matches) {
   const active = (catalog.scenarios || []).find((scenario) => scenario.id === state.scenarioId) || catalog.scenarios[0];
 
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("compare", 14)} Foresight · More than one future</p>
+      <p class="eyebrow">${icon("compare", 14)} Foresight</p>
       <div class="page-head__row">
-        <h1 class="page-title">Three futures, modelled separately</h1>
+        <h1 class="page-title">Three futures, compared</h1>
         <div class="page-head__actions">
           <a class="btn btn--secondary btn--sm" href="#/signals">${icon("activity", 15)} Signal evidence</a>
         </div>
-      </div>
-      <p class="page-lead">
-        A plan that only works in one future is a bet. These scenarios change the assumptions behind adoption, regulation
-        and climate policy, then re-score your matches. The active scenario flows through every screen.
-      </p>
-      <div class="page-meta">
-        <span>${icon("check", 13)} Active: <strong>${active.name}</strong></span>
-        <span>${icon("calendar", 13)} Horizon ${active.horizon}</span>
-        <span>${icon("clock", 13)} Signals ${fmt.relative(state.meta?.lastRefreshedAt)}</span>
       </div>
     </div>
 
@@ -205,8 +179,7 @@ function page(state, matches) {
       <section class="panel">
         <div class="panel__head">
           <div>
-            <h2 class="panel__title">Assumptions behind the active scenario</h2>
-            <p class="panel__hint">Change the future by changing these, not the output.</p>
+            <h2 class="panel__title">Assumptions</h2>
           </div>
         </div>
         <ul class="stack" style="--gap:9px">
@@ -217,18 +190,13 @@ function page(state, matches) {
             </li>`,
           )}
         </ul>
-        <div class="notice" style="margin-top:14px">
-          ${icon("info", 15)}
-          <span>Scores are a structured comparison, not a prediction. The point is to test which skills stay valuable across futures.</span>
-        </div>
       </section>
     </div>
 
     <section class="panel" style="margin-top:18px">
       <div class="panel__head">
         <div>
-          <h2 class="panel__title">Scenario comparison</h2>
-          <p class="panel__hint">The same profile, three sets of assumptions.</p>
+          <h2 class="panel__title">Comparison</h2>
         </div>
       </div>
       ${comparisonTable(catalog, state.scenarioId, matches)}
@@ -244,7 +212,7 @@ function bind(root) {
     if (!scenarioId || scenarioId === store.getState().scenarioId) return;
     store.setScenario(scenarioId);
     const scenario = (store.getState().catalog.scenarios || []).find((item) => item.id === scenarioId);
-    toast("Now modelling " + (scenario ? scenario.name : scenarioId) + ". Matches and pathway will be recomputed.", {
+    toast("Now modelling " + (scenario ? scenario.name : scenarioId) + ".", {
       tone: "brand",
       title: "Scenario changed",
     });
@@ -261,12 +229,8 @@ export const scenariosView = {
   async render({ state }) {
     if (!state.profile) {
       return html`<div class="page-head reveal">
-          <p class="eyebrow">${icon("compare", 14)} Foresight · More than one future</p>
-          <h1 class="page-title">Three futures, modelled separately</h1>
-          <p class="page-lead">
-            Scenarios change adoption, regulation and climate policy assumptions. Build a profile to see how each future
-            re-scores your matches — or compare the labour-market assumptions below.
-          </p>
+          <p class="eyebrow">${icon("compare", 14)} Foresight</p>
+          <h1 class="page-title">Three futures</h1>
         </div>
         <div class="scenario-cards">
           ${(state.catalog.scenarios || []).map((scenario) => scenarioCard(scenario, scenario.id === state.scenarioId, state.catalog))}

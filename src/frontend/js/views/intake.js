@@ -9,10 +9,10 @@ import * as store from "../core/store.js";
 import { toast } from "../core/ui.js";
 
 const STEPS = [
-  { short: "About you", label: "Context & intent", hint: "Who you are, where you work, where you want to go." },
-  { short: "Skills", label: "Skills assessment", hint: "Rate 23 capabilities across five families." },
-  { short: "Preferences", label: "Interests & constraints", hint: "Time, budget and the problems you want to work on." },
-  { short: "Review", label: "Review & analyse", hint: "Save the profile and run the first match." },
+  { short: "About you", label: "Context & intent", hint: "Your context and goal." },
+  { short: "Skills", label: "Skills assessment", hint: "Rate 23 skills." },
+  { short: "Preferences", label: "Interests & constraints", hint: "Time, budget and interests." },
+  { short: "Review", label: "Review & analyse", hint: "Review and analyse." },
 ];
 
 let draft = null;
@@ -213,7 +213,6 @@ function stepOne() {
     <div class="field span-2">
       <label class="field__label" for="intake-goal">What are you trying to change?</label>
       <textarea class="textarea" id="intake-goal" data-field="goal" placeholder="e.g. Move into an AI-facing role without leaving public service">${draft.goal}</textarea>
-      <p class="field__hint">Optional, but it shapes how the pathway is sequenced.</p>
     </div>
   </div>`;
 }
@@ -231,10 +230,7 @@ function stepTwo(catalog) {
       <button class="btn btn--ghost btn--sm" type="button" data-action="clear-skills">Clear all</button>
     </div>
   </div>
-  <div class="notice" style="margin-bottom:14px">
-    ${icon("info", 16)}
-    <span>Rate honestly: 1 is awareness, 3 is independent work, 5 is expert. Over-claiming hides the gaps your pathway should close.</span>
-  </div>
+  <div class="notice" style="margin-bottom:14px">${icon("info", 16)}<span>1 aware · 3 independent · 5 expert.</span></div>
   ${groups.length
     ? groups.map(
         ([category, skills]) => html`<section class="skill-group" data-skill-group>
@@ -243,7 +239,7 @@ function stepTwo(catalog) {
         </section>`,
       )
     : html`<p class="small muted">No skills match that search.</p>`}
-  <p class="tiny faint" style="margin-top:14px">Click an active level again to clear it. Unrated skills are treated as no exposure.</p>`;
+`;
 }
 
 function stepThree() {
@@ -258,7 +254,6 @@ function stepThree() {
           </button>`,
         )}
       </div>
-      <p class="field__hint" style="margin-top:7px">Choose up to four. These lift role families in the match, they do not hide gaps.</p>
     </div>
 
     <div class="form-grid">
@@ -270,7 +265,6 @@ function stepThree() {
               data-action="set-hours" data-hours="${hours}">${hours}h</button>`,
           )}
         </div>
-        <p class="field__hint">The pathway duration is recalculated from this number.</p>
       </div>
       <div class="field">
         <label class="field__label" for="intake-budget">Learning budget</label>
@@ -292,12 +286,11 @@ function stepThree() {
           </label>`,
         )}
       </div>
-      <p class="field__hint" style="margin-top:7px">Only “remote-friendly” currently filters the pathway; the others annotate your profile.</p>
     </div>
 
     <div class="notice">
       ${icon("shield", 16)}
-      <span><strong>Data note.</strong> In the prototype the profile is stored in this browser (demo mode) or in the backend SQLite database (live mode). Nothing is sent to a third-party model without the narrative step.</span>
+      <span>Profiles stay in the browser (demo) or backend SQLite (live).</span>
     </div>
   </div>`;
 }
@@ -340,35 +333,24 @@ function stepFour(catalog) {
       </div>
     </div>
 
-    <div class="notice">
-      ${icon("sparkles", 16)}
-      <span>
-        Saving runs the matcher across ${(catalog.roles || []).length} future roles under
-        <strong>${(catalog.scenarios.find((scenario) => scenario.id === store.getState().scenarioId) || {}).name || "the selected scenario"}</strong>.
-        You can change the scenario afterwards without retyping anything.
-      </span>
-    </div>
   </div>`;
 }
 
 function renderPage(state) {
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("user", 14)} Step 01 · Skills profile intake</p>
+      <p class="eyebrow">${icon("user", 14)} Step 01 · Profile</p>
       <div class="page-head__row">
-        <h1 class="page-title">Build a profile that survives scrutiny</h1>
+        <h1 class="page-title">Build your skills profile</h1>
         <div class="page-head__actions">
           ${state.profile ? html`<button class="btn btn--ghost btn--sm" type="button" data-action="reset-workspace">${icon("trash", 15)} Reset workspace</button>` : ""}
           <button class="btn btn--secondary btn--sm" type="button" data-action="load-sample-draft">${icon("sparkles", 15)} Fill with sample</button>
         </div>
       </div>
       <p class="page-lead">
-        Role titles hide capability. This intake captures what you can actually do, how much time you have and which
-        problems you want to work on — the three inputs the matcher needs to be honest.
+        Capture your skills, time and interests. These are the inputs the matcher uses.
       </p>
       <div class="page-meta">
-        <span>${icon("clock", 13)} About 5 minutes</span>
-        <span>${icon("shield", 13)} Stored locally in demo mode</span>
-        <span>${icon("target", 13)} Feeds matching, pathway and SDG mapping</span>
+        <span>${icon("clock", 13)} ~5 minutes</span>
       </div>
     </div>
     ${stepPanel(state)}`;
@@ -382,7 +364,7 @@ function fillSample(root) {
   draft = fromSample();
   draft.dirty = true;
   rerender(root);
-  toast("Sample profile loaded into the form. Review it, then save.", { tone: "brand" });
+  toast("Sample loaded. Review and save.", { tone: "brand" });
 }
 
 async function save(root) {

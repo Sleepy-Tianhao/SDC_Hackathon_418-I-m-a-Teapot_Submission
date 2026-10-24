@@ -104,14 +104,14 @@ function mapPage(state, mapping, goals, selected, profileReady) {
   const primary = mapping.summary.primaryGoals || [];
   const top = goals.find((item) => item.number === mapping.summary.topGoal);
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("globe", 14)} SDG mapping · 17 themes</p>
+      <p class="eyebrow">${icon("globe", 14)} SDG mapping</p>
       <div class="page-head__row">
-        <h1 class="page-title">Where could your work make a difference?</h1>
+        <h1 class="page-title">Your SDG contribution</h1>
         <div class="page-head__actions"><a class="btn btn--secondary btn--sm" href="#/pathway">${icon("route", 15)} Reskilling pathway</a></div>
       </div>
-      <p class="page-lead">Select a glowing theme to see how your roles and skills connect to it. The light shows match strength; the explanation shows why.</p>
+      <p class="page-lead">Select a goal to see the roles, skills and evidence behind it.</p>
       <div class="page-meta">
-        ${profileReady ? html`<span>${icon("target", 13)} ${primary.length} strongest links</span>` : html`<span>${icon("info", 13)} Example catalogue view · build your profile for a personal map</span>`}
+        ${profileReady ? html`<span>${icon("target", 13)} ${primary.length} strongest links</span>` : ""}
         ${top ? html`<span>${icon("target", 13)} Strongest: ${top.shortName} · ${top.score}/100</span>` : ""}
         ${mapping.generatedAt ? html`<span>${icon("clock", 13)} Updated ${fmt.relative(mapping.generatedAt)}</span>` : ""}
       </div>
@@ -144,7 +144,7 @@ function genericPage(state) {
   }));
   const selected = selectedNumber || 4;
   const goal = goals.find((item) => item.number === selected) || goals[0];
-  const mapping = { goals, summary: { note: "Build a skills profile to calculate a personal contribution map.", primaryGoals: [], topGoal: null }, generatedAt: null };
+  const mapping = { goals, summary: { note: "Build a profile for a personal map.", primaryGoals: [], topGoal: null }, generatedAt: null };
   return mapPage(state, mapping, goals, goal?.number || 4, false);
 }
 
