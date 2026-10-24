@@ -8,9 +8,9 @@ const STORAGE_KEY = "aicn:config:v1";
 export const DEFAULTS = {
   apiBaseUrl: "/api/v1",
   mode: "auto",
-  requestTimeoutMs: 15000,
+  requestTimeoutMs: 120000,
   stream: true,
-  streamTimeoutMs: 45000,
+  streamTimeoutMs: 120000,
   sampleProfile: false,
 };
 

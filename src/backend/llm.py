@@ -64,11 +64,22 @@ def _model() -> str:
     return (os.getenv("LLM_MODEL") or "deepseek-chat").strip()
 
 
+def _structured_model() -> str:
+    """Use a fast non-reasoning model for strict JSON when one is available."""
+    override = (os.getenv("LLM_STRUCTURED_MODEL") or "").strip()
+    if override:
+        return override
+    configured = _model()
+    if "flash" in configured.lower():
+        return "deepseek-chat"
+    return configured
+
+
 def _timeout() -> float:
     try:
-        return max(2.0, float(os.getenv("LLM_TIMEOUT_SECONDS") or os.getenv("LLM_TIMEOUT") or "25"))
+        return max(2.0, float(os.getenv("LLM_TIMEOUT_SECONDS") or os.getenv("LLM_TIMEOUT") or "120"))
     except ValueError:
-        return 25.0
+        return 120.0
 
 
 def is_configured() -> bool:
@@ -85,6 +96,7 @@ def provider_info() -> dict:
     return {
         "provider": "openai-compatible",
         "model": _model(),
+        "structuredModel": _structured_model(),
         "configured": is_configured(),
         "host": host,
         "enabled": _enabled_flag(),
@@ -131,7 +143,7 @@ def extract_json(text: str) -> dict:
 
 
 def _request(
-    messages: list[dict], *, temperature: float, max_tokens: int, json_mode: bool = False
+    messages: list[dict], *, temperature: float, max_tokens: int, json_mode: bool = False, model: str | None = None
 ) -> str:
     if not is_configured():
         raise LLMError("No external model is configured.")
@@ -140,7 +152,7 @@ def _request(
     last_error = "The provider returned an empty answer."
     for attempt in range(3):
         payload = {
-            "model": _model(),
+            "model": model or _model(),
             "messages": messages,
             "temperature": temperature,
             "max_tokens": budget,
@@ -208,6 +220,7 @@ def generate_json(system: str, user: str, *, max_tokens: int = 900, temperature:
         temperature=temperature,
         max_tokens=max(8000, int(max_tokens)),
         json_mode=True,
+        model=_structured_model(),
     )
     return extract_json(content)
 

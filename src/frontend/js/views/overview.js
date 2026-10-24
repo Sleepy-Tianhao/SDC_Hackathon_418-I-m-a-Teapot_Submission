@@ -498,19 +498,17 @@ export const overviewView = {
       const signals = await loadSignals(3);
       return landing(signals, state);
     }
-    let matches = store.getState().matches;
-    if (!matches || matches.scenarioId !== state.scenarioId) {
-      matches = await api.match(state.profile, state.scenarioId);
-    }
-    let sdgMap = store.getState().sdgMap;
-    if (!sdgMap || sdgMap.scenarioId !== state.scenarioId) {
-      try {
-        sdgMap = await api.sdgMap(state.profile, state.scenarioId);
-      } catch {
-        sdgMap = null;
-      }
-    }
-    const signals = await loadSignals(4);
+    const storedMatches = store.getState().matches;
+    const storedSdg = store.getState().sdgMap;
+    const matchPromise =
+      storedMatches && storedMatches.scenarioId === state.scenarioId
+        ? Promise.resolve(storedMatches)
+        : api.match(state.profile, state.scenarioId);
+    const sdgPromise =
+      storedSdg && storedSdg.scenarioId === state.scenarioId
+        ? Promise.resolve(storedSdg)
+        : api.sdgMap(state.profile, state.scenarioId).catch(() => null);
+    const [matches, sdgMap, signals] = await Promise.all([matchPromise, sdgPromise, loadSignals(4)]);
     return dashboard(store.getState(), matches, signals, sdgMap);
   },
 

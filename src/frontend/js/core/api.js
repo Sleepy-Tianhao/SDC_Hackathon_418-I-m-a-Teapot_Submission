@@ -19,7 +19,7 @@ export class ApiError extends Error {
   }
 }
 
-const PROBE_TIMEOUT_MS = 3000;
+const PROBE_TIMEOUT_MS = 20000;
 let transport = null;
 let transportReason = "";
 let resolving = null;
@@ -382,10 +382,10 @@ function streamLive(payload, onEvent) {
         source.close();
         if (!settled) {
           settled = true;
-          reject(new ApiError("The analysis stream did not start within 30 seconds.", { code: "stream_timeout" }));
+          reject(new ApiError("The analysis stream did not start within 90 seconds.", { code: "stream_timeout" }));
         }
       }
-    }, 30000);
+    }, 90000);
 
     const finish = (analysis) => {
       if (settled) return;

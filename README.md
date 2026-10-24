@@ -252,6 +252,9 @@ illustrative only; the backend never reads them as live data.
 * **Secrets:** if the external model is enabled, add `LLM_API_KEY`, `LLM_BASE_URL` and
   `LLM_MODEL` in Replit Secrets (not in the repository). Without a key the deterministic
   engine remains fully operational.
+* **Timeout headroom:** structured scoring/pathway calls use `deepseek-chat` (typically 5–20 s);
+  narrative calls can take ~20 s on `deepseek-flash`. The frontend waits 120 s, the health probe
+  20 s, and `LLM_TIMEOUT` defaults to 120 s.
 * **Storage:** SQLite is used for profiles. Treat deployed SQLite as disposable demo storage;
   use an external database before relying on profiles across redeploys.
 

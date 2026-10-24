@@ -80,7 +80,7 @@ Precedence, highest first:
 3. `window.AI_CAREER_CONFIG` in `assets/config.js`
 4. Defaults: `/api/v1`, `auto`, streaming on
 
-`mode`: `auto` probes `/health` (3 s) and falls back to the demo dataset; `live` always calls
+`mode`: `auto` probes `/health` (20 s) and falls back to the demo dataset; `live` always calls
 the API; `demo` never does. The active transport is always visible in the sidebar.
 
 ## Routes

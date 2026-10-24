@@ -42,7 +42,7 @@ The UI resolves its transport in this order:
 
 `mode` is one of:
 
-* `auto` — probe `GET /health` (3 s timeout). Live if it answers with JSON, demo otherwise.
+* `auto` — probe `GET /health` (20 s timeout). Live if it answers with JSON, demo otherwise.
 * `live` — always call the API; surface errors to the user.
 * `demo` — never call the API; use the fixtures in `src/frontend/mock/`.
 
@@ -285,7 +285,7 @@ Liveness probe used by the UI to choose its transport.
 }
 ~~~
 
-Requirements: answer within **3 seconds**; the UI treats a timeout, non-JSON response or
+Requirements: answer within **20 seconds**; the UI treats a timeout, non-JSON response or
 connection error as "backend unavailable" and switches to the demo dataset.
 
 ### 6.2 `GET /meta`
@@ -369,7 +369,7 @@ Request (optional): `{ "sources": ["weforum", "ilo"] }`
 }
 ~~~
 
-Keep this request under the UI timeout (15 s by default). If the real pipeline takes longer,
+Keep this request under the UI timeout (120 s by default). If the real pipeline takes longer,
 return `202` with `{ "jobId": "…" }` and add `GET /jobs/{id}` in v2 — the current UI expects a
 synchronous response.
 
@@ -699,7 +699,7 @@ event: error
 data: {"message":"Upstream model timed out."}
 ~~~
 
-The UI has a fallback: if the stream errors or does not start within 20 seconds, it shows the
+The UI has a fallback: if the stream errors or does not start within 90 seconds, it shows the
 error and the user can retry (the *Generate briefing* button also works via `POST /analysis`
 when streaming is disabled with `AI_CAREER_CONFIG.stream = false`).
 
@@ -707,7 +707,7 @@ when streaming is disabled with `AI_CAREER_CONFIG.stream = false`).
 
 | Endpoint | UI behaviour |
 | -------- | ------------ |
-| `/health` | Chooses live vs demo transport (3 s timeout) and fills the sidebar status card |
+| `/health` | Chooses live vs demo transport (20 s timeout) and fills the sidebar status card |
 | `/meta` | Sidebar signal count, top-bar freshness pill, dataset version on the connect screen |
 | `/catalog` | Skills intake, role catalogue, scenario selector, SDG legend |
 | `/signals` | Signal list, filter facets, role filter chips, evidence modals |
