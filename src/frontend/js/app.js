@@ -322,46 +322,9 @@ function bindEvents() {
   });
 }
 
-function bindReveal() {
-  var items = $$(".app-reveal");
-  if (!items.length) return;
-  var html = document.documentElement;
-  var ticking = false;
-
-  // Start visible, then hide only sections that are genuinely off-screen.
-  // This guarantees content stays readable if a script or observer is blocked.
-  items.forEach(function (item) { item.classList.add("is-pending"); });
-  html.classList.add("reveal-ready");
-
-  function sync() {
-    var viewport = window.innerHeight || html.clientHeight;
-    items.forEach(function (item) {
-      var rect = item.getBoundingClientRect();
-      var visible = rect.bottom > 0 && rect.top < viewport * 0.94;
-      item.classList.toggle("is-visible", visible);
-      item.classList.toggle("is-pending", !visible);
-    });
-  }
-
-  function schedule() {
-    if (ticking) return;
-    ticking = true;
-    window.requestAnimationFrame(function () {
-      ticking = false;
-      sync();
-    });
-  }
-
-  window.addEventListener("scroll", schedule, { passive: true });
-  window.addEventListener("resize", schedule);
-  window.addEventListener("load", sync);
-  sync();
-}
-
 async function bootstrap() {
   document.documentElement.classList.remove("darkmode");
   bindEvents();
-  bindReveal();
   renderInterests();
   try {
     var loaded = await Promise.all([request("/meta"), request("/catalog")]);
