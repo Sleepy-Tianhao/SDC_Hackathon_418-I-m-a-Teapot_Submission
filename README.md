@@ -81,8 +81,8 @@ AI Career Navigator turns dated labour-market signals into an auditable plan. Ev
 ├── tests/                   # 20 unit and contract-integrity tests
 ├── submission/              # Required submission documents
 │   ├── SDC2026_418-I-m-a-Teapot_TechDeclaration.pdf   # Technology declaration
-│   ├── SDC2026_418 I'm a Teapot_Preliminary.docx      # Preliminary submission
-│   └── REPLIT PROOF OF USE.docx                       # Replit proof of use
+│   ├── SDC2026_418 I'm a Teapot_Preliminary.pdf      # Preliminary submission
+│   └── REPLIT PROOF OF USE.pdf                       # Replit proof of use
 ├── .env.example             # Example environment variables
 ├── .gitignore
 ├── .replit                  # Replit run configuration
@@ -156,7 +156,7 @@ python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v
 * **Secrets:** `LLM_API_KEY`, `LLM_BASE_URL` and `LLM_MODEL` are supplied as Replit environment variables and never reach the browser; they belong in **Secrets**, not in the repository, because anything committed to `.replit` becomes public with the repo.
 * **Storage:** Profiles live in SQLite at `data/app.db`, which is treated as disposable demo storage for the deployed Repl.
 
-📄 Proof of use: [`submission/REPLIT PROOF OF USE.docx`](<submission/REPLIT PROOF OF USE.docx>)
+📄 Proof of use: [`submission/REPLIT PROOF OF USE.pdf`](<submission/REPLIT PROOF OF USE.pdf>)
 
 ## How We Use RunPod *(Required)*
 
@@ -202,7 +202,7 @@ python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v
 * [ ] Demo video link added
 * [x] Replit used, with proof of use in `submission/`
 * [ ] RunPod used, with proof of use in `submission/`
-* [x] Preliminary submission completed (`SDC2026_418 I'm a Teapot_Preliminary.docx`)
+* [x] Preliminary submission completed (`SDC2026_418 I'm a Teapot_Preliminary.pdf`)
 * [x] Technology declaration completed (`SDC2026_418-I-m-a-Teapot_TechDeclaration.pdf`)
 * [ ] Submission files renamed with your team name (replace `TeamName`) — the proof of use still needs the `SDC2026_418-I-m-a-Teapot_Replit_POU` name
 * [x] "How to Run" steps verified
