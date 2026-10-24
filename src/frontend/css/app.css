@@ -13,6 +13,66 @@ html.darkmode body {
   background: #131313;
 }
 
+/* The banner is light, so the Argon navbar must not use the transparent/white
+   navbar variant. Keep the Argon navbar structure but give it a readable
+   light surface and dark navigation text. */
+#navbar-main {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-bottom: 1px solid #e7eaf7;
+  box-shadow: 0 6px 22px rgba(50, 50, 93, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+#navbar-main .navbar-brand {
+  color: #2b3674 !important;
+  font-weight: 700;
+}
+
+#navbar-main .navbar-brand:hover,
+#navbar-main .navbar-brand:focus {
+  color: #4c5fd5 !important;
+}
+
+#navbar-main .navbar-nav .nav-link {
+  color: #2b3674 !important;
+  font-weight: 550;
+}
+
+#navbar-main .navbar-nav .nav-link:hover,
+#navbar-main .navbar-nav .nav-link:focus,
+#navbar-main .navbar-nav .nav-link.active {
+  color: #4c5fd5 !important;
+}
+
+#navbar-main .navbar-toggler {
+  color: #2b3674;
+  border-color: rgba(43, 54, 116, 0.2);
+}
+
+#navbar-main .navbar-toggler-icon {
+  filter: invert(17%) sepia(25%) saturate(1778%) hue-rotate(219deg) brightness(91%) contrast(94%);
+}
+
+html.darkmode #navbar-main {
+  background: rgba(24, 24, 24, 0.94) !important;
+  border-bottom-color: #333;
+}
+
+html.darkmode #navbar-main .navbar-brand,
+html.darkmode #navbar-main .navbar-nav .nav-link {
+  color: #f8f9fe !important;
+}
+
+html.darkmode #navbar-main .navbar-nav .nav-link:hover,
+html.darkmode #navbar-main .navbar-nav .nav-link:focus,
+html.darkmode #navbar-main .navbar-nav .nav-link.active {
+  color: #acb6f0 !important;
+}
+
 .app-banner {
   position: relative;
   isolation: isolate;
@@ -119,10 +179,10 @@ html.darkmode body {
 .app-banner__polygon--2 {
   left: 23%;
   width: 58%;
-  height: 168px;
+  height: 180px;
   bottom: -58px;
   opacity: 0.8;
-  clip-path: polygon(0 48%, 34% 0, 73% 18%, 100% 62%, 82% 100%, 12% 100%);
+  clip-path: polygon(30% 0%, 70% 0%, 89% 24%, 94% 61%, 70% 100%, 30% 100%, 5% 66%, 9% 27%);
   background: linear-gradient(130deg, #ced4f6 0%, #bbC4f2 52%, #acb6f0 100%);
 }
 
@@ -683,6 +743,20 @@ html.darkmode .app-score-ring strong {
 }
 
 @media (max-width: 991.98px) {
+  #navbar-main .navbar-collapse {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e7eaf7;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 12px 26px rgba(50, 50, 93, 0.1);
+  }
+
+  html.darkmode #navbar-main .navbar-collapse {
+    border-color: #333;
+    background: #1e1e1e;
+  }
+
   .app-shell {
     margin-top: 0;
   }
