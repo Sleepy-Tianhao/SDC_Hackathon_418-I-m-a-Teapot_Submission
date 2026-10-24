@@ -20,7 +20,7 @@
 |Resource|Link|
 |-|-|
 |GitHub Repository|https://github.com/Sleepy-Tianhao/SDC_Hackathon_418-I-m-a-Teapot_Submission|
-|Live Demo|*(pending — add the deployed Replit URL)*|
+|Live Demo|https://aicareer.replit.app|
 |RunPod Endpoint|Not used — this build is CPU-only (see How We Use RunPod)|
 |Slide Deck|*(pending)*|
 |Demo Video|*(pending)*|
