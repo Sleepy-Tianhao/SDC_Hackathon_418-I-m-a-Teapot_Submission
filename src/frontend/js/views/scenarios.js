@@ -24,7 +24,7 @@ function scenarioCard(scenario, active, catalog) {
       </div>
       ${active ? html`<span class="badge badge--brand">${icon("check", 11)} Active</span>` : ""}
     </div>
-    <p class="scenario-card__summary">${scenario.summary}</p>
+    <p class="scenario-card__summary">${fmt.short(scenario.summary, 140)}</p>
     ${keywords.length
       ? html`<div class="scenario-keywords" aria-label="Key forces in this scenario">
           ${keywords.map((driver) => html`<span class="scenario-keyword scenario-keyword--${driver.direction}">
@@ -47,7 +47,7 @@ function scenarioCard(scenario, active, catalog) {
       ${scenario.drivers.map(
         (driver) => html`<div class="driver driver--${driver.direction}">
           ${icon(driver.direction === "up" ? "trendUp" : "trendDown", 14)}
-          <span><strong>${driver.name}.</strong> ${driver.detail}</span>
+          <span><strong>${driver.name}.</strong> ${fmt.short(driver.detail, 95)}</span>
         </div>`,
       )}
     </div>
@@ -86,7 +86,7 @@ function impactPanel(matches, catalog, activeId) {
   return html`<section class="panel">
     <div class="panel__head">
       <div>
-        <h2 class="panel__title">What each future does to your top match</h2>
+        <h2 class="panel__title">Top match by future</h2>
         <p class="panel__hint">${role.title} · baseline fit ${role.baselineFit || role.fitScore}</p>
       </div>
       <span class="badge badge--neutral">${rows.length} scenarios</span>
@@ -180,14 +180,13 @@ function page(state, matches) {
   return html`<div class="page-head reveal">
       <p class="eyebrow">${icon("compare", 14)} Foresight · More than one future</p>
       <div class="page-head__row">
-        <h1 class="page-title">Three futures, modelled separately</h1>
+        <h1 class="page-title">Three futures, compared</h1>
         <div class="page-head__actions">
           <a class="btn btn--secondary btn--sm" href="#/signals">${icon("activity", 15)} Signal evidence</a>
         </div>
       </div>
       <p class="page-lead">
-        A plan that only works in one future is a bet. These scenarios change the assumptions behind adoption, regulation
-        and climate policy, then re-score your matches. The active scenario flows through every screen.
+        Each scenario changes adoption, regulation and climate assumptions, then re-scores your matches.
       </p>
       <div class="page-meta">
         <span>${icon("check", 13)} Active: <strong>${active.name}</strong></span>
@@ -206,7 +205,7 @@ function page(state, matches) {
         <div class="panel__head">
           <div>
             <h2 class="panel__title">Assumptions behind the active scenario</h2>
-            <p class="panel__hint">Change the future by changing these, not the output.</p>
+            <p class="panel__hint">Assumptions behind this scenario.</p>
           </div>
         </div>
         <ul class="stack" style="--gap:9px">
@@ -219,7 +218,7 @@ function page(state, matches) {
         </ul>
         <div class="notice" style="margin-top:14px">
           ${icon("info", 15)}
-          <span>Scores are a structured comparison, not a prediction. The point is to test which skills stay valuable across futures.</span>
+          <span>Scores compare scenarios; they are not predictions.</span>
         </div>
       </section>
     </div>
@@ -228,7 +227,7 @@ function page(state, matches) {
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Scenario comparison</h2>
-          <p class="panel__hint">The same profile, three sets of assumptions.</p>
+          <p class="panel__hint">Same profile, three assumptions.</p>
         </div>
       </div>
       ${comparisonTable(catalog, state.scenarioId, matches)}
@@ -264,8 +263,7 @@ export const scenariosView = {
           <p class="eyebrow">${icon("compare", 14)} Foresight · More than one future</p>
           <h1 class="page-title">Three futures, modelled separately</h1>
           <p class="page-lead">
-            Scenarios change adoption, regulation and climate policy assumptions. Build a profile to see how each future
-            re-scores your matches — or compare the labour-market assumptions below.
+            Compare how each future changes the assumptions and your matches.
           </p>
         </div>
         <div class="scenario-cards">

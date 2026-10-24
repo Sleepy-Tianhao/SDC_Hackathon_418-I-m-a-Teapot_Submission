@@ -80,7 +80,7 @@ function signalCard(signal) {
           <span class="tag tag--muted">${signal.velocity}</span>
         </div>
         <h3 class="signal-item__title">${signal.title}</h3>
-        <p class="signal-item__summary">${signal.summary}</p>
+        <p class="signal-item__summary">${fmt.short(signal.summary, 150)}</p>
       </div>
       <div class="signal-item__side">
         <span class="signal-item__impact">${signal.impact}<small>impact</small></span>
@@ -148,7 +148,7 @@ function trendSummary(data) {
     { key: "declining", label: "Declining", arrow: "↓", note: "More signals point downward", tone: "down" },
   ];
   return html`<section class="trend-summary" data-role="signal-trends" aria-label="Signal momentum summary">
-    <div class="trend-summary__head"><div><p class="eyebrow">Market direction</p><h2>What is moving?</h2></div><span>${data?.items?.length || 0} signals in this view</span></div>
+    <div class="trend-summary__head"><div><p class="eyebrow">Market direction</p><h2>Momentum</h2></div><span>${data?.items?.length || 0} signals in this view</span></div>
     <div class="trend-summary__grid">
       ${rows.map((row) => html`<article class="trend-summary__item trend-summary__item--${row.tone}">
         <div class="trend-summary__top"><span class="trend-summary__arrow" aria-hidden="true">${row.arrow}</span><strong>${row.label}</strong><b>${counts[row.key]}</b></div>
@@ -156,7 +156,7 @@ function trendSummary(data) {
         <p>${row.note}</p>
       </article>`)}
     </div>
-    <p class="trend-summary__foot">Counts reflect the dated, source-linked signals below; they describe this snapshot, not a time-series forecast.</p>
+    <p class="trend-summary__foot">Snapshot of the dated, source-linked signals below.</p>
   </section>`;
 }
 
@@ -164,16 +164,15 @@ function pageShell(data) {
   const state = store.getState();
   const roleFilter = filters.roleId ? roleName(filters.roleId) : "";
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("activity", 14)} Step 02 · AI-trend signal layer</p>
+      <p class="eyebrow">${icon("activity", 14)} Step 02 · Signals</p>
       <div class="page-head__row">
-        <h1 class="page-title">Signals you can date, cite and challenge</h1>
+        <h1 class="page-title">Dated, sourced signals</h1>
         <div class="page-head__actions">
           <a class="btn btn--secondary btn--sm" href="#/scenarios">${icon("compare", 15)} Scenario lab</a>
         </div>
       </div>
       <p class="page-lead">
-        Labour-market, policy and technology signals extracted from reports, job-posting data and regulators.
-        Every record has a publisher, a publication date and a source link, so the forecast can be audited rather than trusted.
+        Labour-market, policy and technology signals. Each has a publisher, date and source link.
       </p>
       <div class="page-meta">
         <span>${icon("calendar", 13)} Window ${fmt.date(data?.window?.from || state.meta?.signalWindow?.from)} → ${fmt.date(data?.window?.to || state.meta?.signalWindow?.to)}</span>
@@ -259,7 +258,7 @@ function openSignal(signal) {
 
       <div class="notice">
         ${icon("info", 15)}
-        <span>Signals are inputs to a model, not facts about your future. The scenario lab shows how sensitive your match is to them.</span>
+        <span>Signals inform the model; they do not predict your future.</span>
       </div>
     </div>`,
     footer: html`<button class="btn btn--ghost" type="button" data-modal-close="true">Close</button>

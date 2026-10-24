@@ -72,7 +72,7 @@ function matchCard(match, index, scenario) {
         <span>Automation risk ${match.automationRisk}%</span>
         <span>${fmt.range(match.salary.min, match.salary.max, match.salary.currency)}</span>
       </div>
-      <p class="match-card__summary">${match.summary}</p>
+      <p class="match-card__summary">${fmt.short(match.summary, 150)}</p>
       <div class="match-card__reasons">
         ${match.reasons.map((reason) => html`<span class="match-card__reason">${reason}</span>`)}
       </div>
@@ -268,10 +268,9 @@ function bubbleField(matches) {
     <div class="bubble-card__head">
       <div>
         <p class="eyebrow">${icon("target", 14)} Role constellation</p>
-        <h2 class="bubble-card__title">Twelve future roles — bubble size is fit, colour is the score band</h2>
+        <h2 class="bubble-card__title">Role constellation</h2>
         <p class="bubble-card__hint">
-          Hover to pause the drift, click a bubble for the gap analysis. Switch to <strong>Cards</strong> for the full
-          evidence trail.
+          Click a bubble for gaps. Use <strong>Cards</strong> for details.
         </p>
       </div>
       <div class="bubble-legend">
@@ -282,8 +281,7 @@ function bubbleField(matches) {
     </div>
     <div class="bubble-field" role="group" aria-label="Future roles sized by fit score">${bubbles}</div>
     <p class="bubble-card__foot tiny faint">
-      ${icon("info", 12)} Bubble area scales with fit score; the ranking still follows the
-      <strong>${sortBy === "fit" ? "best fit" : sortBy === "demand" ? "demand" : "salary"}</strong> sort above.
+      ${icon("info", 12)} Bubble size = fit. Ranking follows the <strong>${sortBy === "fit" ? "best fit" : sortBy === "demand" ? "demand" : "salary"}</strong> sort.
     </p>
   </section>`;
 }
@@ -292,17 +290,16 @@ function page(state, matches) {
   const catalog = state.catalog;
   const scenario = (catalog.scenarios || []).find((item) => item.id === matches.scenarioId) || catalog.scenarios[0];
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("target", 14)} Step 03 · Future-role matching</p>
+      <p class="eyebrow">${icon("target", 14)} Step 03 · Matches</p>
       <div class="page-head__row">
-        <h1 class="page-title">Twelve future roles, scored against your real skills</h1>
+        <h1 class="page-title">Roles scored against your skills</h1>
         <div class="page-head__actions">
           <a class="btn btn--secondary btn--sm" href="#/intake">${icon("sliders", 15)} Adjust profile</a>
           <a class="btn btn--primary btn--sm" href="#/pathway">${icon("route", 15)} Pathway</a>
         </div>
       </div>
       <p class="page-lead">
-        Every score is decomposed: the skills you already meet, the levels you need, and how the ranking moves when the
-        scenario changes. ${scenario.summary}
+        See fit, gaps and how the scenario changes the ranking.
       </p>
       <div class="page-meta">
         <span>${icon("compare", 13)} ${scenario.name}</span>
@@ -400,15 +397,15 @@ function methodModal() {
     eyebrow: "Transparency",
     body: html`<div class="stack" style="--gap:14px">
       <p class="small" style="color:var(--ink-2);line-height:1.7">
-        Fit is deliberately simple and inspectable rather than a black box:
+        Fit is simple and inspectable:
       </p>
       <ol class="stack" style="--gap:10px;list-style:decimal;padding-left:18px">
-        <li class="small muted">Each role lists required skills with a target level (1–5) and an importance weight.</li>
-        <li class="small muted">Your self-rated level is divided by the target and capped at 1, then multiplied by importance.</li>
-        <li class="small muted">The weighted overlap is scaled to 0–100 and adjusted for sector (up to +4), experience (+5) and interests (+5).</li>
-        <li class="small muted">The selected scenario adds a role-specific delta, so the same profile can rank differently under acceleration or regulation.</li>
+        <li class="small muted">Roles define target levels and skill weights.</li>
+        <li class="small muted">Your level ÷ target (capped at 1) × importance.</li>
+        <li class="small muted">The weighted overlap is scaled to 0–100, with small sector, experience and interest adjustments.</li>
+        <li class="small muted">The scenario adds a role-specific delta.</li>
       </ol>
-      <div class="notice">${icon("info", 15)}<span>Self-assessment is noisy. The pathway starts with a practical diagnostic, and the backend can replace it with verified evidence later.</span></div>
+      <div class="notice">${icon("info", 15)}<span>Self-assessment is noisy; the pathway starts with a diagnostic.</span></div>
     </div>`,
     footer: html`<button class="btn btn--primary" type="button" data-modal-close="true">Got it</button>`,
   });
@@ -465,7 +462,7 @@ export const matchesView = {
       return html`${emptyState({
         icon: "user",
         title: "Start with a skills profile",
-        body: "Matching needs an intake: your skills, sector, experience and interests. It takes about five minutes.",
+        body: "Add your skills, sector and interests. Takes about five minutes.",
         action: html`<div class="row" style="justify-content:center;--gap:8px">
           <a class="btn btn--primary" href="#/intake">Build my profile</a>
           <button class="btn btn--secondary" type="button" data-action="use-sample">Use sample profile</button>
