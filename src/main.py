@@ -95,6 +95,10 @@ def _stream_analysis(profile: dict, scenario_id: str, role_id: str | None) -> St
                     # SSE comment lines are ignored by EventSource but keep idle
                     # connections (Replit/Cloud Run proxies) from being closed.
                     yield ": keep-alive\n\n"
+        except engine.ApiError as error:
+            task.cancel()
+            yield _sse_frame("error", {"message": error.message, "code": error.code})
+            return
         except Exception:
             task.cancel()
             yield _sse_frame("error", {"message": "The analysis could not be generated."})

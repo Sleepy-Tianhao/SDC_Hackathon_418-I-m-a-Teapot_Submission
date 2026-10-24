@@ -35,7 +35,7 @@ AI is changing which skills matter faster than any training catalogue can follow
 
 ### Solution
 
-AI Career Navigator turns dated labour-market signals into an auditable plan. Every signal carries a publisher, a publication date and a source link, and the FastAPI engine scores 12 future roles under three explicit 2028 scenarios with a published weighted-overlap model, so each result comes with its gap, salary band, automation risk and reasons. A personalised pathway sequences 27 open and low-cost modules into three phases with hours, cost and milestones, and each match is mapped to the 17 SDGs with a weighted rationale. An optional OpenAI-compatible model re-ranks candidates, orders the modules and writes the briefing; the deterministic engine remains the fallback, so the product works with or without a key.
+AI Career Navigator turns dated labour-market signals into an auditable plan. Every signal carries a publisher, a publication date and a source link, and the FastAPI engine scores 12 future roles under three explicit 2028 scenarios with a published weighted-overlap model, so each result comes with its gap, salary band, automation risk and reasons. A personalised pathway sequences 27 open and low-cost modules into three phases with hours, cost and milestones, and each match is mapped to the 17 SDGs with a weighted rationale. An optional OpenAI-compatible model re-ranks candidates, orders the modules and writes the briefing; matching and pathway retain deterministic fallbacks, while the AI briefing requires the configured model.
 
 ### Key Features
 
@@ -53,7 +53,7 @@ AI Career Navigator turns dated labour-market signals into an auditable plan. Ev
 |Frontend|HTML, CSS, native JavaScript (ES modules), hand-rolled SVG charts — no framework, no build step|
 |Backend|Python 3.12, FastAPI, uvicorn, pydantic; `requirements.txt` also pins the transitive HTTP stack (anyio, certifi, h11, idna)|
 |Database|SQLite (`data/app.db`)|
-|AI / Compute|DeepSeek API through an OpenAI-compatible adapter (optional, server-side); deterministic engine as fallback — no GPU workload|
+|AI / Compute|DeepSeek API through an OpenAI-compatible adapter (optional, server-side); deterministic fallback for matching/pathway; model required for briefing — no GPU workload|
 |Hosting / Dev|Replit (run and deployment), Git / GitHub|
 
 ---
@@ -108,7 +108,7 @@ User ──► Replit (FastAPI · src/main.py) ──► SQLite profiles / CSV l
 ### Option 1 — Run on Replit (Recommended)
 
 1. Open the [Replit Project](https://replit.com/@CufoFlux/SDCHackathon418-I-m-a-TeapotSubmission), or import this repository via **Create Repl → Import from GitHub**.
-2. Open the **Secrets** tab (🔒) and add the variables listed in `.env.example`. All of them are optional — without a key the deterministic engine still answers:
+2. Open the **Secrets** tab (🔒) and add the variables listed in `.env.example`. Matching, pathway and SDG mapping work without a key; the AI briefing requires a key:
 
    * `LLM_API_KEY`
    * `LLM_BASE_URL`
@@ -171,7 +171,7 @@ python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v
 ## Challenges & Learnings
 
 * **Evidence instead of a score.** A single fit number is not defensible, so the matcher is a weighted overlap with published weights and every result carries its gap, reasons and scenario delta; the model can adjust scores but only within bounds and only against known role ids.
-* **A demo that cannot die.** The frontend keeps a complete offline transport and labels the fixture dataset, while the backend falls back to the deterministic engine when the key is missing, the provider fails or the reply is malformed.
+* **A demo that cannot die.** The frontend keeps a complete offline transport and labels the fixture dataset, while matching and pathway fall back to the deterministic engine when the key is missing; the AI briefing returns a clear error instead of substituting fixed text.
 * **Three futures, one contract.** Re-scoring the whole catalogue per scenario forced the scenario parameters out of the UI and into the backend, which is why the same profile, route and response shape can be replayed under all three futures.
 * **An install we can defend.** The runtime path touches only FastAPI, uvicorn and pydantic — datasets are read with `csv`, profiles persist through `sqlite3`, and the model call uses `urllib` — while `requirements.txt` pins the transitive HTTP stack (anyio, certifi, h11, idna) so clean installs and dependency scans resolve the same patched versions.
 

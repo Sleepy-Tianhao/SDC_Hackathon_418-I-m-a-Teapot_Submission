@@ -478,8 +478,16 @@ async function generateBriefing(root) {
     }
     toast("Briefing ready.", { tone: "success", title: "AI briefing" });
   } catch (error) {
-    textEl.textContent = "The briefing could not be generated: " + (error.message || "unknown error");
-    toast(error.message || "Briefing failed.", { tone: "danger", title: "Generation failed" });
+    const partial = textEl.textContent.trim();
+    if (partial) {
+      // The model text is already visible; keep it instead of replacing it
+      // with a fixed fallback sentence.
+      textEl.querySelector(".analysis-cursor")?.remove();
+      toast("The stream stopped. Keeping the model's partial briefing.", { tone: "danger", title: "Briefing interrupted" });
+    } else {
+      textEl.textContent = "The briefing could not be generated: " + (error.message || "unknown error");
+      toast(error.message || "Briefing failed.", { tone: "danger", title: "Generation failed" });
+    }
   } finally {
     buttons.forEach((button) => {
       button.disabled = false;

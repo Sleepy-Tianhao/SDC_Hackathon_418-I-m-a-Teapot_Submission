@@ -355,6 +355,9 @@ def _llm_rerank_matches(profile: dict, scenario: dict, base: dict) -> dict:
             ranked.append(match["roleId"])
 
     ordered = [by_id[role_id] for role_id in ranked if role_id in by_id]
+    # Scores are the public ranking contract; the model's role order is only a
+    # hint and must not leave the list unsorted after score adjustments.
+    ordered.sort(key=lambda match: (-match["fitScore"], match["title"]))
     base["matches"] = ordered
     base["summary"] = _summary_for_matches(ordered)
     base["model"] = "career-match:v1.3+llm"
@@ -902,51 +905,11 @@ def build_sdg_map(profile: dict, matches: dict, scenario_id: str) -> dict:
 
 # Narrative ---------------------------------------------------------
 
-def _build_analysis_deterministic(profile: dict, matches: dict, scenario: dict, pathway: dict) -> dict:
-    top = matches["matches"][:3]
-    lead = top[0]
-    gaps = lead["skillsGap"][:3]
-    paragraphs = []
-
-    others = " and ".join(f"{match['title']} ({match['fitScore']})" for match in top[1:])
-    paragraphs.append(
-        f"{profile['name']}, your strongest adjacent role is {lead['title']} (fit {lead['fitScore']}/100) "
-        f"under the {scenario['name']} scenario. {others} follow, which gives you more than one credible route."
-    )
-    if gaps:
-        gap_text = ", ".join(f"{gap['name']} {gap['currentLevel']} to {gap['requiredLevel']}" for gap in gaps)
-        note = (lead.get("scenarioNote") + " ") if lead.get("scenarioNote") else ""
-        anchor = lead["matchedSkills"][0]["name"] if lead["matchedSkills"] else "transferable experience"
-        paragraphs.append(
-            f"The gap is narrow: {gap_text}. {note}"
-            f"Your existing {anchor} is the reason the jump is plausible."
-        )
-    paragraphs.append(
-        f"A {pathway['horizonWeeks']}-week plan at {pathway['hoursPerWeek']} hours per week reaches an estimated "
-        f"readiness of {pathway['readinessTo']}/100, across {len(pathway['phases'])} phases and "
-        f"USD {pathway['totalCost']} of catalogue cost. It ends with evidence: a portfolio artefact and a defended case."
-    )
-    paragraphs.append(
-        "Re-run the analysis when the scenario changes. Under acceleration the same profile scores differently, "
-        "because agentic deployment changes what employers hire for."
-    )
-    return {
-        "provider": "deterministic-engine",
-        "model": "narrative-v1",
-        "generatedAt": now_iso(),
-        "scenarioId": scenario["id"],
-        "narrative": "\n\n".join(paragraphs),
-    }
-
-
 # LLM-assisted briefing ---------------------------------------------
 
 def build_analysis(profile: dict, matches: dict, scenario: dict, pathway: dict) -> dict:
-    base = _build_analysis_deterministic(profile, matches, scenario, pathway)
     if not llm.is_configured():
-        base["llm"] = {**llm.provider_info(), "used": False}
-        return base
-
+        raise ApiError(503, "llm_not_configured", "AI briefing requires a configured external model.")
     top = matches["matches"][:3]
     context = {
         "profile": {
@@ -1022,15 +985,19 @@ def build_analysis(profile: dict, matches: dict, scenario: dict, pathway: dict) 
             max_tokens=900,
             temperature=0.35,
         )
-        if narrative:
-            base["narrative"] = narrative
-            base["provider"] = llm.provider_info()["provider"]
-            base["model"] = llm.provider_info()["model"]
-            base["llm"] = {**llm.provider_info(), "used": True}
-            base["generatedAt"] = now_iso()
     except llm.LLMError as error:
-        base["llm"] = {**llm.provider_info(), "used": False, "error": str(error)[:240]}
-    return base
+        raise ApiError(503, "llm_unavailable", "AI briefing failed: " + str(error)[:240]) from error
+    if not isinstance(narrative, str) or not narrative.strip():
+        raise ApiError(503, "llm_unavailable", "AI briefing returned an empty model response.")
+    info = llm.provider_info()
+    return {
+        "provider": info["provider"],
+        "model": info["model"],
+        "generatedAt": now_iso(),
+        "scenarioId": scenario["id"],
+        "narrative": narrative.strip(),
+        "llm": {**info, "used": True},
+    }
 
 
 # Signals -----------------------------------------------------------

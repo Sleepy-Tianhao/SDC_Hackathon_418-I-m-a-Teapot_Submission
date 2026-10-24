@@ -699,9 +699,11 @@ event: error
 data: {"message":"Upstream model timed out."}
 ~~~
 
-The UI has a fallback: if the stream errors or does not start within 90 seconds, it shows the
-error and the user can retry (the *Generate briefing* button also works via `POST /analysis`
-when streaming is disabled with `AI_CAREER_CONFIG.stream = false`).
+The UI keeps any model text it has already streamed. If the stream errors before the first
+token, it retries the buffered endpoint; if the model is unavailable there, it shows an error
+and the user can retry (the *Generate briefing* button also works via `POST /analysis` when
+streaming is disabled with `AI_CAREER_CONFIG.stream = false`). The backend never substitutes a
+deterministic narrative for the briefing.
 
 ## 7. What the UI does with each response
 
