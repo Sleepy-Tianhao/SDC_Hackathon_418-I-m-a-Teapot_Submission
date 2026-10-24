@@ -1,9 +1,9 @@
 entrypoint = "src/main.py"
-modules = ["python-3.11"]
+modules = ["nodejs-20", "python-3.12", "web", "nix"]
 run = "PORT=3000 python src/main.py"
 
 [nix]
-channel = "stable-24_05"
+channel = "stable-25_05"
 
 [unitTest]
 language = "python3"
