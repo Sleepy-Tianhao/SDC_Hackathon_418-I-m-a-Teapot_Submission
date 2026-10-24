@@ -62,12 +62,11 @@ AI Career Navigator turns dated labour-market signals into an auditable plan. Ev
 
 ```
 .
-├── docs/                    # Screenshots, contract and integration kit
+├── docs/                    # Contract and integration kit
 │   ├── API.md               # frontend↔backend contract, including SSE
 │   ├── openapi.json         # machine-readable OpenAPI 3.1 spec
 │   ├── BACKEND_INTEGRATION.md
-│   ├── backend-integration/ # reference API, 53-check smoke test, fixtures
-│   └── screenshots/         # full-page captures of every route
+│   └── backend-integration/ # reference API, 53-check smoke test, fixtures
 ├── src/
 │   ├── main.py              # Application entry point (FastAPI: /api/v1 + static UI)
 │   ├── utils.py             # Helper functions
