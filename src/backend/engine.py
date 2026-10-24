@@ -310,6 +310,7 @@ def _llm_rerank_matches(profile: dict, scenario: dict, base: dict) -> dict:
     }
     result = llm.generate_json(
         "You are a labour-market career analyst. Return only a JSON object. "
+        "Write every user-facing text value in English, even when supplied profile or source content is in another language. "
         "Do not invent role ids, salaries, credentials or skills. Use only the supplied candidates. "
         "Re-rank them for this person and scenario, and adjust fit scores by at most +/-12 points. "
         "The output schema is: {selectedRoleId: string, rankedRoleIds: string[], "
@@ -750,6 +751,7 @@ def _llm_plan_pathway(profile: dict, matches: dict, scenario: dict, base: dict, 
     }
     result = llm.generate_json(
         "You are a reskilling pathway planner. Return only a JSON object. "
+        "Write every user-facing text value in English, even when supplied profile or source content is in another language. "
         "Never invent roles, module ids, hours or costs. Choose one roleId from roleCandidates "
         "(unless explicitRole is true, in which case keep currentRoleId). Re-order the supplied module ids "
         "into the best learning sequence; every id must come from modules. Keep all modules. "
@@ -1015,6 +1017,7 @@ def build_analysis(profile: dict, matches: dict, scenario: dict, pathway: dict) 
     try:
         narrative = llm.generate_text(
             "You are a careful career adviser. Write a grounded briefing in plain text only: "
+            "Write the entire briefing in English, even when supplied profile or source content is in another language. "
             "3-4 short paragraphs, no markdown headings, no invented salaries, credentials or sources. "
             "Use the supplied profile, scenario, role matches, pathway and dated signals. "
             "Mention uncertainty where the evidence is thin. End with one concrete next action.",
