@@ -144,7 +144,7 @@ step behind the same SSE contract.
 | Frontend | Native ES modules, modern CSS, inline SVG | No build step, instant deploys, nothing to break on Replit |
 | Backend | Python 3 + FastAPI | Typed routes, same-origin UI, SSE, SQLite |
 | Database | SQLite | Profiles are persisted locally with zero setup |
-| Narrative | Deterministic evidence engine; provider adapter optional | Reproducible demo output; no key is needed for the default build |
+| Narrative | Deterministic evidence engine + optional OpenAI-compatible provider | Reproducible fallback; external model can participate in scoring and planning |
 | Hosting / dev | Replit | One URL for UI + API |
 
 ## Repository structure
@@ -284,20 +284,29 @@ Proof of use: [`submission/REPLIT PROOF OF USE.pdf`](submission/REPLIT%20PROOF%2
 
 ## Narrative generation
 
-The default backend generates a deterministic, evidence-based narrative from the selected
-profile, scenario, matched roles, pathway and relevant signals. It streams that narrative to the
-browser over the same Server-Sent Events contract the UI already consumes:
+The backend supports an optional **OpenAI-compatible third-party model** alongside the
+deterministic engine. When configured, the model participates in three places:
 
-~~~text
-event: meta
-event: token
-event: done
+* **Matching and scores** — it re-ranks the deterministic candidates and applies bounded
+  fit-score adjustments (±12 points), validated against the real role ids;
+* **Pathway** — it chooses the role when no explicit role was requested and orders the
+  catalogue modules into a learning sequence, after which hours, cost and readiness are
+  recalculated;
+* **Briefing** — it writes the plain-text evidence narrative from the profile, scenario,
+  matches, pathway and dated signals.
+
+The API contract is unchanged and the deterministic engine remains the fallback when the key
+is missing, the provider fails or the response is invalid. Configure it server-side only:
+
+~~~bash
+LLM_BASE_URL=https://api.deepseek.com/v1
+LLM_API_KEY=...
+LLM_MODEL=deepseek-chat
+LLM_ENABLED=true
 ~~~
 
-No model key is required for the default build. The engine boundary is intentionally separate,
-so a provider adapter can be added later without changing the frontend. If a provider is enabled,
-its key stays server-side; the browser receives only `event: token` frames and never sees a key
-or prompt.
+The browser receives only the resulting structured JSON or SSE token frames; it never sees a
+key or prompt.
 
 ## Challenges and learnings
 

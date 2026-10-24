@@ -37,6 +37,7 @@ FRONTEND = ROOT / "src" / "frontend"
 DB_PATH = ROOT / "data" / "app.db"
 
 from src.backend.data import CATALOG, SIGNALS, MODULES, INTEREST_ROLES
+from src.backend import llm
 
 SKILLS = {item["id"]: item for item in CATALOG["skills"]}
 ROLES = {item["id"]: item for item in CATALOG["roles"]}
@@ -123,7 +124,7 @@ def build_reasons(gaps: list[dict], scenario: dict, adjustment: dict) -> list[st
     return reasons
 
 
-def build_matches(profile: dict, scenario_id: str) -> dict:
+def _build_matches_deterministic(profile: dict, scenario_id: str) -> dict:
     scenario = SCENARIOS.get(scenario_id) or CATALOG["scenarios"][0]
     matches = []
 
@@ -205,6 +206,189 @@ def build_matches(profile: dict, scenario_id: str) -> dict:
             ],
         },
     }
+
+
+# LLM-assisted matching ----------------------------------------------
+
+MATCH_CACHE: dict[str, tuple[float, dict]] = {}
+MATCH_CACHE_SECONDS = 900
+
+
+def _profile_signature(profile: dict) -> str:
+    return json.dumps(
+        {
+            "id": profile.get("id"),
+            "updatedAt": profile.get("updatedAt"),
+            "skills": profile.get("skills"),
+            "interests": profile.get("interests"),
+            "goal": profile.get("goal"),
+            "constraints": profile.get("constraints"),
+            "sector": profile.get("sector"),
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+        default=str,
+    )
+
+
+def _summary_for_matches(matches: list[dict]) -> dict:
+    top = matches[:3]
+    readiness = sum(match["fitScore"] * weight for match, weight in zip(top, [0.5, 0.3, 0.2]))
+    gap_skills = {gap["skillId"] for match in top for gap in match["skillsGap"]}
+    return {
+        "readinessScore": int(round(readiness)),
+        "topRoleId": top[0]["roleId"] if top else None,
+        "topRoleTitle": top[0]["title"] if top else None,
+        "topFit": top[0]["fitScore"] if top else 0,
+        "skillsToClose": len(gap_skills),
+        "coveragePct": int(
+            round(
+                100
+                * sum(len(match["matchedSkills"]) for match in top)
+                / max(1, sum(len(match["matchedSkills"]) + len(match["skillsGap"]) for match in top))
+            )
+        ),
+        "topMatches": [
+            {"roleId": match["roleId"], "title": match["title"], "fitScore": match["fitScore"]} for match in top
+        ],
+    }
+
+
+def _match_provider_info() -> dict:
+    return llm.provider_info()
+
+
+def _llm_rerank_matches(profile: dict, scenario: dict, base: dict) -> dict:
+    candidates = []
+    for match in base["matches"]:
+        candidates.append(
+            {
+                "roleId": match["roleId"],
+                "title": match["title"],
+                "family": match["family"],
+                "sector": match["sector"],
+                "fitScore": match["fitScore"],
+                "baselineFit": match["baselineFit"],
+                "demandIndex": match["demandIndex"],
+                "automationRisk": match["automationRisk"],
+                "salary": match["salary"],
+                "summary": match["summary"],
+                "gaps": [
+                    {
+                        "skill": gap["name"],
+                        "current": gap["currentLevel"],
+                        "required": gap["requiredLevel"],
+                        "importance": gap["importance"],
+                    }
+                    for gap in match["skillsGap"][:5]
+                ],
+            }
+        )
+    context = {
+        "profile": {
+            "name": profile.get("name"),
+            "headline": profile.get("headline"),
+            "currentRole": profile.get("currentRole"),
+            "sector": profile.get("sector"),
+            "region": profile.get("region"),
+            "education": profile.get("education"),
+            "yearsExperience": profile.get("yearsExperience"),
+            "goal": profile.get("goal"),
+            "interests": profile.get("interests"),
+            "constraints": profile.get("constraints"),
+            "skills": profile.get("skills"),
+        },
+        "scenario": {
+            "id": scenario.get("id"),
+            "name": scenario.get("name"),
+            "shortName": scenario.get("shortName"),
+            "summary": scenario.get("summary"),
+            "horizon": scenario.get("horizon"),
+            "metrics": scenario.get("metrics"),
+        },
+        "candidates": candidates,
+    }
+    result = llm.generate_json(
+        "You are a labour-market career analyst. Return only a JSON object. "
+        "Do not invent role ids, salaries, credentials or skills. Use only the supplied candidates. "
+        "Re-rank them for this person and scenario, and adjust fit scores by at most +/-12 points. "
+        "The output schema is: {selectedRoleId: string, rankedRoleIds: string[], "
+        "scoreAdjustments: object mapping roleId to integer, roleNotes: object mapping roleId to one sentence, "
+        "rationale: string}. The selected role must be one of the candidates.",
+        json.dumps(context, ensure_ascii=False, default=str),
+        max_tokens=1100,
+    )
+    by_id = {match["roleId"]: match for match in base["matches"]}
+    adjustments = result.get("scoreAdjustments")
+    if isinstance(adjustments, dict):
+        for role_id, value in adjustments.items():
+            match = by_id.get(role_id)
+            if not match:
+                continue
+            try:
+                delta = int(round(float(value)))
+            except (TypeError, ValueError):
+                continue
+            delta = int(clamp(delta, -12, 12))
+            match["fitScore"] = int(clamp(match["fitScore"] + delta, 0, 100))
+            match["fitDelta"] = match["fitScore"] - match["baselineFit"]
+            match["llmAdjustment"] = delta
+            match["scoreSource"] = "deterministic+llm"
+
+    notes = result.get("roleNotes")
+    if isinstance(notes, dict):
+        for role_id, note in notes.items():
+            if role_id in by_id and isinstance(note, str):
+                by_id[role_id]["llmNote"] = note.strip()[:300]
+
+    ranked = []
+    for role_id in result.get("rankedRoleIds") or []:
+        if role_id in by_id and role_id not in ranked:
+            ranked.append(role_id)
+    selected = result.get("selectedRoleId")
+    if selected not in by_id:
+        selected = ranked[0] if ranked else base["matches"][0]["roleId"]
+    if selected not in ranked:
+        ranked.insert(0, selected)
+    for match in base["matches"]:
+        if match["roleId"] not in ranked:
+            ranked.append(match["roleId"])
+
+    ordered = [by_id[role_id] for role_id in ranked if role_id in by_id]
+    base["matches"] = ordered
+    base["summary"] = _summary_for_matches(ordered)
+    base["model"] = "career-match:v1.3+llm"
+    base["selectionSource"] = "llm"
+    base["llm"] = {
+        **_match_provider_info(),
+        "used": True,
+        "selectedRoleId": selected,
+        "rationale": str(result.get("rationale") or "")[:500],
+    }
+    return base
+
+
+def build_matches(profile: dict, scenario_id: str) -> dict:
+    base = _build_matches_deterministic(profile, scenario_id)
+    if not llm.is_configured():
+        base["llm"] = {**_match_provider_info(), "used": False}
+        base["selectionSource"] = "deterministic"
+        return base
+
+    key = scenario_id + ":" + _profile_signature(profile)
+    cached = MATCH_CACHE.get(key)
+    if cached and time.time() - cached[0] < MATCH_CACHE_SECONDS:
+        return json.loads(json.dumps(cached[1]))
+
+    scenario = SCENARIOS.get(scenario_id) or CATALOG["scenarios"][0]
+    try:
+        enriched = _llm_rerank_matches(profile, scenario, base)
+    except llm.LLMError as error:
+        base["llm"] = {**_match_provider_info(), "used": False, "error": str(error)[:240]}
+        base["selectionSource"] = "deterministic"
+        return base
+    MATCH_CACHE[key] = (time.time(), enriched)
+    return enriched
 
 
 # Profiles & SQLite -------------------------------------------------
@@ -326,7 +510,7 @@ def generic_module(module_id: str, title: str, teaches: list[str], hours: int, l
     }
 
 
-def build_pathway(profile: dict, matches: dict, scenario_id: str, role_id: str | None) -> dict:
+def _build_pathway_deterministic(profile: dict, matches: dict, scenario_id: str, role_id: str | None) -> dict:
     match = next((item for item in matches["matches"] if item["roleId"] == role_id), matches["matches"][0])
     role = ROLES[match["roleId"]]
     hours_per_week = int(profile["constraints"]["hoursPerWeek"])
@@ -502,6 +686,126 @@ def build_pathway(profile: dict, matches: dict, scenario_id: str, role_id: str |
         ),
     }
 
+# LLM-assisted pathway planning -------------------------------------
+
+def _recompute_pathway(base: dict) -> dict:
+    cursor = 0
+    for phase in base.get("phases", []):
+        modules = phase.get("modules", [])
+        hours = sum(int(module.get("hours") or 0) for module in modules)
+        cost = sum(int(module.get("cost") or 0) for module in modules)
+        weeks = max(1, -(-hours // max(1, int(base.get("hoursPerWeek") or 8))))
+        phase["hours"] = hours
+        phase["cost"] = cost
+        phase["weeks"] = weeks
+        phase["startWeek"] = cursor + 1
+        cursor += weeks
+        phase["endWeek"] = cursor
+        for index, milestone in enumerate(phase.get("milestones", [])):
+            milestone["week"] = phase["startWeek"] if index == 0 else phase["endWeek"]
+    base["horizonWeeks"] = cursor
+    base["totalHours"] = sum(int(phase.get("hours") or 0) for phase in base.get("phases", []))
+    base["totalCost"] = sum(int(phase.get("cost") or 0) for phase in base.get("phases", []))
+    covers = base.get("covers", [])
+    covered_pct = (sum(1 for cover in covers if cover.get("covered")) / len(covers)) if covers else 1.0
+    base["readinessTo"] = min(95, int(round(base.get("readinessFrom", 0) + 8 + covered_pct * 18)))
+    return base
+
+
+def _llm_plan_pathway(profile: dict, matches: dict, scenario: dict, base: dict, explicit_role: bool) -> dict:
+    role_candidates = [
+        {"roleId": match["roleId"], "title": match["title"], "fitScore": match["fitScore"]}
+        for match in matches["matches"][:6]
+    ]
+    modules = []
+    for phase in base.get("phases", []):
+        for module in phase.get("modules", []):
+            modules.append(
+                {
+                    "id": module.get("id"),
+                    "title": module.get("title"),
+                    "level": module.get("level"),
+                    "hours": module.get("hours"),
+                    "cost": module.get("cost"),
+                    "teaches": module.get("teaches", []),
+                    "phase": phase.get("id"),
+                }
+            )
+    context = {
+        "profile": {
+            "name": profile.get("name"),
+            "goal": profile.get("goal"),
+            "skills": profile.get("skills"),
+            "constraints": profile.get("constraints"),
+        },
+        "scenario": {
+            "id": scenario.get("id"),
+            "name": scenario.get("name"),
+            "summary": scenario.get("summary"),
+        },
+        "roleCandidates": role_candidates,
+        "currentRoleId": base.get("roleId"),
+        "modules": modules,
+        "explicitRole": explicit_role,
+    }
+    result = llm.generate_json(
+        "You are a reskilling pathway planner. Return only a JSON object. "
+        "Never invent roles, module ids, hours or costs. Choose one roleId from roleCandidates "
+        "(unless explicitRole is true, in which case keep currentRoleId). Re-order the supplied module ids "
+        "into the best learning sequence; every id must come from modules. Keep all modules. "
+        "Output: {selectedRoleId: string, moduleOrder: string[], rationale: string, phaseNotes: object}. "
+        "The plan must respect the learner's hours and budget constraints.",
+        json.dumps(context, ensure_ascii=False, default=str),
+        max_tokens=1100,
+    )
+    return result
+
+
+def build_pathway(profile: dict, matches: dict, scenario_id: str, role_id: str | None) -> dict:
+    scenario = SCENARIOS.get(scenario_id) or CATALOG["scenarios"][0]
+    base = _build_pathway_deterministic(profile, matches, scenario_id, role_id)
+    if not llm.is_configured():
+        base["llm"] = {**llm.provider_info(), "used": False}
+        base["selectionSource"] = "deterministic"
+        return base
+
+    try:
+        result = _llm_plan_pathway(profile, matches, scenario, base, bool(role_id))
+        selected = result.get("selectedRoleId")
+        valid_roles = {match["roleId"] for match in matches["matches"]}
+        if (
+            not role_id
+            and isinstance(selected, str)
+            and selected in valid_roles
+            and selected != base["roleId"]
+        ):
+            base = _build_pathway_deterministic(profile, matches, scenario_id, selected)
+            base["llmRoleChanged"] = True
+
+        order = result.get("moduleOrder")
+        if isinstance(order, list):
+            rank = {module_id: index for index, module_id in enumerate(order) if isinstance(module_id, str)}
+            for phase in base.get("phases", []):
+                phase["modules"] = sorted(
+                    phase.get("modules", []),
+                    key=lambda module, rank=rank: rank.get(module.get("id"), len(rank) + 1),
+                )
+        base = _recompute_pathway(base)
+        base["model"] = "pathway-builder:v1.2+llm"
+        base["selectionSource"] = "llm"
+        base["llm"] = {
+            **llm.provider_info(),
+            "used": True,
+            "selectedRoleId": base["roleId"],
+            "rationale": str(result.get("rationale") or "")[:500],
+            "phaseNotes": result.get("phaseNotes") if isinstance(result.get("phaseNotes"), dict) else {},
+        }
+    except llm.LLMError as error:
+        base["llm"] = {**llm.provider_info(), "used": False, "error": str(error)[:240]}
+        base["selectionSource"] = "deterministic"
+    return base
+
+
 # SDG mapping -------------------------------------------------------
 
 def build_sdg_map(profile: dict, matches: dict, scenario_id: str) -> dict:
@@ -598,7 +902,7 @@ def build_sdg_map(profile: dict, matches: dict, scenario_id: str) -> dict:
 
 # Narrative ---------------------------------------------------------
 
-def build_analysis(profile: dict, matches: dict, scenario: dict, pathway: dict) -> dict:
+def _build_analysis_deterministic(profile: dict, matches: dict, scenario: dict, pathway: dict) -> dict:
     top = matches["matches"][:3]
     lead = top[0]
     gaps = lead["skillsGap"][:3]
@@ -633,6 +937,100 @@ def build_analysis(profile: dict, matches: dict, scenario: dict, pathway: dict) 
         "scenarioId": scenario["id"],
         "narrative": "\n\n".join(paragraphs),
     }
+
+
+# LLM-assisted briefing ---------------------------------------------
+
+def build_analysis(profile: dict, matches: dict, scenario: dict, pathway: dict) -> dict:
+    base = _build_analysis_deterministic(profile, matches, scenario, pathway)
+    if not llm.is_configured():
+        base["llm"] = {**llm.provider_info(), "used": False}
+        return base
+
+    top = matches["matches"][:3]
+    context = {
+        "profile": {
+            "name": profile.get("name"),
+            "headline": profile.get("headline"),
+            "currentRole": profile.get("currentRole"),
+            "sector": profile.get("sector"),
+            "region": profile.get("region"),
+            "goal": profile.get("goal"),
+            "constraints": profile.get("constraints"),
+            "skills": profile.get("skills"),
+        },
+        "scenario": {
+            "id": scenario.get("id"),
+            "name": scenario.get("name"),
+            "shortName": scenario.get("shortName"),
+            "summary": scenario.get("summary"),
+            "metrics": scenario.get("metrics"),
+        },
+        "topMatches": [
+            {
+                "roleId": match["roleId"],
+                "title": match["title"],
+                "fitScore": match["fitScore"],
+                "summary": match["summary"],
+                "gaps": [
+                    {"name": gap["name"], "current": gap["currentLevel"], "required": gap["requiredLevel"]}
+                    for gap in match["skillsGap"][:4]
+                ],
+                "reasons": match.get("reasons", [])[:3],
+                "llmNote": match.get("llmNote", ""),
+            }
+            for match in top
+        ],
+        "pathway": {
+            "roleTitle": pathway.get("roleTitle"),
+            "horizonWeeks": pathway.get("horizonWeeks"),
+            "hoursPerWeek": pathway.get("hoursPerWeek"),
+            "totalHours": pathway.get("totalHours"),
+            "totalCost": pathway.get("totalCost"),
+            "readinessFrom": pathway.get("readinessFrom"),
+            "readinessTo": pathway.get("readinessTo"),
+            "phases": [
+                {
+                    "title": phase.get("title"),
+                    "goal": phase.get("goal"),
+                    "weeks": phase.get("weeks"),
+                    "modules": [
+                        {"title": module.get("title"), "hours": module.get("hours"), "cost": module.get("cost")}
+                        for module in phase.get("modules", [])[:5]
+                    ],
+                }
+                for phase in pathway.get("phases", [])
+            ],
+        },
+        "signals": [
+            {
+                "title": signal.get("title"),
+                "publisher": signal.get("publisher"),
+                "publishedAt": signal.get("publishedAt"),
+                "summary": signal.get("summary"),
+            }
+            for signal in sorted(SIGNALS["items"], key=lambda item: -item["impact"])[:4]
+        ],
+    }
+    try:
+        narrative = llm.generate_text(
+            "You are a careful career adviser. Write a grounded briefing in plain text only: "
+            "3-4 short paragraphs, no markdown headings, no invented salaries, credentials or sources. "
+            "Use the supplied profile, scenario, role matches, pathway and dated signals. "
+            "Mention uncertainty where the evidence is thin. End with one concrete next action.",
+            json.dumps(context, ensure_ascii=False, default=str),
+            max_tokens=900,
+            temperature=0.35,
+        )
+        if narrative:
+            base["narrative"] = narrative
+            base["provider"] = llm.provider_info()["provider"]
+            base["model"] = llm.provider_info()["model"]
+            base["llm"] = {**llm.provider_info(), "used": True}
+            base["generatedAt"] = now_iso()
+    except llm.LLMError as error:
+        base["llm"] = {**llm.provider_info(), "used": False, "error": str(error)[:240]}
+    return base
 
 
 # Signals -----------------------------------------------------------
@@ -699,7 +1097,7 @@ class ApiError(Exception):
         self.details = details
 
 
-CAPABILITIES = ["catalog", "signals", "profiles", "matching", "pathway", "sdg-map", "scenarios", "streaming"]
+CAPABILITIES = ["catalog", "signals", "profiles", "matching", "pathway", "sdg-map", "scenarios", "streaming", "llm"]
 
 
 def meta_payload() -> dict:
@@ -711,7 +1109,7 @@ def meta_payload() -> dict:
         "generatedAt": CATALOG["meta"]["generatedAt"],
         "lastRefreshedAt": LAST_REFRESHED,
         "signalWindow": SIGNALS["window"],
-        "llm": {"provider": "deterministic", "model": "evidence-narrative-v1", "configured": False},
+        "llm": llm.provider_info(),
         "capabilities": CAPABILITIES,
         "counts": {
             "skills": len(SKILLS),
@@ -854,7 +1252,7 @@ def route(method: str, path: str, query: dict, body: dict):
             "datasetVersion": CATALOG["meta"]["datasetVersion"],
             "time": now_iso(),
             "uptimeSeconds": int(time.time() - STARTED_AT),
-            "llm": {"provider": "deterministic", "model": "evidence-narrative-v1", "configured": False},
+            "llm": llm.provider_info(),
         }
     if path == "/meta" and method == "GET":
         return 200, meta_payload()
