@@ -35,8 +35,8 @@ app.add_middleware(
 # ================= 接入真实大模型 =================
 ROOT = Path(__file__).resolve().parent.parent # 获取根目录
 
-@app.post("/api/v1/pathway")
-def generate_pathway(profile: UserProfile):
+@app.post("/api/v1/profiles/{profile_id}/pathway")
+def generate_pathway(profile_id: str, profile: UserProfile):
     api_key = os.getenv("DEEPSEEK_API_KEY")
     if not api_key:
         return {"error": "请配置 DEEPSEEK_API_KEY"}
@@ -125,3 +125,36 @@ if FRONTEND_DIR.exists():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+    # ================= 补齐前端需要的其他接口 =================
+
+@app.get("/api/v1/health")
+def health():
+    return {"status": "ok"}
+
+@app.get("/api/v1/meta")
+def get_meta():
+    return {"version": "1.0", "name": "AI Career Navigator", "team": "418 I'm a Teapot"}
+
+@app.get("/api/v1/catalog")
+def get_catalog():
+    return {"roles": [{"id": "role_001", "title": "Software Engineer"}, {"id": "role_002", "title": "Data Analyst"}]}
+
+@app.get("/api/v1/signals")
+def get_signals():
+    return {"signals": [{"id": "sig_01", "content": "AI is replacing basic coding tasks"}]}
+
+@app.get("/api/v1/profiles/{profile_id}")
+def get_profile(profile_id: str):
+    return {"id": profile_id, "skills": ["Python", "Excel"], "status": "active"}
+
+@app.get("/api/v1/profiles/{profile_id}/match")
+def get_match(profile_id: str):
+    return {"matches": [{"role": "Software Engineer", "score": 85}]}
+
+@app.get("/api/v1/profiles/{profile_id}/sdg-map")
+def get_sdg_map(profile_id: str):
+    return {"sdgs": [{"id": 8, "name": "Decent Work"}]}
+
+@app.get("/api/v1/analysis/stream")
+def get_analysis_stream():
+    return {"status": "ready"}
