@@ -1,16 +1,20 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AI Career Navigator · Argon Edition</title>
-  <meta name="description" content="AI Career Navigator — workforce foresight, role matching, reskilling pathways and SDG mapping." />
+  <meta name="description"
+    content="AI Career Navigator — workforce foresight, role matching, reskilling pathways and SDG mapping." />
   <meta name="theme-color" content="#5e72e4" />
   <link rel="icon" href="assets/argon-mark.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="vendor/argon/argon_css_merged.css" />
   <link rel="stylesheet" href="vendor/argon/style.css" />
+  <script>document.documentElement.classList.add("reveal-ready");</script>
   <link rel="stylesheet" href="css/app.css" />
 </head>
+
 <body>
   <div id="toolbar">
     <header class="header-global">
@@ -38,10 +42,8 @@
                 <span id="apiStatus" class="badge badge-success">Connecting…</span>
               </li>
               <li class="nav-item mr-lg-2">
-                <select id="scenarioSelect" class="custom-select custom-select-sm" aria-label="Future scenario"></select>
-              </li>
-              <li class="nav-item mr-lg-2">
-                <button id="themeToggle" class="btn btn-sm btn-neutral" type="button">Dark mode</button>
+                <select id="scenarioSelect" class="custom-select custom-select-sm"
+                  aria-label="Future scenario"></select>
               </li>
               <li class="nav-item">
                 <a class="btn btn-sm btn-outline-primary" href="/legacy/">Classic</a>
@@ -75,9 +77,9 @@
   </section>
 
   <main class="container app-shell" id="main">
-    <div id="notice" class="alert alert-warning app-notice d-none" role="alert"></div>
+    <div id="notice" class="alert alert-warning app-notice app-span-12 d-none" role="alert"></div>
 
-    <section id="overview" class="app-section">
+    <section id="overview" class="app-section app-span-12 app-reveal">
       <div class="app-section-head">
         <div>
           <p class="app-kicker">Your workspace</p>
@@ -88,7 +90,7 @@
       <div id="overviewCards" class="row"></div>
     </section>
 
-    <section id="profile" class="app-section">
+    <section id="profile" class="app-section app-span-7 app-reveal">
       <div class="app-section-head">
         <div>
           <p class="app-kicker">Step 01</p>
@@ -115,16 +117,22 @@
               <div class="col-md-8">
                 <div class="form-group">
                   <label class="form-control-label" for="headline">Headline</label>
-                  <input class="form-control" id="headline" name="headline" value="Moving into AI-enabled public services" />
+                  <input class="form-control" id="headline" name="headline"
+                    value="Moving into AI-enabled public services" />
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label class="form-control-label" for="region">Region</label>
                   <select class="custom-select" id="region" name="region">
-                    <option>Global</option><option>Southeast Asia</option><option>Singapore</option>
-                    <option>Malaysia</option><option>APAC</option><option>EU</option>
-                    <option>United Kingdom</option><option>North America</option>
+                    <option>Global</option>
+                    <option>Southeast Asia</option>
+                    <option>Singapore</option>
+                    <option>Malaysia</option>
+                    <option>APAC</option>
+                    <option>EU</option>
+                    <option>United Kingdom</option>
+                    <option>North America</option>
                   </select>
                 </div>
               </div>
@@ -132,10 +140,16 @@
                 <div class="form-group">
                   <label class="form-control-label" for="sector">Sector</label>
                   <select class="custom-select" id="sector" name="sector">
-                    <option>Public sector</option><option>Healthcare</option><option>Education</option>
-                    <option>Manufacturing &amp; logistics</option><option>Energy &amp; utilities</option>
-                    <option>Finance</option><option>Technology</option><option>Retail &amp; services</option>
-                    <option>Media</option><option>Other</option>
+                    <option>Public sector</option>
+                    <option>Healthcare</option>
+                    <option>Education</option>
+                    <option>Manufacturing &amp; logistics</option>
+                    <option>Energy &amp; utilities</option>
+                    <option>Finance</option>
+                    <option>Technology</option>
+                    <option>Retail &amp; services</option>
+                    <option>Media</option>
+                    <option>Other</option>
                   </select>
                 </div>
               </div>
@@ -143,21 +157,27 @@
                 <div class="form-group">
                   <label class="form-control-label" for="education">Education</label>
                   <select class="custom-select" id="education" name="education">
-                    <option>Secondary</option><option selected>Diploma / vocational</option>
-                    <option>Bachelor's degree</option><option>Master's degree</option><option>Doctorate</option><option>Other</option>
+                    <option>Secondary</option>
+                    <option selected>Diploma / vocational</option>
+                    <option>Bachelor's degree</option>
+                    <option>Master's degree</option>
+                    <option>Doctorate</option>
+                    <option>Other</option>
                   </select>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label class="form-control-label" for="yearsExperience">Years of experience</label>
-                  <input class="form-control" id="yearsExperience" name="yearsExperience" type="number" min="0" max="50" value="7" />
+                  <input class="form-control" id="yearsExperience" name="yearsExperience" type="number" min="0" max="50"
+                    value="7" />
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-group">
                   <label class="form-control-label" for="hoursPerWeek">Study hours per week</label>
-                  <input class="form-control" id="hoursPerWeek" name="hoursPerWeek" type="number" min="1" max="40" value="8" />
+                  <input class="form-control" id="hoursPerWeek" name="hoursPerWeek" type="number" min="1" max="40"
+                    value="8" />
                 </div>
               </div>
               <div class="col-md-6">
@@ -169,7 +189,8 @@
               <div class="col-12">
                 <div class="form-group">
                   <label class="form-control-label" for="goal">What are you moving toward?</label>
-                  <textarea class="form-control" id="goal" name="goal" rows="2">Move into an AI-facing role without leaving public service.</textarea>
+                  <textarea class="form-control" id="goal" name="goal"
+                    rows="2">Move into an AI-facing role without leaving public service.</textarea>
                 </div>
               </div>
             </div>
@@ -200,53 +221,72 @@
       </div>
     </section>
 
-    <section id="signals" class="app-section">
+    <section id="signals" class="app-section app-span-5 app-reveal">
       <div class="app-section-head">
-        <div><p class="app-kicker">Step 02</p><h2 class="h1">Signal layer</h2></div>
+        <div>
+          <p class="app-kicker">Step 02</p>
+          <h2 class="h1">Signal layer</h2>
+        </div>
         <span class="badge badge-primary">Dated sources</span>
       </div>
       <div id="signalList" class="row"></div>
     </section>
 
-    <section id="matches" class="app-section">
+    <section id="matches" class="app-section app-span-12 app-reveal">
       <div class="app-section-head">
-        <div><p class="app-kicker">Step 03</p><h2 class="h1">Role matches</h2></div>
+        <div>
+          <p class="app-kicker">Step 03</p>
+          <h2 class="h1">Role matches</h2>
+        </div>
         <span id="matchMeta" class="badge badge-neutral">Waiting for profile</span>
       </div>
       <div id="matchList" class="row"></div>
     </section>
 
-    <section id="pathway" class="app-section">
+    <section id="pathway" class="app-section app-span-7 app-reveal">
       <div class="app-section-head">
-        <div><p class="app-kicker">Step 04</p><h2 class="h1">Reskilling pathway</h2></div>
+        <div>
+          <p class="app-kicker">Step 04</p>
+          <h2 class="h1">Reskilling pathway</h2>
+        </div>
       </div>
       <div id="pathwayContent" class="app-empty card shadow border-0">
         <div class="card-body p-5 text-center text-muted">Save a profile to generate a three-phase plan.</div>
       </div>
     </section>
 
-    <section id="sdg" class="app-section">
+    <section id="sdg" class="app-section app-span-5 app-reveal">
       <div class="app-section-head">
-        <div><p class="app-kicker">Step 05</p><h2 class="h1">SDG map</h2></div>
+        <div>
+          <p class="app-kicker">Step 05</p>
+          <h2 class="h1">SDG map</h2>
+        </div>
       </div>
       <div id="sdgGrid" class="row"></div>
     </section>
 
-    <section id="scenarios" class="app-section">
+    <section id="scenarios" class="app-section app-span-5 app-reveal">
       <div class="app-section-head">
-        <div><p class="app-kicker">Foresight</p><h2 class="h1">Scenario lab</h2></div>
+        <div>
+          <p class="app-kicker">Foresight</p>
+          <h2 class="h1">Scenario lab</h2>
+        </div>
       </div>
       <div id="scenarioCards" class="row"></div>
     </section>
 
-    <section id="narrative" class="app-section">
+    <section id="narrative" class="app-section app-span-7 app-reveal">
       <div class="app-section-head">
-        <div><p class="app-kicker">Briefing</p><h2 class="h1">Evidence narrative</h2></div>
+        <div>
+          <p class="app-kicker">Briefing</p>
+          <h2 class="h1">Evidence narrative</h2>
+        </div>
         <button id="briefingBtn" class="btn btn-primary" type="button" disabled>Generate briefing</button>
       </div>
       <div class="card shadow border-0 app-card">
         <div class="card-body p-4 p-lg-5">
-          <div id="narrativeOutput" class="app-narrative text-muted">Your evidence-backed briefing will appear here.</div>
+          <div id="narrativeOutput" class="app-narrative text-muted">Your evidence-backed briefing will appear here.
+          </div>
         </div>
       </div>
     </section>
@@ -261,7 +301,8 @@
         </div>
         <div class="col-md-5 text-md-right mt-3 mt-md-0">
           <a class="btn btn-sm btn-neutral" href="/legacy/">Classic design</a>
-          <a class="btn btn-sm btn-outline-primary" href="https://github.com/solstice23/argon-theme" target="_blank" rel="noopener">Argon Theme</a>
+          <a class="btn btn-sm btn-outline-primary" href="https://github.com/solstice23/argon-theme" target="_blank"
+            rel="noopener">Argon Theme</a>
         </div>
       </div>
     </div>
@@ -272,4 +313,5 @@
   <script src="vendor/argon/argon.min.js"></script>
   <script src="js/app.js"></script>
 </body>
+
 </html>

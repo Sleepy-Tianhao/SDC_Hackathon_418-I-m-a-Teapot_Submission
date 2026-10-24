@@ -4,7 +4,6 @@
 
 var API = "/api/v1";
 var STORAGE_PROFILE = "aicn:argon:profile";
-var STORAGE_THEME = "aicn:argon:theme";
 
 var INTERESTS = [
   ["ai", "AI & automation"],
@@ -304,11 +303,6 @@ function bindEvents() {
   var form = $("#profileForm"); if (form) form.addEventListener("submit", saveProfile);
   var sample = $("#sampleBtn"); if (sample) sample.addEventListener("click", function () { applySample(); var p = $("#profile"); if (p) p.scrollIntoView({ behavior: "smooth", block: "start" }); });
   var briefing = $("#briefingBtn"); if (briefing) briefing.addEventListener("click", generateBriefing);
-  var theme = $("#themeToggle"); if (theme) theme.addEventListener("click", function () {
-    var dark = document.documentElement.classList.toggle("darkmode");
-    localStorage.setItem(STORAGE_THEME, dark ? "dark" : "light");
-    theme.textContent = dark ? "Light mode" : "Dark mode";
-  });
   var select = $("#scenarioSelect"); if (select) select.addEventListener("change", function (event) {
     state.scenarioId = event.target.value;
     renderScenarios();
@@ -328,12 +322,25 @@ function bindEvents() {
   });
 }
 
+function bindReveal() {
+  var items = $(".app-reveal");
+  if (!items.length) return;
+  if (!("IntersectionObserver" in window)) {
+    items.forEach(function (item) { item.classList.add("is-visible"); });
+    return;
+  }
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      entry.target.classList.toggle("is-visible", entry.isIntersecting);
+    });
+  }, { threshold: 0.04, rootMargin: "0px 0px -6% 0px" });
+  items.forEach(function (item) { observer.observe(item); });
+}
+
 async function bootstrap() {
-  var savedTheme = localStorage.getItem(STORAGE_THEME);
-  var dark = savedTheme ? savedTheme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-  if (dark) document.documentElement.classList.add("darkmode");
-  var themeButton = $("#themeToggle"); if (themeButton) themeButton.textContent = dark ? "Light mode" : "Dark mode";
+  document.documentElement.classList.remove("darkmode");
   bindEvents();
+  bindReveal();
   renderInterests();
   try {
     var loaded = await Promise.all([request("/meta"), request("/catalog")]);
