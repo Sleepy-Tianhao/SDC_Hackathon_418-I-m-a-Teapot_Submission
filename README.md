@@ -22,7 +22,7 @@
 |GitHub Repository|https://github.com/Sleepy-Tianhao/SDC_Hackathon_418-I-m-a-Teapot_Submission|
 |Live Demo|https://aicareer.replit.app|
 |RunPod Endpoint|Not used — this build is CPU-only (see How We Use RunPod)|
-|Slide Deck|*(pending)*|
+|Slide Deck|[`submission/AI_Career_Navigator_Pitch_FINAL.pdf`](<submission/AI_Career_Navigator_Pitch_FINAL.pdf>)|
 |Demo Video|*(pending)*|
 
 ---
