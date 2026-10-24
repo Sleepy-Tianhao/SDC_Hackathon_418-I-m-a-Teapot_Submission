@@ -261,34 +261,6 @@
   background: currentColor;
 }
 
-[data-theme="dark"] .badge--brand {
-  color: var(--brand);
-}
-
-[data-theme="dark"] .badge--success {
-  color: var(--success);
-}
-
-[data-theme="dark"] .badge--warning {
-  color: var(--warning);
-}
-
-[data-theme="dark"] .badge--danger {
-  color: var(--danger);
-}
-
-[data-theme="dark"] .badge--violet {
-  color: var(--violet);
-}
-
-[data-theme="dark"] .badge--gold {
-  color: var(--gold);
-}
-
-[data-theme="dark"] .badge--info {
-  color: var(--info);
-}
-
 .chip {
   display: inline-flex;
   align-items: center;

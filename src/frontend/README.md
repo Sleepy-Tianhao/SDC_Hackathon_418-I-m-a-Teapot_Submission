@@ -44,7 +44,7 @@ index.html                 shell, CSS and module entry
 assets/config.js           runtime configuration (API base URL, mode, streaming)
 assets/favicon.svg
 css/
-  tokens.css               colours, type, spacing, dark theme tokens
+  tokens.css               colours, type and spacing (light theme only)
   base.css                 reset, typography, utilities, motion
   layout.css               sidebar, top bar, page shell, responsive rules
   components.css           buttons, inputs, cards, badges, modals, toasts
@@ -101,7 +101,7 @@ the API; `demo` never does. The active transport is always visible in the sideba
 ## State and data flow
 
 * `store.js` holds catalog, profile, matches, pathway, SDG map, analysis and UI preferences.
-  The profile, scenario, theme and last results are cached in `localStorage`; the backend
+  The profile, scenario and last results are cached in `localStorage`; the backend
   remains the source of truth.
 * `api.js` is the only module that talks to the network. Views call `api.match(...)`,
   `api.pathway(...)`, etc. and never see transport details.
@@ -120,13 +120,13 @@ the API; `demo` never does. The active transport is always visible in the sideba
 
 ## Visual system
 
-* Tokens live in `css/tokens.css`; dark mode is `[data-theme="dark"]` with the same token names.
+* Tokens live in `css/tokens.css`; the UI is light-only and has no dark-theme toggle.
 * Type: system UI stack for text, monospace for data labels and eyebrows. No web fonts, so the
   demo works offline.
 * Components: cards, badges, chips, segmented controls, progress bars, score rings, modals,
   toasts, skeletons, empty states and an error panel.
 * Accessibility: skip link, focus-visible rings, ARIA labels on controls, keyboard-trapped
-  modal, `prefers-reduced-motion` support, 4.5:1 text contrast in both themes.
+  modal, `prefers-reduced-motion` support and 4.5:1 text contrast.
 * Responsive: three-column desktop -> sidebar drawer and single-column cards below 1024/720 px.
 * Print: the pathway page prints without the shell (used for interviews/mentor meetings).
 

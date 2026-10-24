@@ -20,7 +20,6 @@ const initialState = {
   sdgMap: null,
   analysis: null,
   signals: null,
-  theme: "light",
   busy: {},
   lastError: null,
   route: { path: "/overview", query: {} },
@@ -37,7 +36,6 @@ function persist() {
       JSON.stringify({
         profile: state.profile,
         scenarioId: state.scenarioId,
-        theme: state.theme,
         matches: state.matches,
         pathway: state.pathway,
         sdgMap: state.sdgMap,
@@ -57,7 +55,6 @@ export function restore() {
     const saved = JSON.parse(raw);
     if (saved.profile) state.profile = saved.profile;
     if (saved.scenarioId) state.scenarioId = saved.scenarioId;
-    if (saved.theme) state.theme = saved.theme;
     if (saved.matches) state.matches = saved.matches;
     if (saved.pathway) state.pathway = saved.pathway;
     if (saved.sdgMap) state.sdgMap = saved.sdgMap;
@@ -113,7 +110,6 @@ export function resetWorkspace() {
     health: state.health,
     meta: state.meta,
     catalog: state.catalog,
-    theme: state.theme,
     route: state.route,
     scenarioId: "baseline",
   };
@@ -144,19 +140,6 @@ export function skillById(skillId) {
 
 export function sdgByNumber(number) {
   return (state.catalog?.sdgs || []).find((goal) => goal.number === Number(number)) || null;
-}
-
-export function applyTheme(theme) {
-  const next = theme === "dark" ? "dark" : "light";
-  document.documentElement.setAttribute("data-theme", next);
-  document.documentElement.style.colorScheme = next;
-  const metaTheme = document.querySelector('meta[name="theme-color"]');
-  if (metaTheme) metaTheme.setAttribute("content", next === "dark" ? "#17100f" : "#f6f1ee");
-  setState({ theme: next });
-}
-
-export function toggleTheme() {
-  applyTheme(state.theme === "dark" ? "light" : "dark");
 }
 
 export function setScenario(scenarioId) {

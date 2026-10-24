@@ -135,10 +135,6 @@ function renderTopbar() {
             : html`<option value="baseline">Baseline</option>`}
         </select>
       </div>
-      <button class="icon-btn icon-btn--bordered" type="button" data-action="toggle-theme"
-        aria-label="Switch to ${state.theme === "dark" ? "light" : "dark"} theme" title="Toggle theme">
-        ${icon(state.theme === "dark" ? "sun" : "moon", 17)}
-      </button>
       <a class="avatar" href="#/intake" title="${profile ? "Edit skills profile" : "Build your skills profile"}">
         <span class="avatar__initials">${profile ? fmt.initials(profile.name) : "?"}</span>
         <span class="avatar__name">${profile ? profile.name : "New profile"}</span>
@@ -247,10 +243,7 @@ function bindGlobalEvents() {
 
     if (action === "menu-open") openNav();
     else if (action === "menu-close") closeNav();
-    else if (action === "toggle-theme") {
-      store.toggleTheme();
-      renderTopbar();
-    } else if (action === "use-sample") {
+    else if (action === "use-sample") {
       loadSampleProfile();
     } else if (action === "reset-workspace") {
       confirmDialog({
@@ -380,7 +373,6 @@ function renderFatal(error) {
 
 async function boot() {
   store.restore();
-  store.applyTheme(store.getState().theme || "light");
   renderSidebar();
   renderTopbar();
   renderJourneyTabs();
