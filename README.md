@@ -59,48 +59,45 @@ evidence, their assumptions, or what happens if the future turns out differently
   manager can act on. An optional OpenAI-compatible model can also re-rank matches, adjust the
   fit scores and order the pathway modules; the deterministic engine remains the fallback.
 
-The default frontend is built on the vendored Argon Theme source and calls the FastAPI API
-directly. The previous frontend is preserved independently in `src/frontend_bak` and remains
-available at `/legacy/`.
+The frontend is a build-free SPA and calls the FastAPI API directly. It also retains a local
+demo transport for offline review; the live backend remains the source of truth.
 
 ## Requirement coverage
 
 | Must-have from the Domain 1 brief | Where it is implemented |
 | --------------------------------- | ----------------------- |
-| Skills profile intake | `Profile` section — validated form, persisted via `POST /api/v1/profiles` |
-| AI-trend signal layer (updatable, dated source) | `Signals` section — dated cards, source links, `POST /api/v1/signals/refresh` |
-| Future-role matching + skills gap | `Matches` section — fit scores, gap chips, reasons, score source |
-| Personalised reskilling pathway | `Pathway` section — LLM-ordered modules, phases, cost, milestones |
-| SDG mapping | `SDG map` section — all 17 goals, contribution scores, rationale, evidence |
-| More than one future scenario | `Scenarios` section + top-bar selector — three futures re-score everything |
+| Skills profile intake | `#/intake` — four-step wizard, persisted via `POST /api/v1/profiles` |
+| AI-trend signal layer (updatable, dated source) | `#/signals` — filters, evidence modal, source links, `POST /api/v1/signals/refresh` |
+| Future-role matching + skills gap | `#/matches` and `#/overview` — fit scores, gap matrix, LLM score source |
+| Personalised reskilling pathway | `#/pathway` — LLM-ordered modules, phases, cost, milestones, coverage |
+| SDG mapping | `#/sdg` — all 17 goals, contribution scores, role and skill links, evidence |
+| More than one future scenario | `#/scenarios` + scenario selector — three futures re-score everything |
 
 ## Architecture
 
 ~~~text
-┌──────────────────────────────┐      ┌──────────────────────────────────────┐
-│ Browser                      │      │ FastAPI  src/main.py                 │
-│  src/frontend                │ JSON │  /api/v1/*                           │
-│  Argon Theme source + JS     │ ───► │  ├─ src/backend/engine.py            │
-│  fetch + EventSource         │      │  │   matching / pathway / SDG       │
-│  local profile cache         │ SSE  │  ├─ src/backend/llm.py               │
-└──────────────────────────────┘      │  │   optional external model        │
-                                      │  ├─ SQLite data/app.db               │
-                                      │  └─ static mounts: / and /legacy/    │
-                                      └──────────────────────────────────────┘
+┌────────────────────────────┐        ┌─────────────────────────────────────┐
+│ Browser                    │        │ FastAPI  src/main.py                │
+│  src/frontend              │ JSON   │  /api/v1/*                          │
+│  ES modules, no build step │ ─────► │  ├─ src/backend/engine.py           │
+│  fetch + EventSource       │        │  │   matching / pathway / SDG      │
+│  localStorage cache        │  SSE   │  ├─ src/backend/llm.py              │
+└────────────────────────────┘        │  │   optional external model       │
+                                      │  ├─ SQLite data/app.db              │
+                                      │  └─ static frontend mount at /       │
+                                      └─────────────────────────────────────┘
 ~~~
 
-The default frontend never reads the CSV files or the SQLite database directly. The backend owns
-the data load, scoring, LLM adapter and persistence; the browser only sends ids and receives
-structured JSON or SSE frames. The legacy frontend is a fully independent copy in
-`src/frontend_bak`.
+The frontend never reads the CSV files or the SQLite database directly. The backend owns the data
+load, scoring, LLM adapter and persistence; the browser only sends ids and receives structured
+JSON or SSE frames.
 
 ## Tech stack
 
 | Layer | Technology | Why |
 | ----- | ---------- | --- |
-| Frontend | Vendored Argon Theme CSS/JS, Bootstrap and product JS | Uses the actual Argon source; no build step |
-| Backend | Python 3 + FastAPI + SQLite | /api/v1 contract, same-origin UI, SSE, profile persistence |
-| Database | SQLite | Profiles are persisted locally with zero setup |
+| Frontend | Native ES modules, modern CSS, inline SVG | No build step, instant deploys |
+| Backend | Python 3 + FastAPI + SQLite | /api/v1 contract, same-origin UI, SSE, persistence |
 | LLM | Optional OpenAI-compatible provider (`src/backend/llm.py`) | Model participates in matching, scoring, pathway order and briefing; deterministic fallback |
 | Hosting / dev | Replit | One URL for UI + API |
 
@@ -119,13 +116,11 @@ structured JSON or SSE frames. The legacy frontend is a fully independent copy i
 │   │   └── fixtures/                # legacy shape references
 │   └── screenshots/                 # image assets (not linked from this README)
 ├── src/
-│   ├── frontend/                    # default Argon Theme frontend
-│   │   ├── vendor/argon/            # unchanged Argon source + LICENSE
-│   │   ├── css/app.css              # product layout on Argon components
-│   │   └── js/app.js                # API, profile, matches, pathway, SDG, SSE
-│   ├── frontend_bak/                # independent classic frontend at /legacy/
-│   ├── argon-theme/                 # upstream Argon source tree
-│   ├── main.py                      # FastAPI: /api/v1, static mounts, SSE
+│   ├── frontend/                    # the default routed frontend
+│   │   ├── css/                     # design tokens, layout, components, views
+│   │   ├── js/                      # app shell, views, API facade, demo engine
+│   │   └── mock/                    # offline demo fixtures
+│   ├── main.py                      # FastAPI: /api/v1, static UI, SSE
 │   └── backend/
 │       ├── data.py                  # real CSVs → catalogue/signals/modules
 │       ├── engine.py                # deterministic core + LLM orchestration
@@ -135,12 +130,13 @@ structured JSON or SSE frames. The legacy frontend is a fully independent copy i
 │   ├── serve_frontend.py            # static server for frontend work
 │   └── screenshot.mjs               # optional headless screenshots
 ├── tests/
-│   ├── test_frontend_assets.py      # asset, backup-data and contract checks
+│   ├── test_frontend_assets.py      # asset, fixture and contract checks
 │   └── test_utils.py
 ├── requirements.txt
 ├── .env.example
 └── README.md
 ~~~
+
 ## How to run
 
 ### 1. Full stack — FastAPI backend + frontend (recommended)
@@ -154,11 +150,7 @@ python src/main.py
 The FastAPI entry serves the frontend and the `/api/v1` API from the same origin, so the
 sidebar reads **Live API connected** without any extra configuration. It reads the real
 labour snapshots in `src/backend/data/`, persists profiles in `data/app.db`, and serves the
-default Argon frontend from `src/frontend` (built on the vendored Argon Theme source).
-
-The previous teapot design is preserved independently in `src/frontend_bak`. Open
-`http://127.0.0.1:8000/legacy/` or use the **Classic** pill in the top bar to switch back
-immediately; the legacy page has an **Argon design** link back.
+frontend from `src/frontend`.
 
 Optional external model configuration (server-side only):
 
@@ -180,11 +172,15 @@ python src/main.py
 # open http://127.0.0.1:8022/
 ~~~
 
-### 2. Legacy frontend only
+### 2. Frontend only — offline demo
 
-The previous frontend is complete and independent in `src/frontend_bak`. In the FastAPI
-entry it is available at `/legacy/`; it can also be served by any static server rooted at
-`src/frontend_bak`. The Argon frontend is the default and has no offline mock dataset.
+~~~bash
+python tools/serve_frontend.py --port 8003
+# open http://127.0.0.1:8003/
+~~~
+
+No API is required. The UI falls back to the files in `src/frontend/mock/` and visibly shows
+**Offline demo dataset**. The live FastAPI backend does not read those fixtures.
 
 ### 3. Legacy reference API (contract shape only)
 
@@ -209,8 +205,7 @@ python docs/backend-integration/smoke_test.py --base http://127.0.0.1:8000/api/v
 
 The contract covers health and metadata, the catalogue, the signal layer, profile intake,
 matching, pathway generation, SDG mapping, scenarios, and the server-side narrative stream.
-The default Argon frontend calls the live API directly. The classic frontend in
-`src/frontend_bak` retains its own demo/live transport for offline review.
+The frontend transport switches between `auto`, `live` and `demo` at runtime.
 
 When configured, the optional model also participates in matching scores and pathway ordering.
 Its provider/model/configured state is exposed through `GET /api/v1/meta`; keys and prompts
@@ -218,15 +213,15 @@ never cross into the browser.
 
 ## Two-minute demo script
 
-1. **Banner** — introduce the product and the six must-haves; use *Load sample profile*.
-2. **Overview** — readiness score, top role, dated signals and SDG footprint.
-3. **Profile** — show honest self-rating, interests and time/budget constraints.
-4. **Signals** — open one signal's evidence: publisher, date, source link and affected roles.
-5. **Matches** — compare two roles, inspect gaps and reasons, then change the scenario:
+1. **Landing** — state the problem and the six must-haves. Click *Explore with a sample profile*.
+2. **Overview** — the exploration tree, readiness score, top roles, capability radar and SDG footprint.
+3. **Intake** — show honest self-rating and the time/budget constraints that drive the plan.
+4. **Signals** — open one signal's evidence: publisher, date, source link, affected roles.
+5. **Matches** — compare two roles, open the gap matrix, then change the scenario:
    the same profile re-ranks.
-6. **Pathway** — LLM-ordered modules, phases, costs and milestones; regenerate the briefing.
-7. **SDG map** — inspect goals, contribution scores and rationale.
-8. **Classic** — switch to `/legacy/` to show the fully independent previous design.
+6. **Pathway** — phases, costs, milestones, coverage; generate or regenerate the LLM briefing.
+7. **SDG map** — pick a goal and show the role, skills and evidence behind its score.
+8. **Connect** — show live/demo status and the endpoint contract.
 
 ## Data and provenance
 
@@ -242,10 +237,8 @@ The live backend is data-driven:
 
 Salary, employment and signal metadata are loaded from those tables. Role archetypes, the skill
 taxonomy and scenario parameterisation are explicit product definitions on top of the real data;
-they are not random mock records. The new Argon frontend has no mock dataset and uses the `/api/v1` contract directly.
-
-The legacy frontend in `src/frontend_bak` retains its offline demo fixtures for comparison;
-they are not used by the default Argon frontend or served as live backend data.
+they are not random mock records. The frontend's offline fixtures in `src/frontend/mock` are
+illustrative only; the backend never reads them as live data.
 
 
 ## How we use Replit *(required)*
@@ -289,15 +282,14 @@ key or prompt.
 * **Showing evidence, not just answers.** Every score had to be explainable, so the matcher is a
   weighted overlap with published weights rather than an opaque model. The UI shows the gaps,
   the reasons and the scenario delta.
-* **Making a demo survivable.** The classic frontend retains a complete offline demo
-  transport; the Argon frontend reports an API-offline state instead of inventing data.
-  The backend also falls back to its deterministic engine when the external model fails.
+* **Making a demo survivable.** The frontend retains a complete offline demo transport and
+  reports when it is running on fixtures. The backend also falls back to its deterministic
+  engine when the external model fails.
 * **Keeping the contract honest.** The API contract, OpenAPI spec, self-contained FastAPI
   backend and a 53-check smoke test are all in the repo, so "the frontend expects this shape"
   is testable rather than a claim.
-* **Six must-haves, two frontends.** The Argon page groups the six requirements into one
-  scrollable workspace, while the classic backup keeps the original routed views and offline
-  demo; both use the same `/api/v1` contract.
+* **Six must-haves, one routed workspace.** The frontend keeps the six requirements in
+  separate, inspectable views and the same `/api/v1` contract.
 
 ## Future improvements
 
@@ -322,7 +314,7 @@ key or prompt.
 
 * [x] Domain 1 and SDG track filled in
 * [x] All six must-haves implemented and demonstrated
-* [x] Argon frontend with an independent classic fallback at `/legacy/`
+* [x] Working frontend with live/demo transport switch
 * [x] API contract + OpenAPI + integration guide
 * [x] Self-contained FastAPI backend with real labour datasets and contract smoke test
 * [x] Automated tests for assets, fixtures and contract

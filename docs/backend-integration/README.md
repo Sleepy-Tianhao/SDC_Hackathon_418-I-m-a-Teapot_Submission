@@ -14,7 +14,7 @@ small legacy contract reference and is **not imported by the runtime backend**.
 ## Current runtime
 
 ~~~text
-src/main.py                         FastAPI entry: /api/v1, / and /legacy, CORS, SSE
+src/main.py                         FastAPI entry: /api/v1, static UI, CORS, SSE
   └── src/backend/engine.py         deterministic core + LLM-assisted matching/pathway/briefing
         ├── src/backend/llm.py      optional OpenAI-compatible external model
         ├── src/backend/data.py     builds catalogue/signals/modules from real CSVs
@@ -38,9 +38,8 @@ $env:API_PORT="8022"
 python src/main.py
 ~~~
 
-The FastAPI entry serves the default Argon frontend at `/`, the classic frontend at
-`/legacy/`, and the API at `/api/v1` on the same origin, so the UI does not need a separate CORS
-configuration or a second static server.
+The FastAPI entry serves `src/frontend` at `/` and the API at `/api/v1` on the same origin,
+so the UI does not need a separate CORS configuration or a second static server.
 
 The optional external model is configured server-side with `LLM_BASE_URL`, `LLM_API_KEY`,
 `LLM_MODEL` and `LLM_ENABLED`. When enabled it participates in match re-ranking and score

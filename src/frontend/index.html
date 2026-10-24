@@ -1,316 +1,54 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Career Navigator · Argon Edition</title>
+  <title>AI Career Navigator · SDC 2026 Domain 1</title>
   <meta name="description"
-    content="AI Career Navigator — workforce foresight, role matching, reskilling pathways and SDG mapping." />
-  <meta name="theme-color" content="#5e72e4" />
-  <link rel="icon" href="assets/argon-mark.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="vendor/argon/argon_css_merged.css" />
-  <link rel="stylesheet" href="vendor/argon/style.css" />
-  <link rel="stylesheet" href="css/app.css" />
+    content="AI Career Navigator turns dated AI-trend signals into personalised reskilling pathways and SDG-linked role matches." />
+  <meta name="theme-color" content="#f6f1ee" />
+  <!-- <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" /> -->
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/views-core.css" />
+  <link rel="stylesheet" href="css/views-plan.css" />
 </head>
 
 <body>
-  <div id="toolbar">
-    <header class="header-global">
-      <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-light bg-white">
-        <div class="container">
-          <a class="navbar-brand" href="#overview">
-            <img class="brand-logo" src="assets/argon-mark.svg" alt="" />
-            <span>AI Career Navigator</span>
-          </a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global"
-            aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbar_global">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item"><a class="nav-link" href="#overview">Overview</a></li>
-              <li class="nav-item"><a class="nav-link" href="#profile">Profile</a></li>
-              <li class="nav-item"><a class="nav-link" href="#signals">Signals</a></li>
-              <li class="nav-item"><a class="nav-link" href="#matches">Matches</a></li>
-              <li class="nav-item"><a class="nav-link" href="#pathway">Pathway</a></li>
-              <li class="nav-item"><a class="nav-link" href="#sdg">SDG map</a></li>
-            </ul>
-            <ul class="navbar-nav align-items-lg-center">
-              <li class="nav-item mr-lg-2">
-                <span id="apiStatus" class="badge badge-success">Connecting…</span>
-              </li>
-              <li class="nav-item mr-lg-2">
-                <select id="scenarioSelect" class="custom-select custom-select-sm"
-                  aria-label="Future scenario"></select>
-              </li>
-              <li class="nav-item">
-                <a class="btn btn-sm btn-outline-primary" href="/legacy/">Classic</a>
-              </li>
-            </ul>
-          </div>
+  <a class="skip-link" href="#view">Skip to content</a>
+  <div id="sidebar-scrim" class="sidebar-scrim hidden"></div>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation"></aside>
+    <div class="app-main">
+      <header class="topbar" id="topbar"></header>
+      <nav class="journey-tabs" id="journey-tabs" aria-label="Career journey"></nav>
+      <main class="view" id="view" tabindex="-1">
+        <div class="loading-panel"><span class="spinner" aria-hidden="true"></span><span>Starting workspace…</span>
         </div>
-      </nav>
-    </header>
+      </main>
+      <footer class="page-foot">
+        <div class="page-foot__inner">
+          <span>AI Career Navigator · SDC 2026 · Domain 1 — Future-ready workforce</span>
+          <span>
+            Prototype dataset · figures are illustrative, sources are dated and linked ·
+            <a href="#/connect">API &amp; integration</a>
+          </span>
+        </div>
+      </footer>
+    </div>
   </div>
-
-  <section id="banner" class="banner app-banner section section-lg section-shaped">
-    <div class="app-banner__polygons" aria-hidden="true">
-      <span class="app-banner__polygon app-banner__polygon--1"></span>
-      <span class="app-banner__polygon app-banner__polygon--2"></span>
-      <span class="app-banner__polygon app-banner__polygon--3"></span>
-      <span class="app-banner__polygon app-banner__polygon--4"></span>
-      <span class="app-banner__polygon app-banner__polygon--5"></span>
+  <div id="toast-root" class="toast-root" role="status" aria-live="polite"></div>
+  <div id="modal-root"></div>
+  <noscript>
+    <div style="padding: 24px; font-family: system-ui">
+      AI Career Navigator needs JavaScript. Enable it, or read the API contract in <code>docs/API.md</code>.
     </div>
-    <div class="banner-container container text-center">
-      <span class="badge app-eyebrow app-banner__eyebrow">Argon Edition · SDC 2026</span>
-      <h1 class="banner-title">A clearer path through<br /><span>the future of work</span></h1>
-      <p class="banner-subtitle app-banner-lead">
-        Dated labour signals, scenario-aware role matching and an evidence-backed reskilling plan.
-      </p>
-      <div class="app-banner-actions">
-        <a class="btn btn-primary btn-lg" href="#profile">Build my profile</a>
-        <button id="sampleBtn" class="btn btn-neutral btn-lg" type="button">Load sample profile</button>
-      </div>
-    </div>
-  </section>
-
-  <main class="container app-shell" id="main">
-    <div id="notice" class="alert alert-warning app-notice d-none" role="alert"></div>
-
-    <section id="overview" class="app-section">
-      <div class="app-section-head">
-        <div>
-          <p class="app-kicker">Your workspace</p>
-          <h2 class="h1">Readiness at a glance</h2>
-        </div>
-        <span id="workflowState" class="badge badge-neutral">No profile yet</span>
-      </div>
-      <div id="overviewCards" class="row"></div>
-    </section>
-
-    <section id="profile" class="app-section">
-      <div class="app-section-head">
-        <div>
-          <p class="app-kicker">Step 01</p>
-          <h2 class="h1">Skills profile</h2>
-          <p class="app-section-lead">Tell the navigator what you can do, what you want and how much time you have.</p>
-        </div>
-      </div>
-      <div class="card shadow border-0 app-card">
-        <div class="card-body p-4 p-lg-5">
-          <form id="profileForm" novalidate>
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-control-label" for="name">Name</label>
-                  <input class="form-control" id="name" name="name" value="Aisha Rahman" required />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-control-label" for="currentRole">Current role</label>
-                  <input class="form-control" id="currentRole" name="currentRole" value="Operations Coordinator" />
-                </div>
-              </div>
-              <div class="col-md-8">
-                <div class="form-group">
-                  <label class="form-control-label" for="headline">Headline</label>
-                  <input class="form-control" id="headline" name="headline"
-                    value="Moving into AI-enabled public services" />
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-control-label" for="region">Region</label>
-                  <select class="custom-select" id="region" name="region">
-                    <option>Global</option>
-                    <option>Southeast Asia</option>
-                    <option>Singapore</option>
-                    <option>Malaysia</option>
-                    <option>APAC</option>
-                    <option>EU</option>
-                    <option>United Kingdom</option>
-                    <option>North America</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-control-label" for="sector">Sector</label>
-                  <select class="custom-select" id="sector" name="sector">
-                    <option>Public sector</option>
-                    <option>Healthcare</option>
-                    <option>Education</option>
-                    <option>Manufacturing &amp; logistics</option>
-                    <option>Energy &amp; utilities</option>
-                    <option>Finance</option>
-                    <option>Technology</option>
-                    <option>Retail &amp; services</option>
-                    <option>Media</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-control-label" for="education">Education</label>
-                  <select class="custom-select" id="education" name="education">
-                    <option>Secondary</option>
-                    <option selected>Diploma / vocational</option>
-                    <option>Bachelor's degree</option>
-                    <option>Master's degree</option>
-                    <option>Doctorate</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label class="form-control-label" for="yearsExperience">Years of experience</label>
-                  <input class="form-control" id="yearsExperience" name="yearsExperience" type="number" min="0" max="50"
-                    value="7" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-control-label" for="hoursPerWeek">Study hours per week</label>
-                  <input class="form-control" id="hoursPerWeek" name="hoursPerWeek" type="number" min="1" max="40"
-                    value="8" />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label class="form-control-label" for="budget">Learning budget</label>
-                  <input class="form-control" id="budget" name="budget" type="number" min="0" step="50" value="300" />
-                </div>
-              </div>
-              <div class="col-12">
-                <div class="form-group">
-                  <label class="form-control-label" for="goal">What are you moving toward?</label>
-                  <textarea class="form-control" id="goal" name="goal"
-                    rows="2">Move into an AI-facing role without leaving public service.</textarea>
-                </div>
-              </div>
-            </div>
-
-            <hr class="my-4" />
-            <div class="row">
-              <div class="col-lg-8">
-                <h3 class="h4">Skills</h3>
-                <p class="text-muted small">Tick what you can do and choose a level from 1 (aware) to 5 (expert).</p>
-                <div id="skillFields" class="app-skill-grid"></div>
-              </div>
-              <div class="col-lg-4">
-                <h3 class="h4">Interests</h3>
-                <p class="text-muted small">Used to break ties between roles.</p>
-                <div id="interestFields" class="app-interest-list"></div>
-              </div>
-            </div>
-
-            <div class="d-flex flex-wrap align-items-center justify-content-between mt-4">
-              <p class="text-muted small mb-2 mb-sm-0">Your profile is stored in the backend SQLite database.</p>
-              <div>
-                <button class="btn btn-neutral" type="reset">Reset</button>
-                <button class="btn btn-primary" type="submit" id="saveProfileBtn">Save and calculate</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <section id="signals" class="app-section">
-      <div class="app-section-head">
-        <div>
-          <p class="app-kicker">Step 02</p>
-          <h2 class="h1">Signal layer</h2>
-        </div>
-        <span class="badge badge-primary">Dated sources</span>
-      </div>
-      <div id="signalList" class="row"></div>
-    </section>
-
-    <section id="matches" class="app-section">
-      <div class="app-section-head">
-        <div>
-          <p class="app-kicker">Step 03</p>
-          <h2 class="h1">Role matches</h2>
-        </div>
-        <span id="matchMeta" class="badge badge-neutral">Waiting for profile</span>
-      </div>
-      <div id="matchList" class="row"></div>
-    </section>
-
-    <section id="pathway" class="app-section">
-      <div class="app-section-head">
-        <div>
-          <p class="app-kicker">Step 04</p>
-          <h2 class="h1">Reskilling pathway</h2>
-        </div>
-      </div>
-      <div id="pathwayContent" class="app-empty card shadow border-0">
-        <div class="card-body p-5 text-center text-muted">Save a profile to generate a three-phase plan.</div>
-      </div>
-    </section>
-
-    <section id="sdg" class="app-section">
-      <div class="app-section-head">
-        <div>
-          <p class="app-kicker">Step 05</p>
-          <h2 class="h1">SDG map</h2>
-        </div>
-      </div>
-      <div id="sdgGrid" class="row"></div>
-    </section>
-
-    <section id="scenarios" class="app-section">
-      <div class="app-section-head">
-        <div>
-          <p class="app-kicker">Foresight</p>
-          <h2 class="h1">Scenario lab</h2>
-        </div>
-      </div>
-      <div id="scenarioCards" class="row"></div>
-    </section>
-
-    <section id="narrative" class="app-section">
-      <div class="app-section-head">
-        <div>
-          <p class="app-kicker">Briefing</p>
-          <h2 class="h1">Evidence narrative</h2>
-        </div>
-        <button id="briefingBtn" class="btn btn-primary" type="button" disabled>Generate briefing</button>
-      </div>
-      <div class="card shadow border-0 app-card">
-        <div class="card-body p-4 p-lg-5">
-          <div id="narrativeOutput" class="app-narrative text-muted">Your evidence-backed briefing will appear here.
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer app-footer">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-7">
-          <p class="mb-1">AI Career Navigator · SDC 2026 · Domain 1 — Future-ready workforce</p>
-          <p class="small text-muted mb-0">Prototype dataset · figures are illustrative · sources dated and linked.</p>
-        </div>
-        <div class="col-md-5 text-md-right mt-3 mt-md-0">
-          <a class="btn btn-sm btn-neutral" href="/legacy/">Classic design</a>
-          <a class="btn btn-sm btn-outline-primary" href="https://github.com/solstice23/argon-theme" target="_blank"
-            rel="noopener">Argon Theme</a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <script src="vendor/argon/jquery.min.js"></script>
-  <script src="vendor/argon/bootstrap.bundle.min.js"></script>
-  <script src="vendor/argon/argon.min.js"></script>
-  <script src="js/app.js"></script>
+  </noscript>
+  <script src="assets/config.js"></script>
+  <script type="module" src="js/app.js"></script>
 </body>
 
 </html>
