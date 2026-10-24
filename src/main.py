@@ -7,26 +7,48 @@ src/backend/data; it does not import the reference implementation under docs/.
 from __future__ import annotations
 
 import asyncio
+"""FastAPI entry point for AI Career Navigator.
+
+The API engine lives under src/backend. It reads the real labour datasets in
+src/backend/data; it does not import the reference implementation under docs/.
+"""
+
+from __future__ import annotations
+
+import asyncio
 import json
+import mimetypes
+import os
+import sys
 import mimetypes
 import os
 import sys
 from pathlib import Path
 
+
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 
+from src.backend import engine  # noqa: E402
 from src.backend import engine  # noqa: E402
 
 FRONTEND = ROOT / "src" / "frontend"
 LEGACY_FRONTEND = ROOT / "src" / "frontend_bak"
 mimetypes.add_type("image/webp", ".webp")
+FRONTEND = ROOT / "src" / "frontend"
+LEGACY_FRONTEND = ROOT / "src" / "frontend_bak"
+mimetypes.add_type("image/webp", ".webp")
 
+app = FastAPI(title="AI Career Navigator API", version="1.0.0")
 app = FastAPI(title="AI Career Navigator API", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
