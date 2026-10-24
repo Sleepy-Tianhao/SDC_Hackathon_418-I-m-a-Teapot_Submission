@@ -18,3 +18,10 @@ openpyxl>=3.1          # required by pandas.read_excel for .xlsx workbooks
 
 # Outbound calls to the DeepSeek narrative endpoint
 requests>=2.31
+
+# Explicit patched versions for transitive HTTP dependencies, so both clean
+# installs and dependency scans resolve patched versions.
+anyio==4.15.1
+certifi==2026.10.23
+h11==0.16.0
+idna==3.20

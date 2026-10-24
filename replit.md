@@ -8,6 +8,8 @@ JavaScript frontend, and SQLite storage. No frontend build step is needed.
 - The server binds to `0.0.0.0:5000` and serves both the frontend at `/` and
   the API at `/api/v1` from the same origin.
 - Python 3.12 dependencies are declared in `requirements.txt`.
+- Publishing uses `python3 -m uvicorn src.main:app --host 0.0.0.0 --port 5000`
+  so the production server matches the configured external port.
 - Runtime profiles are stored in `data/app.db` (git-ignored); source datasets
   remain in `src/backend/data/`.
 
