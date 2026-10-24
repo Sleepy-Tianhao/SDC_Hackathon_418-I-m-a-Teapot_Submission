@@ -19,30 +19,27 @@ window.addEventListener("error", (event) => {
 
 const NAV_SECTIONS = [
   {
-    label: "Workspace",
+    label: "",
+    items: [{ path: "/overview", label: "Overview", icon: "compass" }],
+  },
+  {
+    label: "Explore & Forecast",
     items: [
-      { path: "/overview", label: "Overview", icon: "compass" },
-      { path: "/intake", label: "Skills profile", icon: "user", step: "01" },
+      { path: "/intake", label: "Skills Profile", icon: "user" },
+      { path: "/signals", label: "Signal Layer", icon: "activity" },
+      { path: "/matches", label: "Role Matches", icon: "target" },
+      { path: "/pathway", label: "Reskilling Pathway", icon: "route" },
     ],
   },
   {
-    label: "Foresight",
-    items: [
-      { path: "/signals", label: "Signal layer", icon: "activity", step: "02" },
-      { path: "/scenarios", label: "Scenario lab", icon: "compare" },
-    ],
+    label: "",
+    divider: true,
+    items: [{ path: "/sdg", label: "SDG Mapping", icon: "globe" }],
   },
   {
-    label: "Your plan",
-    items: [
-      { path: "/matches", label: "Role matches", icon: "target", step: "03" },
-      { path: "/pathway", label: "Reskilling pathway", icon: "route", step: "04" },
-      { path: "/sdg", label: "SDG map", icon: "globe", step: "05" },
-    ],
-  },
-  {
-    label: "Build",
-    items: [{ path: "/connect", label: "API & integration", icon: "plug" }],
+    label: "",
+    divider: true,
+    items: [{ path: "/connect", label: "API & Integration", icon: "plug" }],
   },
 ];
 
@@ -77,7 +74,8 @@ function renderSidebar() {
     </a>
     <nav class="sidebar__nav" aria-label="Sections">
       ${NAV_SECTIONS.map(
-        (section) => html`<p class="nav__label">${section.label}</p>
+        (section) => html`${section.divider ? html`<div class="nav__divider" aria-hidden="true"></div>` : ""}
+          ${section.label ? html`<p class="nav__label">${section.label}</p>` : ""}
           ${section.items.map((item) => {
             const active = route.path === item.path || (item.path === "/overview" && route.path === "/");
             const count = item.path === "/signals" && signalCount ? html`<span class="nav__count">${signalCount}</span>` : "";
@@ -115,7 +113,7 @@ function renderTopbar() {
   const lastRefreshed = state.meta?.lastRefreshedAt;
   const profile = state.profile;
 
-  topbar.innerHTML = toHtml(html`<button class="icon-btn menu-btn" type="button" data-action="menu-open" aria-label="Open navigation">
+  topbar.innerHTML = toHtml(html`<button class="icon-btn menu-btn" type="button" data-action="menu-open" aria-label="Open navigation" aria-expanded="false">
       ${icon("menu", 20)}
     </button>
     <div class="crumb">
@@ -158,11 +156,32 @@ function renderTopbar() {
   }
 }
 
+function renderJourneyTabs() {
+  const tabs = qs("#journey-tabs");
+  if (!tabs) return;
+  const route = currentRoute();
+  const current = route.path === "/matches" || route.path === "/" ? "/overview" : route.path;
+  const items = [
+    { path: "/intake", label: "Skills Profile" },
+    { path: "/signals", label: "Signal Layer" },
+    { path: "/scenarios", label: "Scenario Lab" },
+    { path: "/pathway", label: "Reskilling Pathway" },
+    { path: "/sdg", label: "SDG Mapping" },
+  ];
+  tabs.innerHTML = toHtml(html`<div class="journey-tabs__overview">
+      <a href="#/overview" class="journey-tab ${current === "/overview" ? "is-active" : ""}" ${current === "/overview" ? 'aria-current="page"' : ""}>Overview</a>
+    </div>
+    <div class="journey-tabs__links">
+      ${items.map((item) => html`<a href="#${item.path}" class="journey-tab ${current === item.path ? "is-active" : ""}" ${current === item.path ? 'aria-current="page"' : ""}>${item.label}</a>`)}
+    </div>`);
+}
+
 function openNav() {
   const sidebar = qs("#sidebar");
   const scrim = qs("#sidebar-scrim");
   if (!sidebar) return;
   sidebar.classList.add("is-open");
+  qs('[data-action="menu-open"]')?.setAttribute("aria-expanded", "true");
   if (scrim) scrim.classList.remove("hidden");
   document.body.classList.add("is-locked");
 }
@@ -172,6 +191,7 @@ function closeNav() {
   const scrim = qs("#sidebar-scrim");
   if (!sidebar) return;
   sidebar.classList.remove("is-open");
+  qs('[data-action="menu-open"]')?.setAttribute("aria-expanded", "false");
   if (scrim) scrim.classList.add("hidden");
   if (!qs("#modal-root")?.classList.contains("is-open")) document.body.classList.remove("is-locked");
 }
@@ -275,6 +295,7 @@ async function renderRoute() {
   }
   rendering = true;
   const route = currentRoute();
+  document.documentElement.dataset.view = (route.path.replace(/^\//, "") || "overview");
   const view = views[route.path];
   const viewEl = qs("#view");
   if (!viewEl) {
@@ -285,6 +306,7 @@ async function renderRoute() {
   closeModal();
   renderSidebar();
   renderTopbar();
+  renderJourneyTabs();
 
   if (!view) {
     viewEl.innerHTML = toHtml(html`<div class="empty">
@@ -361,6 +383,7 @@ async function boot() {
   store.applyTheme(store.getState().theme || "light");
   renderSidebar();
   renderTopbar();
+  renderJourneyTabs();
   bindGlobalEvents();
   startRouter();
   onRoute(() => renderRoute());

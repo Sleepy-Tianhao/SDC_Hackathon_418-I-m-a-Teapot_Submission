@@ -7,6 +7,7 @@ import * as store from "../core/store.js";
 import { progressBar, scoreTone, toast } from "../core/ui.js";
 
 function scenarioCard(scenario, active, catalog) {
+  const keywords = (scenario.drivers || []).slice(0, 3);
   const rising = (scenario.rolesRising || [])
     .map((roleId) => (catalog.roles || []).find((role) => role.id === roleId))
     .filter(Boolean)
@@ -24,6 +25,13 @@ function scenarioCard(scenario, active, catalog) {
       ${active ? html`<span class="badge badge--brand">${icon("check", 11)} Active</span>` : ""}
     </div>
     <p class="scenario-card__summary">${scenario.summary}</p>
+    ${keywords.length
+      ? html`<div class="scenario-keywords" aria-label="Key forces in this scenario">
+          ${keywords.map((driver) => html`<span class="scenario-keyword scenario-keyword--${driver.direction}">
+            <span aria-hidden="true">${driver.direction === "up" ? "↑" : "↓"}</span>${driver.name}
+          </span>`)}
+        </div>`
+      : ""}
     <div class="scenario-card__metrics">
       <div class="scenario-metric"><span>Net employment</span><strong>${scenario.metrics.netEmploymentChangePct > 0 ? "+" : ""}${scenario.metrics.netEmploymentChangePct}%</strong></div>
       <div class="scenario-metric"><span>Task automation</span><strong>${scenario.metrics.taskAutomationPct}%</strong></div>

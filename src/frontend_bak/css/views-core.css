@@ -1560,3 +1560,26 @@
     display: none;
   }
 }
+
+
+/* Source-derived trend snapshot: clear direction arrows, counts and bars. */
+.trend-summary { margin:0 0 16px; padding:16px 18px; border:1px solid rgba(77,111,82,.16); border-radius:18px; background:rgba(255,254,247,.88); box-shadow:0 6px 20px rgba(46,76,54,.07); backdrop-filter:blur(8px); }
+.trend-summary__head { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.trend-summary__head .eyebrow { margin:0 0 3px; color:#779071; }
+.trend-summary__head h2 { margin:0; color:#315443; font-size:18px; letter-spacing:-.025em; }
+.trend-summary__head > span { color:#77887b; font-size:11px; }
+.trend-summary__grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.trend-summary__item { min-width:0; padding:12px; border:1px solid rgba(91,121,90,.13); border-radius:13px; background:rgba(248,250,239,.88); }
+.trend-summary__top { display:flex; align-items:center; gap:8px; }
+.trend-summary__arrow { display:grid; place-items:center; width:31px; height:31px; border-radius:10px; background:#e5f2e4; color:#397858; font-size:23px; font-weight:800; line-height:1; }
+.trend-summary__item--down .trend-summary__arrow { background:#f7e8dd; color:#ad654d; }
+.trend-summary__item--steady .trend-summary__arrow { background:#edf0df; color:#8b7834; }
+.trend-summary__top strong { color:#405b4d; font-size:13px; }
+.trend-summary__top b { margin-left:auto; color:#304e40; font-size:22px; font-variant-numeric:tabular-nums; }
+.trend-summary__bar { height:6px; margin:10px 0 7px; overflow:hidden; border-radius:99px; background:#e4ebdf; }
+.trend-summary__bar i { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#9dc49d,#4c8b68); }
+.trend-summary__item--down .trend-summary__bar i { background:linear-gradient(90deg,#e6bd91,#bd755a); }
+.trend-summary__item--steady .trend-summary__bar i { background:linear-gradient(90deg,#e2d68a,#b49b48); }
+.trend-summary__item p { margin:0; color:#74857a; font-size:10px; }
+.trend-summary__foot { margin:10px 0 0; color:#839086; font-size:10px; line-height:1.45; }
+@media(max-width:720px) { .trend-summary__grid { grid-template-columns:1fr; } .trend-summary__item { padding:10px 12px; } }

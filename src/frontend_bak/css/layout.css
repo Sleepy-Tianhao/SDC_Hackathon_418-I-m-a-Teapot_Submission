@@ -607,3 +607,26 @@
     border-color: #d5d5d5;
   }
 }
+
+/* Watercolor journey navigation and page artwork */
+.app-main { margin-left: var(--sidebar-width); background-color: var(--bg); }
+.sidebar { transform: none; transition: transform .24s cubic-bezier(.3,.7,.3,1); }
+.sidebar.is-open { transform: none; box-shadow: 0 18px 55px rgba(37,68,51,.22); }
+.menu-btn { display: none; }
+.nav__divider { height:1px; margin:9px 10px 8px; background:var(--sidebar-line); }
+.sidebar-scrim { position: fixed; inset: 0; z-index: 55; background: rgba(25,48,38,.36); backdrop-filter: blur(2px); }
+.journey-tabs { position: sticky; top: 66px; z-index: 35; display: grid; gap: 4px; padding: 7px clamp(16px,3.4vw,36px) 8px; border-bottom: 1px solid rgba(76,111,85,.14); background: rgba(250,252,244,.82); backdrop-filter: blur(13px) saturate(130%); }
+.journey-tabs__overview,.journey-tabs__links { display:flex; align-items:center; gap:7px; min-width:0; }
+.journey-tabs__links { overflow-x:auto; scrollbar-width:none; }
+.journey-tabs__links::-webkit-scrollbar { display:none; }
+.journey-tab { display:inline-flex; align-items:center; min-height:31px; padding:6px 11px; border:1px solid transparent; border-radius:10px; color:#5d7668; font-size:12px; font-weight:600; text-decoration:none; white-space:nowrap; transition:background .16s ease,color .16s ease,box-shadow .16s ease; }
+.journey-tab:hover { background:rgba(223,238,220,.7); color:#345b48; text-decoration:none; }
+.journey-tab.is-active { background:#3f6e5a; color:#fffdf2; box-shadow:0 3px 12px rgba(49,91,68,.18); }
+.journey-tabs__overview .journey-tab { font-weight:750; }
+.view { border-radius:0; background-color:rgba(248,251,244,.16); background-position:center; background-size:cover; background-attachment:fixed; }
+html[data-view="intake"] .app-main,html[data-view="matches"] .app-main { background-image:linear-gradient(rgba(250,252,243,.28),rgba(250,252,243,.34)),url("../assets/background-profile.jpg"); background-position:center 40%; background-size:cover; background-attachment:fixed; }
+html[data-view="signals"] .app-main { background-image:linear-gradient(rgba(250,252,243,.26),rgba(250,252,243,.32)),url("../assets/background-signals.jpg"); background-position:center; background-size:cover; background-attachment:fixed; }
+html[data-view="scenarios"] .app-main { background-image:linear-gradient(rgba(250,252,243,.26),rgba(250,252,243,.32)),url("../assets/background-scenario.jpg"); background-position:center; background-size:cover; background-attachment:fixed; }
+html[data-view="pathway"] .app-main { background-image:linear-gradient(rgba(250,252,243,.26),rgba(250,252,243,.32)),url("../assets/background-pathway.jpg"); background-position:center; background-size:cover; background-attachment:fixed; }
+@media (max-width: 1024px) { .app-main { margin-left:0; } .sidebar { transform:translateX(-100%); } .sidebar.is-open { transform:translateX(0); } .menu-btn { display:inline-flex; } }
+@media (max-width: 720px) { .journey-tabs { top:60px; padding-left:12px; padding-right:12px; } .journey-tab { min-height:30px; padding:5px 9px; font-size:11px; } }

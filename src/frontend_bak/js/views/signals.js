@@ -136,6 +136,30 @@ function pipelineHtml(data) {
   </div>`;
 }
 
+function trendSummary(data) {
+  const counts = { rising: 0, stable: 0, declining: 0 };
+  (data?.items || []).forEach((signal) => {
+    if (Object.prototype.hasOwnProperty.call(counts, signal.momentum)) counts[signal.momentum] += 1;
+  });
+  const max = Math.max(1, ...Object.values(counts));
+  const rows = [
+    { key: "rising", label: "Rising", arrow: "↑", note: "More signals point upward", tone: "up" },
+    { key: "stable", label: "Steady", arrow: "→", note: "Signals remain broadly level", tone: "steady" },
+    { key: "declining", label: "Declining", arrow: "↓", note: "More signals point downward", tone: "down" },
+  ];
+  return html`<section class="trend-summary" data-role="signal-trends" aria-label="Signal momentum summary">
+    <div class="trend-summary__head"><div><p class="eyebrow">Market direction</p><h2>What is moving?</h2></div><span>${data?.items?.length || 0} signals in this view</span></div>
+    <div class="trend-summary__grid">
+      ${rows.map((row) => html`<article class="trend-summary__item trend-summary__item--${row.tone}">
+        <div class="trend-summary__top"><span class="trend-summary__arrow" aria-hidden="true">${row.arrow}</span><strong>${row.label}</strong><b>${counts[row.key]}</b></div>
+        <div class="trend-summary__bar"><i style="width:${Math.round((counts[row.key] / max) * 100)}%"></i></div>
+        <p>${row.note}</p>
+      </article>`)}
+    </div>
+    <p class="trend-summary__foot">Counts reflect the dated, source-linked signals below; they describe this snapshot, not a time-series forecast.</p>
+  </section>`;
+}
+
 function pageShell(data) {
   const state = store.getState();
   const roleFilter = filters.roleId ? roleName(filters.roleId) : "";
@@ -158,6 +182,7 @@ function pageShell(data) {
       </div>
     </div>
     ${pipelineHtml(data)}
+    ${trendSummary(data)}
     ${filterBar(data)}
     <div data-role="signal-list">${listHtml(data)}</div>`;
 }
@@ -272,6 +297,8 @@ async function updateList(root, options = {}) {
     if (filtersEl && options.rebuildFilters !== false) filtersEl.outerHTML = filterBar(data).value;
     const pipelineEl = root.querySelector('[data-role="pipeline"]');
     if (pipelineEl) pipelineEl.outerHTML = pipelineHtml(data).value;
+    const trendsEl = root.querySelector('[data-role="signal-trends"]');
+    if (trendsEl) trendsEl.outerHTML = trendSummary(data).value;
   } catch (error) {
     listEl.innerHTML = html`<div class="error-panel" role="alert">
       <span class="error-panel__icon">${icon("alert", 20)}</span>

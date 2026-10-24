@@ -13,25 +13,26 @@ function tierLabel(tier) {
   return "Contextual";
 }
 
-function cards(goals, selected) {
-  return html`<div class="sdg-grid">
-    ${goals.map(
-      (goal) => html`<button type="button" class="sdg-card sdg-card--${goal.tier} ${goal.number === selected ? "is-selected" : ""}"
-        style="--sdg:${goal.color}" data-action="select-sdg" data-sdg="${goal.number}"
-        aria-pressed="${goal.number === selected}">
-        <div class="sdg-card__top">
-          <span class="sdg-card__num">SDG ${goal.number}</span>
-          <span class="sdg-card__tier">${tierLabel(goal.tier)}</span>
-        </div>
-        <p class="sdg-card__name">${goal.shortName}</p>
-        <div class="sdg-card__bottom">
-          <div class="bar bar--sm" style="background:var(--surface-3)">
-            <span class="bar__fill" style="width:${goal.score}%;background:${goal.color}"></span>
-          </div>
-          <span class="sdg-card__score">${goal.score}</span>
-        </div>
-      </button>`,
-    )}
+const SDG_POSITIONS = [[12,10],[30,12],[50,9],[70,12],[88,10],[18,31],[42,33],[66,32],[84,34],[12,56],[32,58],[53,56],[74,59],[88,57],[20,83],[50,85],[80,83]];
+const SDG_MAP_IMAGE = new URL("../../assets/sdg-watercolor-map.jpg", import.meta.url).href;
+const SDG_PIN_IMAGE = new URL("../../assets/sdg-pin-gold.png", import.meta.url).href;
+
+function mapMarkers(goals, selected) {
+  return html`<div class="sdg-map-board" style="--sdg-map:url('${SDG_MAP_IMAGE}')" role="group" aria-label="SDG contribution map">
+    ${goals.map((goal, index) => {
+      const [x, y] = SDG_POSITIONS[index] || [50, 50];
+      const score = Math.max(0, Math.min(100, Number(goal.score) || 0));
+      const strength = score / 100;
+      const opacity = (0.22 + strength * 0.78).toFixed(2);
+      return html`<button type="button" class="sdg-marker ${goal.number === selected ? "is-selected" : ""}"
+        data-action="select-sdg" data-sdg="${goal.number}" aria-pressed="${goal.number === selected}"
+        aria-label="${goal.name}, ${score} out of 100 match"
+        style="--x:${x}%;--y:${y}%;--strength:${strength};--pin-opacity:${opacity};--pin-image:url('${SDG_PIN_IMAGE}')">
+        <span class="sdg-marker__art" aria-hidden="true"></span>
+        <span class="sdg-marker__name">${goal.shortName || goal.name}</span>
+      </button>`;
+    })}
+    <span class="sdg-map-caption">Brighter warm light = stronger match</span>
   </div>`;
 }
 
@@ -98,57 +99,41 @@ function detailBody(goal, state, mapping) {
     <p class="tiny faint" style="margin-top:16px;line-height:1.6">${mapping.summary.note}</p>`;
 }
 
-function page(state, mapping) {
-  const goals = [...mapping.goals].sort((a, b) => a.number - b.number);
-  const selected = selectedNumber || mapping.summary.topGoal || 1;
+function mapPage(state, mapping, goals, selected, profileReady) {
   const goal = goals.find((item) => item.number === selected) || goals[0];
   const primary = mapping.summary.primaryGoals || [];
   const top = goals.find((item) => item.number === mapping.summary.topGoal);
-
   return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("globe", 14)} Step 05 · SDG mapping</p>
+      <p class="eyebrow">${icon("globe", 14)} SDG mapping · 17 themes</p>
       <div class="page-head__row">
-        <h1 class="page-title">Where your next role lands in the 2030 agenda</h1>
-        <div class="page-head__actions">
-          <a class="btn btn--secondary btn--sm" href="#/pathway">${icon("route", 15)} Back to pathway</a>
-        </div>
+        <h1 class="page-title">Where could your work make a difference?</h1>
+        <div class="page-head__actions"><a class="btn btn--secondary btn--sm" href="#/pathway">${icon("route", 15)} Reskilling pathway</a></div>
       </div>
-      <p class="page-lead">
-        The same role can create very different public value. Each of the 17 goals is scored from the SDG weights of your
-        matched roles and the signals that support them — with a written rationale rather than a logo row.
-      </p>
+      <p class="page-lead">Select a glowing theme to see how your roles and skills connect to it. The light shows match strength; the explanation shows why.</p>
       <div class="page-meta">
-        <span>${icon("target", 13)} ${primary.length} primary goal${primary.length === 1 ? "" : "s"}</span>
-        ${top ? html`<span>${icon("target", 13)} Strongest: SDG ${top.number} — ${top.shortName} (${top.score})</span>` : ""}
-        <span>${icon("clock", 13)} Generated ${fmt.relative(mapping.generatedAt)}</span>
+        ${profileReady ? html`<span>${icon("target", 13)} ${primary.length} strongest links</span>` : html`<span>${icon("info", 13)} Example catalogue view · build your profile for a personal map</span>`}
+        ${top ? html`<span>${icon("target", 13)} Strongest: ${top.shortName} · ${top.score}/100</span>` : ""}
+        ${mapping.generatedAt ? html`<span>${icon("clock", 13)} Updated ${fmt.relative(mapping.generatedAt)}</span>` : ""}
       </div>
     </div>
-
-    <div class="split">
-      <section class="panel">
-        <div class="panel__head">
-          <div>
-            <h2 class="panel__title">All 17 goals</h2>
-            <p class="panel__hint">Select a goal to see the evidence behind the score.</p>
-          </div>
-          <span class="badge badge--neutral">${goals.filter((item) => item.tier !== "contextual").length} linked</span>
-        </div>
-        ${cards(goals, selected)}
-        <div class="matrix-legend" style="margin-top:12px">
-          <span><i style="background:var(--success-soft)"></i> primary</span>
-          <span><i style="background:var(--brand-soft)"></i> supporting</span>
-          <span><i style="background:var(--surface-3)"></i> contextual</span>
-        </div>
+    <div class="sdg-map-layout">
+      <section class="sdg-map-wrap" aria-label="SDG map">
+        ${mapMarkers(goals, goal.number)}
       </section>
-
-      <aside class="sdg-detail">
+      <aside class="sdg-detail-panel" aria-label="Selected SDG details">
         <div class="side-card" data-role="sdg-detail">${detailBody(goal, state, mapping)}</div>
       </aside>
     </div>`;
 }
 
+function page(state, mapping) {
+  const goals = [...mapping.goals].sort((a, b) => a.number - b.number);
+  const selected = selectedNumber || mapping.summary.topGoal || 1;
+  return mapPage(state, mapping, goals, selected, true);
+}
+
 function genericPage(state) {
-  const goals = state.catalog.sdgs.map((goal) => ({
+  const goals = (state.catalog.sdgs || []).map((goal) => ({
     ...goal,
     score: 0,
     tier: "contextual",
@@ -159,49 +144,8 @@ function genericPage(state) {
   }));
   const selected = selectedNumber || 4;
   const goal = goals.find((item) => item.number === selected) || goals[0];
-
-  return html`<div class="page-head reveal">
-      <p class="eyebrow">${icon("globe", 14)} SDG mapping</p>
-      <h1 class="page-title">How the 17 goals connect to future work</h1>
-      <p class="page-lead">
-        Every future role in the catalogue carries a weighted SDG contribution with a written rationale. Build a profile
-        to see where <em>your</em> path scores.
-      </p>
-    </div>
-    <div class="split">
-      <section class="panel">
-        <div class="panel__head">
-          <div>
-            <h2 class="panel__title">The 17 goals</h2>
-            <p class="panel__hint">Select a goal to see which roles carry it.</p>
-          </div>
-        </div>
-        ${cards(goals, goal.number)}
-      </section>
-      <aside class="sdg-detail">
-        <div class="side-card" data-role="sdg-detail">
-          <div class="sdg-detail__banner" style="--sdg:${goal.color}">
-            <span class="sdg-detail__num">${goal.number}</span>
-            <div>
-              <p class="sdg-detail__title">${goal.name}</p>
-              <p class="sdg-detail__focus">${goal.focus}</p>
-            </div>
-          </div>
-          <div style="margin-top:14px">
-            <p class="side-card__title" style="margin-bottom:6px">Roles in the catalogue</p>
-            ${goal.roleIds.length
-              ? goal.roleIds.map(
-                  (roleId) => html`<div class="sdg-list-item"><span class="dot" style="--sdg:${goal.color}"></span><span>${(state.catalog.roles.find((role) => role.id === roleId) || {}).title}</span></div>`,
-                )
-              : html`<p class="small muted">No role in the catalogue carries this goal directly.</p>`}
-          </div>
-          <div class="empty empty--compact" style="margin-top:16px">
-            <p class="small muted">Build a skills profile to turn this catalogue view into your personal contribution map.</p>
-            <a class="btn btn--primary btn--sm" href="#/intake">Build my profile</a>
-          </div>
-        </div>
-      </aside>
-    </div>`;
+  const mapping = { goals, summary: { note: "Build a skills profile to calculate a personal contribution map.", primaryGoals: [], topGoal: null }, generatedAt: null };
+  return mapPage(state, mapping, goals, goal?.number || 4, false);
 }
 
 function bind(root) {
@@ -217,12 +161,10 @@ function bind(root) {
     const goal = mapping.goals.find((item) => item.number === number);
     const detail = root.querySelector('[data-role="sdg-detail"]');
     if (detail && goal) detail.innerHTML = detailBody(goal, state, mapping).value;
-    root.querySelectorAll("[data-sdg]").forEach((card) => {
-      if (card.classList.contains("sdg-card")) {
-        const active = Number(card.getAttribute("data-sdg")) === number;
-        card.classList.toggle("is-selected", active);
-        card.setAttribute("aria-pressed", String(active));
-      }
+    root.querySelectorAll(".sdg-marker[data-sdg]").forEach((marker) => {
+      const active = Number(marker.getAttribute("data-sdg")) === number;
+      marker.classList.toggle("is-selected", active);
+      marker.setAttribute("aria-pressed", String(active));
     });
   });
 }
