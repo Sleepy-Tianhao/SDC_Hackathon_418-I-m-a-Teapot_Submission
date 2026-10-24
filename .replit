@@ -43,3 +43,12 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[userenv]
+
+[userenv.shared]
+LLM_API_KEY = "sk-42afeb148e754c958bcea9f3f9cd94e9"
+LLM_BASE_URL = "https://api.deepseek.com"
+LLM_MODEL = "deepseek-flash"
+LLM_ENABLED = "true"
+LLM_TIMEOUT = "60"
