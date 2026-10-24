@@ -19,7 +19,7 @@ src/main.py                         FastAPI entry: /api/v1, static UI, CORS, SSE
         ├── src/backend/llm.py      optional OpenAI-compatible external model
         ├── src/backend/data.py     builds catalogue/signals/modules from real CSVs
         └── src/backend/data/       labour snapshots and source URL metadata
-              └── data/app.db       created on first profile write
+data/app.db                         created on first profile write
 ~~~
 
 Start the real backend:
@@ -42,10 +42,12 @@ The FastAPI entry serves `src/frontend` at `/` and the API at `/api/v1` on the s
 so the UI does not need a separate CORS configuration or a second static server.
 
 The optional external model is configured server-side with `LLM_BASE_URL`, `LLM_API_KEY`,
-`LLM_MODEL` and `LLM_ENABLED`. When enabled it participates in match re-ranking and score
-adjustment, pathway role/module ordering, and the briefing. Matching and pathway retain their
-deterministic fallbacks; the AI briefing requires the model and returns an error instead of
-substituting fixed narrative text.
+`LLM_MODEL`, `LLM_ENABLED`, `LLM_STRUCTURED_MODEL`, `LLM_TIMEOUT`, `LLM_TEMPERATURE`,
+`LLM_MAX_TOKENS` and `AI_SCORE_WEIGHT`. When enabled it participates in match re-ranking and
+score adjustment, pathway role/module ordering, and the briefing. Structured JSON calls use
+`LLM_STRUCTURED_MODEL` (default `deepseek-chat` when `LLM_MODEL` is a Flash model), and
+`LLM_TIMEOUT` defaults to 120 seconds. Matching and pathway retain their deterministic fallbacks;
+the AI briefing requires the model and returns an error instead of substituting fixed narrative text.
 
 ## Contract test
 

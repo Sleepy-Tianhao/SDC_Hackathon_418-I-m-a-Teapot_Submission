@@ -108,11 +108,11 @@ User ──► Replit (FastAPI · src/main.py) ──► SQLite profiles / CSV l
 ### Option 1 — Run on Replit (Recommended)
 
 1. Open the [Replit Project](https://replit.com/@CufoFlux/SDCHackathon418-I-m-a-TeapotSubmission), or import this repository via **Create Repl → Import from GitHub**.
-2. Open the **Secrets** tab (🔒) and add the variables listed in `.env.example`. Matching, pathway and SDG mapping work without a key; the AI briefing requires a key:
+2. Open the **Secrets** tab (🔒) and add the model variables used by the backend. Matching, pathway and SDG mapping work without a key; the AI briefing requires a key:
 
-   * `LLM_API_KEY`
-   * `LLM_BASE_URL`
-   * `LLM_MODEL`
+   * Required for model calls: `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL`
+   * Optional tuning: `LLM_STRUCTURED_MODEL`, `LLM_TIMEOUT`, `LLM_TEMPERATURE`, `LLM_MAX_TOKENS`, `AI_SCORE_WEIGHT`
+   * Optional switch: `LLM_ENABLED` (defaults to true)
 3. Click **Run**. The **Start application** workflow in `.replit` runs `PORT=5000 python src/main.py`, serving the UI at `/` and the API at `/api/v1` from the same origin (port 5000 is mapped to external port 80 and opened in the webview).
 
 ### Option 2 — Run Locally
