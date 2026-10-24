@@ -4,7 +4,7 @@
 #   uvicorn src.main:app --port 8000
 #
 # Version floors and ceilings keep the install working on Python 3.9+.
-# Replit uses Python 3.11 via .replit/replit.nix. pandas 3.x requires
+# Replit uses Python 3.12 via .replit. pandas 3.x requires
 # Python 3.11+, so it is capped below 3.0.
 
 # HTTP API layer
