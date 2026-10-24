@@ -193,8 +193,7 @@ function sideColumn(state, matches) {
     <section class="side-card">
       <p class="side-card__title">How the score works</p>
       <p class="small muted">
-        Fit is a weighted overlap between your self-rated levels and each role's required levels, adjusted by sector,
-        experience, interests and the selected scenario.
+        Weighted skills, sector, experience, interests and scenario.
       </p>
       <div class="row row--wrap" style="--gap:8px;margin-top:10px">
         <button class="btn btn--ghost btn--sm" type="button" data-action="method">${icon("info", 14)} Method</button>
@@ -269,9 +268,6 @@ function bubbleField(matches) {
       <div>
         <p class="eyebrow">${icon("target", 14)} Role constellation</p>
         <h2 class="bubble-card__title">Role constellation</h2>
-        <p class="bubble-card__hint">
-          Click a bubble for gaps. Use <strong>Cards</strong> for details.
-        </p>
       </div>
       <div class="bubble-legend">
         ${tones.map((tone) => html`<span class="bubble-legend__item"
@@ -280,9 +276,6 @@ function bubbleField(matches) {
       </div>
     </div>
     <div class="bubble-field" role="group" aria-label="Future roles sized by fit score">${bubbles}</div>
-    <p class="bubble-card__foot tiny faint">
-      ${icon("info", 12)} Bubble size = fit. Ranking follows the <strong>${sortBy === "fit" ? "best fit" : sortBy === "demand" ? "demand" : "salary"}</strong> sort.
-    </p>
   </section>`;
 }
 
@@ -405,7 +398,6 @@ function methodModal() {
         <li class="small muted">The weighted overlap is scaled to 0–100, with small sector, experience and interest adjustments.</li>
         <li class="small muted">The scenario adds a role-specific delta.</li>
       </ol>
-      <div class="notice">${icon("info", 15)}<span>Self-assessment is noisy; the pathway starts with a diagnostic.</span></div>
     </div>`,
     footer: html`<button class="btn btn--primary" type="button" data-modal-close="true">Got it</button>`,
   });

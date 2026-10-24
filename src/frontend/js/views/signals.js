@@ -109,14 +109,13 @@ function listHtml(data) {
     return html`<div class="empty">
       ${icon("search", 24)}
       <h3 class="empty__title">No signals match these filters</h3>
-      <p class="empty__body">Broaden the momentum, type or region filter, or clear the search term.</p>
+      <p class="empty__body">Adjust filters or clear the search.</p>
       <button class="btn btn--secondary btn--sm" type="button" data-action="clear-filters">Reset filters</button>
     </div>`;
   }
   return html`<div class="signal-list">${data.items.map(signalCard)}</div>
     <p class="tiny faint" style="margin-top:14px">
-      Showing ${data.items.length} of ${data.total} signals · sorted by ${filters.sort === "impact" ? "impact" : "most recent"}.
-      Each row links to the original publisher.
+      ${data.items.length} of ${data.total} signals · ${filters.sort === "impact" ? "impact" : "recent"} first.
     </p>`;
 }
 
@@ -156,7 +155,6 @@ function trendSummary(data) {
         <p>${row.note}</p>
       </article>`)}
     </div>
-    <p class="trend-summary__foot">Snapshot of the dated, source-linked signals below.</p>
   </section>`;
 }
 
@@ -256,10 +254,6 @@ function openSignal(signal) {
         </div>
       </div>
 
-      <div class="notice">
-        ${icon("info", 15)}
-        <span>Signals inform the model; they do not predict your future.</span>
-      </div>
     </div>`,
     footer: html`<button class="btn btn--ghost" type="button" data-modal-close="true">Close</button>
       <a class="btn btn--primary" href="#/signals?roleId=${roles[0]?.roleId || ""}" data-modal-close="true">

@@ -111,7 +111,7 @@ function mapPage(state, mapping, goals, selected, profileReady) {
       </div>
       <p class="page-lead">Select a goal to see the roles, skills and evidence behind it.</p>
       <div class="page-meta">
-        ${profileReady ? html`<span>${icon("target", 13)} ${primary.length} strongest links</span>` : html`<span>${icon("info", 13)} Example view · build your profile for a personal map</span>`}
+        ${profileReady ? html`<span>${icon("target", 13)} ${primary.length} strongest links</span>` : ""}
         ${top ? html`<span>${icon("target", 13)} Strongest: ${top.shortName} · ${top.score}/100</span>` : ""}
         ${mapping.generatedAt ? html`<span>${icon("clock", 13)} Updated ${fmt.relative(mapping.generatedAt)}</span>` : ""}
       </div>

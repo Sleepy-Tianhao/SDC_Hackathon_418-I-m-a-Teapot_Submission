@@ -87,7 +87,6 @@ function impactPanel(matches, catalog, activeId) {
     <div class="panel__head">
       <div>
         <h2 class="panel__title">Top match by future</h2>
-        <p class="panel__hint">${role.title} · baseline fit ${role.baselineFit || role.fitScore}</p>
       </div>
       <span class="badge badge--neutral">${rows.length} scenarios</span>
     </div>
@@ -110,9 +109,6 @@ function impactPanel(matches, catalog, activeId) {
         </div>`,
       )}
     </div>
-    <p class="tiny faint" style="margin-top:14px">
-      Scenario deltas are applied to your baseline fit, so the comparison isolates the future rather than the intake.
-    </p>
   </section>`;
 }
 
@@ -205,7 +201,6 @@ function page(state, matches) {
         <div class="panel__head">
           <div>
             <h2 class="panel__title">Assumptions behind the active scenario</h2>
-            <p class="panel__hint">Assumptions behind this scenario.</p>
           </div>
         </div>
         <ul class="stack" style="--gap:9px">
@@ -216,10 +211,6 @@ function page(state, matches) {
             </li>`,
           )}
         </ul>
-        <div class="notice" style="margin-top:14px">
-          ${icon("info", 15)}
-          <span>Scores compare scenarios; they are not predictions.</span>
-        </div>
       </section>
     </div>
 
@@ -227,7 +218,6 @@ function page(state, matches) {
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Scenario comparison</h2>
-          <p class="panel__hint">Same profile, three assumptions.</p>
         </div>
       </div>
       ${comparisonTable(catalog, state.scenarioId, matches)}

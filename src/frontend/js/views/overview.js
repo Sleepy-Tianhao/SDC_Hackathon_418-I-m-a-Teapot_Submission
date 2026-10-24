@@ -162,7 +162,7 @@ function lifeTreeOverview({ state, name = "there", signalTotal = 0, topRole = nu
   const nextTitle = next ? next.focusTitle : "Your tree is fully lit";
   const nextBody = next
     ? next.focusBody
-    : "You have explored your profile, signals, roles, futures and pathway. Keep testing the plan as the future changes.";
+    : "All five steps explored. Keep testing as the future changes.";
   const nextHref = next ? next.href : "#/scenarios";
   const nextAction = next ? next.action : "Keep exploring futures";
   const nextDetail = next ? next.actionDetail : "All five steps complete";
@@ -298,7 +298,6 @@ function analysisPanel(analysis) {
       <button class="btn btn--primary btn--sm" type="button" data-action="generate-briefing">
         ${icon("sparkles", 15)} Generate briefing
       </button>
-      <span class="tiny faint">Streams from the backend.</span>
     </div>
   </div>`;
 }
@@ -321,20 +320,17 @@ function dashboard(state, matches, signals, sdgMap) {
       value: matches.summary.readinessScore + "/100",
       icon: "activity",
       tone: "brand",
-      hint: "Fit across your top three roles.",
     })}
     ${statCard({ label: "Best-fit role", value: top.fitScore + "%", icon: "target", hint: top.title })}
     ${statCard({
       label: "Skills to close",
       value: matches.summary.skillsToClose,
       icon: "layers",
-      hint: "Gaps across your top matches.",
     })}
     ${statCard({
       label: "Signals tracked",
       value: signals.total || (signals.items || []).length,
       icon: "activity",
-      hint: "Each has a publisher, date and source.",
     })}
   </div>
 
@@ -343,7 +339,6 @@ function dashboard(state, matches, signals, sdgMap) {
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Top future roles</h2>
-          <p class="panel__hint">Ranked by fit.</p>
         </div>
         <a class="btn btn--ghost btn--sm" href="#/matches">Compare ${icon("arrowRight", 14)}</a>
       </div>
@@ -363,16 +358,12 @@ function dashboard(state, matches, signals, sdgMap) {
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Capability profile</h2>
-          <p class="panel__hint">Self-rated level by skill family.</p>
         </div>
         <a class="btn btn--ghost btn--sm" href="#/intake">${icon("sliders", 14)} Edit</a>
       </div>
       <div class="row" style="justify-content:center">
         ${radar.length >= 3 ? radarChart(radar, { size: 250, label: "Capability radar" }) : html`<p class="small muted">Add skills to see the radar.</p>`}
       </div>
-      <p class="tiny faint" style="text-align:center;margin-top:6px">
-        Self-assessment, not certification.
-      </p>
     </section>
   </div>
 
@@ -384,8 +375,7 @@ function dashboard(state, matches, signals, sdgMap) {
         <div class="panel__head">
           <div>
             <h2 class="panel__title">Scenario sensitivity</h2>
-            <p class="panel__hint">Across three 2028 futures.</p>
-          </div>
+            </div>
         </div>
         <div class="gauge-stack">
           ${sensitivity.map(
@@ -408,7 +398,6 @@ function dashboard(state, matches, signals, sdgMap) {
         <div class="panel__head">
           <div>
             <h2 class="panel__title">SDG footprint</h2>
-            <p class="panel__hint">Public value.</p>
           </div>
           <a class="btn btn--ghost btn--sm" href="#/sdg">All 17 ${icon("arrowRight", 13)}</a>
         </div>
@@ -421,7 +410,6 @@ function dashboard(state, matches, signals, sdgMap) {
     <div class="panel__head">
       <div>
         <h2 class="panel__title">Signals behind your top match</h2>
-        <p class="panel__hint">Evidence behind the ranking.</p>
       </div>
       <a class="btn btn--ghost btn--sm" href="#/signals?roleId=${top.roleId}">Filter signals ${icon("arrowRight", 14)}</a>
     </div>

@@ -156,12 +156,6 @@ function page(state, path, matches) {
           ${path.phases.map((phase, index) => phaseCard(phase, index))}
         </div>
 
-        <div class="notice" style="margin-top:16px">
-          ${icon("info", 16)}
-          <span>
-            Costs and hours are estimates. Confirm before enrolling.
-          </span>
-        </div>
       </div>
 
       <aside class="sticky">

@@ -213,7 +213,6 @@ function stepOne() {
     <div class="field span-2">
       <label class="field__label" for="intake-goal">What are you trying to change?</label>
       <textarea class="textarea" id="intake-goal" data-field="goal" placeholder="e.g. Move into an AI-facing role without leaving public service">${draft.goal}</textarea>
-      <p class="field__hint">Optional; shapes your pathway.</p>
     </div>
   </div>`;
 }
@@ -231,10 +230,7 @@ function stepTwo(catalog) {
       <button class="btn btn--ghost btn--sm" type="button" data-action="clear-skills">Clear all</button>
     </div>
   </div>
-  <div class="notice" style="margin-bottom:14px">
-    ${icon("info", 16)}
-    <span>Rate honestly: 1 is awareness, 3 is independent work, 5 is expert. Over-claiming hides the gaps your pathway should close.</span>
-  </div>
+  <div class="notice" style="margin-bottom:14px">${icon("info", 16)}<span>1 aware · 3 independent · 5 expert.</span></div>
   ${groups.length
     ? groups.map(
         ([category, skills]) => html`<section class="skill-group" data-skill-group>
@@ -243,7 +239,7 @@ function stepTwo(catalog) {
         </section>`,
       )
     : html`<p class="small muted">No skills match that search.</p>`}
-  <p class="tiny faint" style="margin-top:14px">Click an active level again to clear it. Unrated skills are treated as no exposure.</p>`;
+`;
 }
 
 function stepThree() {
@@ -258,7 +254,6 @@ function stepThree() {
           </button>`,
         )}
       </div>
-      <p class="field__hint" style="margin-top:7px">Choose up to four. They lift role families, not gaps.</p>
     </div>
 
     <div class="form-grid">
@@ -270,7 +265,6 @@ function stepThree() {
               data-action="set-hours" data-hours="${hours}">${hours}h</button>`,
           )}
         </div>
-        <p class="field__hint">Used to calculate pathway duration.</p>
       </div>
       <div class="field">
         <label class="field__label" for="intake-budget">Learning budget</label>
@@ -292,12 +286,11 @@ function stepThree() {
           </label>`,
         )}
       </div>
-      <p class="field__hint" style="margin-top:7px">Only remote-friendly filters the pathway.</p>
     </div>
 
     <div class="notice">
       ${icon("shield", 16)}
-      <span><strong>Data note.</strong> In the prototype the profile is stored in this browser (demo mode) or in the backend SQLite database (live mode). Nothing is sent to a third-party model without the narrative step.</span>
+      <span>Profiles stay in the browser (demo) or backend SQLite (live).</span>
     </div>
   </div>`;
 }
@@ -340,14 +333,6 @@ function stepFour(catalog) {
       </div>
     </div>
 
-    <div class="notice">
-      ${icon("sparkles", 16)}
-      <span>
-        Saving scores ${(catalog.roles || []).length} roles under
-        <strong>${(catalog.scenarios.find((scenario) => scenario.id === store.getState().scenarioId) || {}).name || "the selected scenario"}</strong>.
-        You can switch scenarios later.
-      </span>
-    </div>
   </div>`;
 }
 
@@ -366,8 +351,6 @@ function renderPage(state) {
       </p>
       <div class="page-meta">
         <span>${icon("clock", 13)} ~5 minutes</span>
-        <span>${icon("shield", 13)} Stored locally in demo mode</span>
-        <span>${icon("target", 13)} Feeds matching, pathway and SDG mapping</span>
       </div>
     </div>
     ${stepPanel(state)}`;

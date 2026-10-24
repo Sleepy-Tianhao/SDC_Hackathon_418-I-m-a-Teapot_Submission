@@ -99,14 +99,10 @@ function page(state) {
     <div class="split" style="margin-top:18px">
       <section class="panel">
         <h2 class="panel__title">Connection settings</h2>
-        <p class="panel__hint" style="margin-bottom:14px">
-          Same-origin by default. Change only for another host or port.
-        </p>
         <div class="stack" style="--gap:14px">
           <div class="field">
             <label class="field__label" for="api-base">API base URL</label>
             <input class="input" id="api-base" value="${base}" placeholder="/api/v1" />
-            <p class="field__hint">Examples: <code class="mono">/api/v1</code>, <code class="mono">http://127.0.0.1:8000/api/v1</code>, <code class="mono">demo</code></p>
           </div>
           <div class="field">
             <span class="field__label">Transport policy</span>
@@ -120,15 +116,10 @@ function page(state) {
                   data-action="set-mode" data-mode="${mode.id}" title="${mode.hint}">${mode.label}</button>`,
               )}
             </div>
-            <p class="field__hint">Auto keeps the UI usable if the API sleeps.</p>
           </div>
           <div class="row" style="--gap:8px">
             <button class="btn btn--primary btn--sm" type="button" data-action="apply-connection">${icon("save", 15)} Save &amp; test</button>
             <button class="btn btn--ghost btn--sm" type="button" data-action="reset-connection">${icon("refresh", 15)} Reset to default</button>
-          </div>
-          <div class="notice">
-            ${icon("info", 15)}
-            <span>Saved in <code class="mono">localStorage</code>; URL overrides supported.</span>
           </div>
         </div>
 
@@ -142,7 +133,6 @@ function page(state) {
           <div class="panel__head">
             <div>
               <h2 class="panel__title">Serve the frontend from FastAPI</h2>
-              <p class="panel__hint">Same-origin: no CORS.</p>
             </div>
           </div>
           <pre class="code-block"><span class="c"># src/main.py</span>
@@ -163,7 +153,6 @@ app.mount(<span class="s">"/"</span>, StaticFiles(directory=<span class="s">"src
           <div class="panel__head">
             <div>
               <h2 class="panel__title">Run the reference API</h2>
-              <p class="panel__hint">Legacy contract reference; not the runtime backend.</p>
             </div>
           </div>
           <pre class="code-block">python docs/backend-integration/reference_api.py --port 8000
@@ -181,14 +170,10 @@ app.mount(<span class="s">"/"</span>, StaticFiles(directory=<span class="s">"src
       <div class="panel__head">
         <div>
           <h2 class="panel__title">Endpoint contract</h2>
-          <p class="panel__hint">Versioned at <code class="mono">/api/v1</code>.</p>
         </div>
         <button class="btn btn--ghost btn--sm" type="button" data-copy="/api/v1/health">${icon("copy", 14)} Copy base</button>
       </div>
       ${endpointTable()}
-      <p class="tiny faint" style="margin-top:12px">
-        See <code class="mono">docs/API.md</code> and <code class="mono">docs/openapi.json</code>.
-      </p>
     </section>
 
     <div class="grid grid--2" style="margin-top:18px">
@@ -199,9 +184,6 @@ app.mount(<span class="s">"/"</span>, StaticFiles(directory=<span class="s">"src
 curl -X POST http://127.0.0.1:8000/api/v1/profiles \
   -H <span class="s">'Content-Type: application/json'</span> \
   -d <span class="s">'{"name":"Aisha","currentRole":"Coordinator","sector":"Public sector","skills":[{"skillId":"data-literacy","level":3}]}'</span></pre>
-        <p class="tiny faint" style="margin-top:9px">
-          The UI only needs the documented response shapes.
-        </p>
       </section>
       <section class="panel">
         <h2 class="panel__title">Integration checklist</h2>
