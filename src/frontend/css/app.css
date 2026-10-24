@@ -14,16 +14,23 @@ html.darkmode body {
 }
 
 .app-banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   height: auto !important;
-  min-height: 430px;
+  min-height: 590px;
   margin-bottom: 0;
-  padding: 62px 0 74px;
+  padding: 70px 0 170px;
+  color: #2b3674;
   background:
-    radial-gradient(780px 420px at 78% 8%, rgba(255, 255, 255, 0.18), transparent 62%),
-    linear-gradient(135deg, #5e72e4 0%, #825ee4 58%, #f5365c 135%) !important;
+    radial-gradient(720px 460px at 12% -8%, rgba(255, 255, 255, 0.92), transparent 62%),
+    radial-gradient(640px 420px at 92% 8%, rgba(206, 212, 246, 0.55), transparent 66%),
+    linear-gradient(180deg, #fbfbff 0%, #f2f4ff 54%, #e8ecfa 100%) !important;
 }
 
 .app-banner .banner-container {
+  position: relative;
+  z-index: 2;
   height: auto !important;
   display: flex;
   flex-direction: column;
@@ -36,22 +43,34 @@ html.darkmode body {
   transform: none;
   max-width: 860px;
   margin: 14px auto 0;
+  color: #2b3674 !important;
   font-size: clamp(2.2rem, 5vw, 4.2rem);
   line-height: 1.02;
   letter-spacing: -0.045em;
 }
 
+.app-banner .banner-title span {
+  color: #4c5fd5;
+}
+
 .app-banner .banner-subtitle {
   max-width: 660px;
   margin: 16px auto 0;
+  color: #5b6694 !important;
   font-size: 1rem;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.82) !important;
 }
 
 .app-eyebrow {
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.app-banner__eyebrow {
+  border: 1px solid rgba(94, 114, 228, 0.18);
+  background: rgba(255, 255, 255, 0.86);
+  color: #3f4faf;
+  box-shadow: 0 8px 22px rgba(94, 114, 228, 0.1);
 }
 
 .app-banner-actions {
@@ -60,6 +79,81 @@ html.darkmode body {
   justify-content: center;
   gap: 10px;
   margin-top: 26px;
+}
+
+/* Argon page banner: faceted periwinkle polygons, partially cut by the banner edge. */
+.app-banner__polygons {
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 275px;
+  pointer-events: none;
+}
+
+.app-banner__polygon {
+  position: absolute;
+  display: block;
+  bottom: -76px;
+  opacity: 0.92;
+  filter: drop-shadow(0 18px 26px rgba(94, 114, 228, 0.08));
+}
+
+.app-banner__polygon::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  clip-path: inherit;
+  background: linear-gradient(122deg, rgba(255, 255, 255, 0.46) 0%, rgba(255, 255, 255, 0.06) 42%, transparent 68%);
+}
+
+.app-banner__polygon--1 {
+  left: -10%;
+  width: 64%;
+  height: 245px;
+  clip-path: polygon(0 37%, 19% 10%, 52% 0, 84% 20%, 100% 61%, 91% 100%, 0 100%);
+  background: linear-gradient(135deg, #acb6f0 0%, #9ba8ea 54%, #8d9ce3 100%);
+}
+
+.app-banner__polygon--2 {
+  left: 23%;
+  width: 58%;
+  height: 168px;
+  bottom: -58px;
+  opacity: 0.8;
+  clip-path: polygon(0 48%, 34% 0, 73% 18%, 100% 62%, 82% 100%, 12% 100%);
+  background: linear-gradient(130deg, #ced4f6 0%, #bbC4f2 52%, #acb6f0 100%);
+}
+
+.app-banner__polygon--3 {
+  right: -12%;
+  width: 54%;
+  height: 232px;
+  bottom: -72px;
+  opacity: 0.72;
+  clip-path: polygon(0 62%, 21% 24%, 56% 0, 100% 22%, 100% 100%, 17% 100%);
+  background: linear-gradient(135deg, #e4e7fa 0%, #ced4f6 46%, #acb6f0 100%);
+}
+
+.app-banner__polygon--4 {
+  right: 6%;
+  width: 31%;
+  height: 146px;
+  bottom: -54px;
+  opacity: 0.7;
+  clip-path: polygon(0 35%, 35% 0, 100% 17%, 86% 100%, 18% 100%);
+  background: linear-gradient(140deg, #f1f3fd 0%, #ced4f6 52%, #b9c2f1 100%);
+}
+
+.app-banner__polygon--5 {
+  left: 45%;
+  width: 22%;
+  height: 96px;
+  bottom: -42px;
+  opacity: 0.55;
+  clip-path: polygon(0 58%, 30% 8%, 70% 0, 100% 52%, 81% 100%, 13% 100%);
+  background: linear-gradient(145deg, #ffffff 0%, #e6e9fa 55%, #ced4f6 100%);
 }
 
 .brand-logo {
@@ -608,8 +702,42 @@ html.darkmode .app-score-ring strong {
 
 @media (max-width: 575.98px) {
   .app-banner {
-    min-height: 390px;
-    padding: 48px 0 58px;
+    min-height: 540px;
+    padding: 48px 0 142px;
+  }
+
+  .app-banner__polygons {
+    height: 215px;
+  }
+
+  .app-banner__polygon--1 {
+    left: -22%;
+    width: 86%;
+    height: 190px;
+  }
+
+  .app-banner__polygon--2 {
+    left: 12%;
+    width: 76%;
+    height: 132px;
+  }
+
+  .app-banner__polygon--3 {
+    right: -22%;
+    width: 70%;
+    height: 180px;
+  }
+
+  .app-banner__polygon--4 {
+    right: 2%;
+    width: 42%;
+    height: 112px;
+  }
+
+  .app-banner__polygon--5 {
+    left: 38%;
+    width: 32%;
+    height: 76px;
   }
 
   .app-banner .banner-title {
