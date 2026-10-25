@@ -23,7 +23,7 @@
 |Live Demo|https://aicareer.replit.app|
 |RunPod Endpoint|Not used — this build is CPU-only (see How We Use RunPod)|
 |Slide Deck|[`submission/AI_Career_Navigator_Pitch_FINAL.pdf`](<submission/AI_Career_Navigator_Pitch_FINAL.pdf>)|
-|Demo Video|*(pending)*|
+|Demo Video|[*(pending)*](https://youtu.be/tN_oNH_rwtY)|
 
 ---
 
